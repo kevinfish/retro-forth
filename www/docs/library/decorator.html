@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>decorator'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="decorator">
+<h1 class="title">decorator'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>A decorator extends an existing function by appending ocde that will be
+executed before (and possibly after) execution of the original function.</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage</h1>
+<pre class="literal-block">
+ok  : foo + putn cr ;
+ok  1
+ok  2
+ok  foo 3
+ok  : demo 2over &quot;%d + %d = &quot; puts ;
+ok  &amp;foo
+ok  &amp;demo
+ok  decorate
+ok  1
+ok  2
+ok  foo 2 + 1 = 3
+ok
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="12%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>decorate</td>
+<td>aa-</td>
+<td>Apply decoration (a2) to function (a1)</td>
+</tr>
+<tr><td>undecorate</td>
+<td>a-</td>
+<td>Remove a decoration from a function</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

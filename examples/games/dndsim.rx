@@ -1,0 +1,87 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+(           A simple Dungeons and Dragons Combat Simulator              )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+needs math'
+
+{{
+: ->name     0 + @ ;
+: ->hp       1 + ;
+: ->ac       2 + @ ;
+: ->thac0    3 + @ ;
+: ->dmgnum   4 + @ ;
+: ->dmgsize  5 + @ ;
+: ->dmgmod   6 + @ ;
+: ->startHP  7 + ;
+
+variable accumulator
+
+: dieRange ( range -- val )
+    ^math'random swap mod 1+ ;
+
+: numDice ( num range -- val )
+    swap [ dup dieRange +accumulator ] times
+    drop @accumulator ;
+
+: rollDie ( num range modifier -- val )
+    0 !accumulator 2rot numDice + ;
+    
+: rollD20 ( -- val )
+    1 20 0 rollDie ;
+    
+: rollD10 ( -- val )
+    1 10 0 rollDie ;
+
+: calcDamage ( attacker -- damage )
+    [ ->dmgnum ] [ ->dmgsize ] [ ->dmgmod ] tri rollDie ;
+
+: calcHit ( attacker defender -- t | f )
+    ->ac [ ->thac0 ] dip - rollD20 <= ;
+
+: printAttack ( attacker defender damage -- defender damage )
+    2rot swap ->name puts space 2over
+    [ @->hp ] sip ->name
+    "hits %s (%d) for %d points of damage. "
+    puts swap ;
+
+: printVictim ( defender damage -- )
+    over @->hp swap - over !->hp 
+    [ @->hp ] sip ->name
+    "%s is reduced to %d hp." puts cr ;
+
+: alive? ( player -- t | f )
+    @->hp 0 > ;
+
+: attack ( attacker defender -- )
+    2over calcHit
+    [ over calcDamage cr printAttack printVictim ]
+    [ [ ->name ] bi@ swap cr "%s misses %s." puts cr ] if ;
+
+: initiative ( attacker defender -- )
+    2 [ rollD10 ] times > [ swap ] ifTrue
+    over ->name cr "%s wins initiative." puts cr ;
+
+: round ( attacker defender -- )
+    initiative 2over attack dup alive?
+    [ 2over swap attack ] ifTrue ;
+
+: endcombat ( attacker defender -- )
+    dup alive? [ drop ] [ nip ] if
+    ->name "%s dies. " puts cr ;
+
+: combat ( attacker defender -- )
+    [ 2over round [ alive? ] bi@ and ] while
+    cr endcombat ;
+---reveal---
+
+: startcombat ( attacker defender -- )
+    2over [ [ @->startHP ] sip !->hp ] bi@
+    combat ;
+}}
+
+( name, currenthp, ac, thac0, numdice, dicerange, dicemodifier, startinghp )
+    
+create alice "Alice" , 0 , 5 , 18 , 1 , 6 , 0 , 14 ,
+create bob   "Bob"   , 0 , 7 , 16 , 2 , 4 , 0 , 12 ,
+
+alice bob startcombat
+

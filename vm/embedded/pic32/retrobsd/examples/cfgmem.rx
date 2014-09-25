@@ -1,0 +1,14 @@
+with pic32'
+
+: memread -2 6 out wait 6 in ;
+: memshow dup hex8 space memread hex8 cr ;
+: cfgread clear cr "Configuration Memory" puts cr cr
+"       Address  Value" puts cr 
+$9FC02FF0 
+dup "CFG 3  " puts memshow 4 + 
+dup "CFG 2  " puts memshow 4 + 
+dup "CFG 1  " puts memshow 4 + 
+"CFG 0  " puts memshow ;
+cfgread
+bye
+

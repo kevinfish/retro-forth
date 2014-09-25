@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>files'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="files">
+<h1 class="title">files'</h1>
+
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>:R</td>
+<td>-n</td>
+<td>Mode for reading a file. Does not create file</td>
+</tr>
+<tr><td>:W</td>
+<td>-n</td>
+<td>Mode for writing a file</td>
+</tr>
+<tr><td>:A</td>
+<td>-n</td>
+<td>Mode for appending to a file</td>
+</tr>
+<tr><td>:M</td>
+<td>-n</td>
+<td>Mode for modifying a file. Does not create
+file.</td>
+</tr>
+<tr><td>open</td>
+<td>$m-h</td>
+<td>Open a file. Will return a handle. Valid
+handles will be non-zero. A zero handle
+indicates failure to open a file.</td>
+</tr>
+<tr><td>read</td>
+<td>h-c</td>
+<td>Read a byte from a file. This returns the
+byte.</td>
+</tr>
+<tr><td>write</td>
+<td>ch-f</td>
+<td>Write a byte to a file. This returns a flag
+indicating the number of bytes written.
+(Should always equal '1')</td>
+</tr>
+<tr><td>close</td>
+<td>h-f</td>
+<td>Close an open file. Returns a flag of zero if
+unable to close, or non-zero if successful.</td>
+</tr>
+<tr><td>pos</td>
+<td>h-n</td>
+<td>Get current position in a file</td>
+</tr>
+<tr><td>seek</td>
+<td>nh-f</td>
+<td>Seek a position in a file</td>
+</tr>
+<tr><td>size</td>
+<td>h-n</td>
+<td>Return size of open file</td>
+</tr>
+<tr><td>delete</td>
+<td>$-f</td>
+<td>Delete a file. Returns a handle. Non-zero if
+successful, zero if failed.</td>
+</tr>
+<tr><td>slurp</td>
+<td>a$-n</td>
+<td>Read a file into a buffer</td>
+</tr>
+<tr><td>spew</td>
+<td>an$-n</td>
+<td>Write (n) bytes from address (a) into a file</td>
+</tr>
+<tr><td>readLine</td>
+<td>h-$</td>
+<td>Read a line from a file</td>
+</tr>
+<tr><td>writeLine</td>
+<td>$h-</td>
+<td>Write a string to a file</td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

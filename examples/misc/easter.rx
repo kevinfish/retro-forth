@@ -1,0 +1,22 @@
+{{
+  variable year
+
+  : s- negate + ;
+  : a. @year 19 mod ;
+  : b. @year 100 / ;
+  : c. @year 100 mod ;
+  : d. b. 4 / ;
+  : e. b. 4 mod ;
+  : g. b. 8 * 13 + 25 / ;
+  : h. b. a. 19 * + d. s- g. s- 15 + 30 mod ;
+  : m. a. h. 11 * + 319 / ;
+  : j. c. 4 / ;
+  : k. c. 4 mod ;
+  : l. e. 2 * j. 2 * + k. s- h. s- m. + 32 + 7 mod ;
+  : month h. m. s- l. + 90 + 25 / ;
+  : day   h. m. s- l. + month + 19 + 32 mod ;
+---reveal---
+  : easter  ( year -- month day year )
+    [ !year month day ] sip ;
+}}
+

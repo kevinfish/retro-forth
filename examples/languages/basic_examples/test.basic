@@ -1,0 +1,7 @@
+0001 LET A$ = ""
+0002 PRINT "What is your name?"
+0003 INPUT A$
+0004 LET B$ = "Hello, "
+0005 LET B$ += A$
+0006 PRINT B$
+0007 RUN

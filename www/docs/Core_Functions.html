@@ -1,0 +1,1338 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title></title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+
+<div class="section" id="global">
+<h1>Global</h1>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>1+</td>
+<td>n-n</td>
+<td>Increment TOS by 1 <a class="footnote-reference" href="#id29" id="id1">[1]</a></td>
+</tr>
+<tr><td>1-</td>
+<td>n-n</td>
+<td>Decrement TOS by 1 <a class="footnote-reference" href="#id29" id="id2">[1]</a></td>
+</tr>
+<tr><td>swap</td>
+<td>xy-yx</td>
+<td>Exchange positions of TOS and NOS <a class="footnote-reference" href="#id29" id="id3">[1]</a></td>
+</tr>
+<tr><td>drop</td>
+<td>n-</td>
+<td>Drop TOS from the stack <a class="footnote-reference" href="#id29" id="id4">[1]</a></td>
+</tr>
+<tr><td>and</td>
+<td>xy-n</td>
+<td>Bitwise AND <a class="footnote-reference" href="#id29" id="id5">[1]</a></td>
+</tr>
+<tr><td>or</td>
+<td>xy-n</td>
+<td>Bitwise OR <a class="footnote-reference" href="#id29" id="id6">[1]</a></td>
+</tr>
+<tr><td>xor</td>
+<td>xy-n</td>
+<td>Bitwise XOR <a class="footnote-reference" href="#id29" id="id7">[1]</a></td>
+</tr>
+<tr><td>&#64;</td>
+<td>a-n</td>
+<td>Fetch a value from a memory location <a class="footnote-reference" href="#id29" id="id8">[1]</a></td>
+</tr>
+<tr><td>!</td>
+<td>na-</td>
+<td>Store a value to a memory location <a class="footnote-reference" href="#id29" id="id9">[1]</a></td>
+</tr>
+<tr><td><tt class="docutils literal">+</tt></td>
+<td>xy-n</td>
+<td>Add two values       (x+y) <a class="footnote-reference" href="#id29" id="id10">[1]</a></td>
+</tr>
+<tr><td><tt class="docutils literal">-</tt></td>
+<td>xy-n</td>
+<td>Subtract two values  (x-y) <a class="footnote-reference" href="#id29" id="id11">[1]</a></td>
+</tr>
+<tr><td><tt class="docutils literal">*</tt></td>
+<td>xy-n</td>
+<td>Multiply two values  (x*y) <a class="footnote-reference" href="#id29" id="id12">[1]</a></td>
+</tr>
+<tr><td>/mod</td>
+<td>xy-rq</td>
+<td><div class="first last line-block">
+<div class="line">Divide and Remainder <a class="footnote-reference" href="#id29" id="id13">[1]</a></div>
+<div class="line">This performs symmetric division</div>
+</div>
+</td>
+</tr>
+<tr><td>&lt;&lt;</td>
+<td>xy-n</td>
+<td>Shift bits left      (x&lt;&lt;y) <a class="footnote-reference" href="#id29" id="id14">[1]</a> <a class="footnote-reference" href="#id30" id="id15">[2]</a></td>
+</tr>
+<tr><td>&gt;&gt;</td>
+<td>xy-n</td>
+<td>Shift bits right     (x&gt;&gt;y) <a class="footnote-reference" href="#id29" id="id16">[1]</a> <a class="footnote-reference" href="#id30" id="id17">[2]</a></td>
+</tr>
+<tr><td>tib</td>
+<td>-a</td>
+<td>Returns address of text input buffer</td>
+</tr>
+<tr><td>dup</td>
+<td>n-nn</td>
+<td>Duplicate TOS <a class="footnote-reference" href="#id29" id="id18">[1]</a></td>
+</tr>
+<tr><td>in</td>
+<td>p-n</td>
+<td>Read a value from an I/O port <a class="footnote-reference" href="#id29" id="id19">[1]</a></td>
+</tr>
+<tr><td>out</td>
+<td>np-</td>
+<td>Write a value to an I/O port <a class="footnote-reference" href="#id29" id="id20">[1]</a></td>
+</tr>
+<tr><td>accept</td>
+<td>c-</td>
+<td>Read a string, ending with the specified
+character. The string is returned in <strong>tib</strong></td>
+</tr>
+<tr><td>here</td>
+<td>-a</td>
+<td>Next free address in <strong>heap</strong></td>
+</tr>
+<tr><td>,</td>
+<td>n-</td>
+<td>Place TOS <strong>here</strong> and increment <strong>heap</strong> by
+1</td>
+</tr>
+<tr><td>create</td>
+<td>&quot;-</td>
+<td>Parse for a name and call <strong>header</strong></td>
+</tr>
+<tr><td>:</td>
+<td>&quot;-</td>
+<td>Calls <strong>create</strong>, changes class to <strong>.word</strong>,
+and turns <strong>compiler</strong> on.</td>
+</tr>
+<tr><td>header</td>
+<td>$-</td>
+<td>Given a name, create a new header with a
+class of <strong>.data</strong></td>
+</tr>
+<tr><td>cr</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display a newline character</td>
+</tr>
+<tr><td>putc</td>
+<td>c-</td>
+<td>Display a character</td>
+</tr>
+<tr><td>remapKeys</td>
+<td>c-c</td>
+<td>Remap one ASCII value to another</td>
+</tr>
+<tr><td>&lt;puts&gt;</td>
+<td>$-</td>
+<td>Helper; default way to display strings</td>
+</tr>
+<tr><td>over</td>
+<td>xy-xyx</td>
+<td>Place a copy of NOS over TOS</td>
+</tr>
+<tr><td>quote</td>
+<td>-a</td>
+<td>Helper function for quotations</td>
+</tr>
+<tr><td>]]</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Turn compiler on</td>
+</tr>
+<tr><td>not</td>
+<td>x-y</td>
+<td>Same as -1 xor; invert TOS and subtract 1.</td>
+</tr>
+<tr><td>on</td>
+<td>a-</td>
+<td>Set a variable to -1 (true)</td>
+</tr>
+<tr><td>off</td>
+<td>a-</td>
+<td>Set a variable to  0 (false)</td>
+</tr>
+<tr><td>/</td>
+<td>xy-q</td>
+<td>Divide two numbers (x/y)</td>
+</tr>
+<tr><td>mod</td>
+<td>xy-r</td>
+<td>Modulus of two numbers (x%y)</td>
+</tr>
+<tr><td>negate</td>
+<td>x-y</td>
+<td>Invert sign of TOS</td>
+</tr>
+<tr><td>do</td>
+<td>a-</td>
+<td>Call a function by address</td>
+</tr>
+<tr><td>numbers</td>
+<td>-a</td>
+<td>Function returning address of string
+containing all valid numeric characters</td>
+</tr>
+<tr><td>wait</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Wait for an I/O event</td>
+</tr>
+<tr><td>'</td>
+<td>&quot;-a</td>
+<td>Interpret time: return the address (&quot;xt&quot;) of
+a name</td>
+</tr>
+<tr><td>&#64;+</td>
+<td>a-ac</td>
+<td>Fetch a value from an address, return the
+next address and the value</td>
+</tr>
+<tr><td>!+</td>
+<td>ca-a</td>
+<td>Store a value to an address, return next
+address</td>
+</tr>
+<tr><td>string</td>
+<td><ul class="first last simple">
+<li></li>
+</ul>
+</td>
+<td>Helper function for strings</td>
+</tr>
+<tr><td>keepString</td>
+<td>a-a</td>
+<td>Move the string to a permanent location</td>
+</tr>
+<tr><td>getLength</td>
+<td>a-n</td>
+<td>Return the length of a string</td>
+</tr>
+<tr><td>withLength</td>
+<td>a-an</td>
+<td>Same as <strong>dup getLength</strong></td>
+</tr>
+<tr><td>withClass</td>
+<td>ac-</td>
+<td>Execute a function via the specified class
+handler</td>
+</tr>
+<tr><td>.word</td>
+<td>a-</td>
+<td>Class for normal functions</td>
+</tr>
+<tr><td>.macro</td>
+<td>a-</td>
+<td>Class for immediate functions</td>
+</tr>
+<tr><td>.data</td>
+<td>a-</td>
+<td>Class for data (variables, literals, etc)</td>
+</tr>
+<tr><td>d-&gt;class</td>
+<td>a-a</td>
+<td>Given a dictionary header, return the address
+of the class handler. Use <strong>&#64;</strong> to get the
+class handler.</td>
+</tr>
+<tr><td>d-&gt;xt</td>
+<td>a-a</td>
+<td>Given a dictionary header, return the address
+of the function start (&quot;xt&quot;). Use <strong>&#64;</strong> to
+get the actual xt.</td>
+</tr>
+<tr><td>d-&gt;doc</td>
+<td>a-a</td>
+<td>Given a dictionary header, return the address
+of a documentation string. Use <strong>&#64;</strong> to get
+the actual pointer.</td>
+</tr>
+<tr><td>d-&gt;name</td>
+<td>a-a</td>
+<td>Given a dictionary header, return the address
+of the name. This is the actual start of the
+name.</td>
+</tr>
+<tr><td>boot</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Called when the image first loads; use for
+custom startup routines</td>
+</tr>
+<tr><td>toNumber</td>
+<td>$-n</td>
+<td>Convert a string to a number</td>
+</tr>
+<tr><td>isNumber?</td>
+<td>$-f</td>
+<td>See if a string is a valid number in the
+current <strong>base</strong></td>
+</tr>
+<tr><td>ok</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Displays the &quot;ok&quot; prompt</td>
+</tr>
+<tr><td>listen</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Top level interpreter. Reads and process
+input.</td>
+</tr>
+<tr><td>getc</td>
+<td>-c</td>
+<td>Read a keypress and return the ASCII value on
+the stack</td>
+</tr>
+<tr><td>find</td>
+<td>$-af</td>
+<td>Search for a name in the dictionary. Returns
+a dictionary header and a flag</td>
+</tr>
+<tr><td>notFound</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Called when a name is not found. Calls
+<strong>&lt;notFound&gt;</strong> and displays an error message
+if necessary</td>
+</tr>
+<tr><td>&lt;notFound&gt;</td>
+<td>-f</td>
+<td>Called by <strong>notFound</strong>; hook for custom error
+handling. Used by the prefix system. Returns
+a flag of 0 if the error is cleared, or -1 if
+not</td>
+</tr>
+<tr><td>puts</td>
+<td>$-</td>
+<td>Display a string <a class="footnote-reference" href="#id31" id="id21">[3]</a></td>
+</tr>
+<tr><td>compare</td>
+<td>$$-f</td>
+<td>Compare two strings for equality</td>
+</tr>
+<tr><td>redraw</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Update the display. Can be disabled
+temporarily by <strong>update</strong></td>
+</tr>
+<tr><td>if</td>
+<td>fqq-</td>
+<td>Execute first quote if flag is true, second
+if false</td>
+</tr>
+<tr><td>ifTrue</td>
+<td>fq-</td>
+<td>Execute quote if flag is true</td>
+</tr>
+<tr><td>ifFalse</td>
+<td>fq-</td>
+<td>Execute quote if flag is false</td>
+</tr>
+<tr><td>dip</td>
+<td>nq-n</td>
+<td>Call a quote while temporarily hiding the top
+item on the stack</td>
+</tr>
+<tr><td>sip</td>
+<td>nq-n</td>
+<td>Call a quote with an item on the stack,
+restoring that item after the quote returns</td>
+</tr>
+<tr><td>=</td>
+<td>xy-f</td>
+<td>Compare two values for equality</td>
+</tr>
+<tr><td>&lt;&gt;</td>
+<td>xy-f</td>
+<td>Compare two values for inequality</td>
+</tr>
+<tr><td>&lt;</td>
+<td>xy-f</td>
+<td>Compare two values for less than</td>
+</tr>
+<tr><td>&gt;</td>
+<td>xy-f</td>
+<td>Compare two values for greater than</td>
+</tr>
+<tr><td>&lt;=</td>
+<td>xy-f</td>
+<td>Compare for less than or equal to</td>
+</tr>
+<tr><td>&gt;=</td>
+<td>xy-f</td>
+<td>Compare for greater than or equal to</td>
+</tr>
+<tr><td>;</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Compile an exit into a function and stop the
+compiler</td>
+</tr>
+<tr><td>;;</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Compile an exit into a function, but do not
+stop compilation</td>
+</tr>
+<tr><td>repeat</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Start an unconditional loop</td>
+</tr>
+<tr><td>again</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Jump to the code following the most recent
+<strong>repeat</strong></td>
+</tr>
+<tr><td>0;</td>
+<td><div class="first last line-block">
+<div class="line-block">
+<div class="line">n-n</div>
+</div>
+<div class="line"><em>or</em></div>
+<div class="line-block">
+<div class="line">n-</div>
+</div>
+</div>
+</td>
+<td><div class="first last line-block">
+<div class="line">If TOS is not zero, do nothing</div>
+<div class="line"><br /></div>
+<div class="line">If TOS is zero, drop TOS and exit the
+function</div>
+</div>
+</td>
+</tr>
+<tr><td>push</td>
+<td>n-</td>
+<td>Push a value to the address stack</td>
+</tr>
+<tr><td>pop</td>
+<td>-n</td>
+<td>Pop a value off the address stack</td>
+</tr>
+<tr><td>(</td>
+<td>&quot;-</td>
+<td>Parse for ) and ignore everything it reads</td>
+</tr>
+<tr><td>[</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Start a quote (code block)</td>
+</tr>
+<tr><td>]</td>
+<td>-a</td>
+<td>End a quote (code block)</td>
+</tr>
+<tr><td>[[</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Turn compiler off</td>
+</tr>
+<tr><td>last</td>
+<td>-a</td>
+<td>Variable; pointer to most recent dictionary
+header</td>
+</tr>
+<tr><td>compiler</td>
+<td>-a</td>
+<td>Variable; holds compiler state</td>
+</tr>
+<tr><td>fb</td>
+<td>-a</td>
+<td>Variable; Is canvas present? <a class="footnote-reference" href="#id32" id="id22">[4]</a></td>
+</tr>
+<tr><td>fw</td>
+<td>-a</td>
+<td>Variable; Framebuffer width  <a class="footnote-reference" href="#id32" id="id23">[4]</a></td>
+</tr>
+<tr><td>fh</td>
+<td>-a</td>
+<td>Variable; Framebuffer height <a class="footnote-reference" href="#id32" id="id24">[4]</a></td>
+</tr>
+<tr><td>memory</td>
+<td>-a</td>
+<td>Variable; Holds amount of memory provided by
+the VM <a class="footnote-reference" href="#id32" id="id25">[4]</a></td>
+</tr>
+<tr><td>cw</td>
+<td>-a</td>
+<td>Variable; Console width <a class="footnote-reference" href="#id32" id="id26">[4]</a></td>
+</tr>
+<tr><td>ch</td>
+<td>-a</td>
+<td>Variable; Console height <a class="footnote-reference" href="#id32" id="id27">[4]</a></td>
+</tr>
+<tr><td>heap</td>
+<td>-a</td>
+<td>Variable; Pointer to current free location in
+heap</td>
+</tr>
+<tr><td>which</td>
+<td>-a</td>
+<td>Variable; Holds pointer to most recently
+looked up header</td>
+</tr>
+<tr><td>remapping</td>
+<td>-a</td>
+<td>Variable; indicates whether CR, LF, and TAB
+should be treated as whitespace</td>
+</tr>
+<tr><td>eatLeading?</td>
+<td>-a</td>
+<td>Variable; indicates whether <strong>accept</strong> should
+ignore leading delimiters</td>
+</tr>
+<tr><td>base</td>
+<td>-a</td>
+<td>Variable; holds current base for numeric
+conversion and display</td>
+</tr>
+<tr><td>update</td>
+<td>-a</td>
+<td>Variable; flag indicating whether or not
+<strong>redraw</strong> should update the display</td>
+</tr>
+<tr><td>version</td>
+<td>-$</td>
+<td>String holding version information</td>
+</tr>
+<tr><td>build</td>
+<td>-$</td>
+<td>String holding a build identifier</td>
+</tr>
+<tr><td>tabAsWhitespace</td>
+<td>-a</td>
+<td>Variable; treat tab as whitespace?</td>
+</tr>
+<tr><td>?dup</td>
+<td><div class="first last line-block">
+<div class="line">n-n</div>
+<div class="line">n-nn</div>
+</div>
+</td>
+<td>Duplicate TOS if non-zero. If zero, leave
+alone</td>
+</tr>
+<tr><td>nip</td>
+<td>xy-y</td>
+<td>Drop the NOS from the stack</td>
+</tr>
+<tr><td>rot</td>
+<td>xyz-yzx</td>
+<td>Rotate the top three values on the stack</td>
+</tr>
+<tr><td>tuck</td>
+<td>xy-yxy</td>
+<td>Put a copy of TOS under NOS</td>
+</tr>
+<tr><td>+!</td>
+<td>na-</td>
+<td>Add value to value at address</td>
+</tr>
+<tr><td>-!</td>
+<td>na-</td>
+<td>Subtract value from value at address</td>
+</tr>
+<tr><td>++</td>
+<td>a-</td>
+<td>Increment variable by 1</td>
+</tr>
+<tr><td>--</td>
+<td>a-</td>
+<td>Decrement variable by 1</td>
+</tr>
+<tr><td>HEADERS</td>
+<td>-n</td>
+<td>Returns number of private headers permitted</td>
+</tr>
+<tr><td>{{</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Start a namespace (private portion)</td>
+</tr>
+<tr><td>---reveal---</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Switch to public portion of a namespace</td>
+</tr>
+<tr><td>}}</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Close a namespace, sealing off private
+symbols</td>
+</tr>
+<tr><td>:devector</td>
+<td>a-</td>
+<td>Restore a function to its original state</td>
+</tr>
+<tr><td>:is</td>
+<td>aa-</td>
+<td>Alter a function to point to a new function</td>
+</tr>
+<tr><td>devector</td>
+<td>&quot;-</td>
+<td>Same as <strong>:devector</strong>, but parses for name of
+function</td>
+</tr>
+<tr><td>is</td>
+<td>a&quot;-</td>
+<td>Same as <strong>:is</strong>, but parses for name of
+function</td>
+</tr>
+<tr><td>default:</td>
+<td>&quot;-</td>
+<td>Compile call to default definition of a
+function, ignoring any revectoring</td>
+</tr>
+<tr><td>d'</td>
+<td>&quot;-a</td>
+<td>Parse for a name and return the dictionary
+header corresponding to it</td>
+</tr>
+<tr><td>xt-&gt;d</td>
+<td>a-d</td>
+<td>Given an address, return the corresponding
+dictionary header or 0 if not found</td>
+</tr>
+<tr><td>:hide</td>
+<td>a-</td>
+<td>Remove a name from a dictionary. Specify the
+address of a function. Used by <strong>hide</strong></td>
+</tr>
+<tr><td>hide</td>
+<td>&quot;-</td>
+<td>Remove a name from the dictionary</td>
+</tr>
+<tr><td>reclass</td>
+<td>a-</td>
+<td>Change class of most recent function to
+specified class</td>
+</tr>
+<tr><td>reclass:</td>
+<td>a&quot;-</td>
+<td>Same as <strong>reclass</strong>, but parse for function
+to change class of</td>
+</tr>
+<tr><td>__&amp;</td>
+<td>a-a</td>
+<td>Prefix; returns address of a variable or
+function</td>
+</tr>
+<tr><td>__&#64;</td>
+<td>a-n</td>
+<td>Prefix; execute function or data element and
+fetch from addres returned</td>
+</tr>
+<tr><td>__!</td>
+<td>na-</td>
+<td>Prefix; execute function or data element and
+store value to address returned</td>
+</tr>
+<tr><td>__+</td>
+<td>na-</td>
+<td>Prefix; execute function or data element and
+add value to value at address returned</td>
+</tr>
+<tr><td>__-</td>
+<td>na-</td>
+<td>Prefix; execute function or data element and
+subtract value from value at address returned</td>
+</tr>
+<tr><td>__2</td>
+<td>a-</td>
+<td>Prefix; execute function twice</td>
+</tr>
+<tr><td>.primitive</td>
+<td>a-</td>
+<td>Class for functions corresponding to VM
+opcodes; used for simple optimizations</td>
+</tr>
+<tr><td>.compiler</td>
+<td>a-</td>
+<td>Class for functions that can only be used
+inside a definition</td>
+</tr>
+<tr><td>immediate</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set the most recent function to <strong>.macro</strong>
+class</td>
+</tr>
+<tr><td>compile-only</td>
+<td>&quot;-</td>
+<td>Set the most recent function to <strong>.compiler</strong>
+class</td>
+</tr>
+<tr><td>`</td>
+<td>&quot;-</td>
+<td>Either execute a function, or compile the xt
+and a call to the corresponding class
+handler. This will also work with numbers</td>
+</tr>
+<tr><td>jump:</td>
+<td>&quot;-</td>
+<td>Compile a jump to another function</td>
+</tr>
+<tr><td>[]</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Empty quote</td>
+</tr>
+<tr><td>while</td>
+<td>q-</td>
+<td>Execute quote until quote returns a flag of 0</td>
+</tr>
+<tr><td>until</td>
+<td>q-</td>
+<td>Execute quote until quote returns a flag of
+-1</td>
+</tr>
+<tr><td>curry</td>
+<td>nq-q</td>
+<td>5 [ . ]   =  [ 5 [ . ] do ]</td>
+</tr>
+<tr><td>take</td>
+<td>qq-q</td>
+<td>5 [ . ]   =  [ [ . ] do 5 ]</td>
+</tr>
+<tr><td>bi</td>
+<td>xqq-</td>
+<td>Apply each quote to a copy of x</td>
+</tr>
+<tr><td>bi*</td>
+<td>xyqq-</td>
+<td>Apply q1 to x and q2 to y</td>
+</tr>
+<tr><td>bi&#64;</td>
+<td>xyq-</td>
+<td>Apply q to x and y</td>
+</tr>
+<tr><td>tri</td>
+<td>xqqq-</td>
+<td>Apply each quote to a copy of x</td>
+</tr>
+<tr><td>tri*</td>
+<td>xyzqqq-</td>
+<td>Apply q1 to x, q2 to y, and q3 to z</td>
+</tr>
+<tr><td>tri&#64;</td>
+<td>xyzq-</td>
+<td>Apply q to x, y, and z</td>
+</tr>
+<tr><td>cons</td>
+<td>ab-q</td>
+<td>Create a quote returning two data elements</td>
+</tr>
+<tr><td>preserve</td>
+<td>aq-</td>
+<td><div class="first last line-block">
+<div class="line">Given a variable (a) and a quote (q),
+preserve the contents of (a) while executing
+the quote, and restore the original contents
+of (a) after execution completes.</div>
+<div class="line">(a) is removed from the stack before (q) is
+executed.</div>
+</div>
+</td>
+</tr>
+<tr><td>when</td>
+<td>nqq-n</td>
+<td>Execute q1, with a copy of n on the stack. If
+q1 returns a true flag, run q2 and exit the
+caller. If not, discard q2 and return to the
+caller. q2 is permitted to discard n, which
+will alter the stack effect.</td>
+</tr>
+<tr><td>whend</td>
+<td>nqq-?</td>
+<td>Execute q1, with a copy of n on the stack. If
+q1 returns a true flag, drop n, run q2 and
+exit the caller. If not, discard q2 and
+return to the caller.</td>
+</tr>
+<tr><td>times</td>
+<td>nq-</td>
+<td>Run quote (n) times</td>
+</tr>
+<tr><td>iterd</td>
+<td>nq-</td>
+<td>Run quote (n) times and push counter to stack
+each time. Counts down.</td>
+</tr>
+<tr><td>iter</td>
+<td>nq-</td>
+<td>Run quote (n) times and push counter to stack
+each time. Counts up.</td>
+</tr>
+<tr><td>&lt;each&#64;&gt;</td>
+<td>...t-</td>
+<td>Hook into <strong>each&#64;</strong> for adding additional
+types</td>
+</tr>
+<tr><td>each&#64;</td>
+<td>...t-</td>
+<td><p class="first">Supercombinator for applying quote to each
+item in various data structures. Also
+provide on the stack:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="59%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Type</th>
+<th class="head">Stack</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ARRAY</td>
+<td>aq-</td>
+</tr>
+<tr><td>BUFFER</td>
+<td>anq-</td>
+</tr>
+<tr><td>STRING</td>
+<td>$q-</td>
+</tr>
+<tr><td>LIST</td>
+<td>lq-</td>
+</tr>
+</tbody>
+</table>
+<p>For LIST, <em>l</em> should be a variable pointing to
+the actual list.</p>
+<p class="last">The quote is given the address of the
+current element each time it is invoked.</p>
+</td>
+</tr>
+<tr><td>copy</td>
+<td>aan-</td>
+<td>Copy n values from source (a1) to dest (a2)</td>
+</tr>
+<tr><td>fill</td>
+<td>ann-</td>
+<td>Fill (n2) memory locations starting at (a)
+with value (n1)</td>
+</tr>
+<tr><td>ahead</td>
+<td>-a</td>
+<td>Used in conditionals; compiles a branch to be
+patched in later</td>
+</tr>
+<tr><td>if;</td>
+<td>f-</td>
+<td>Exit function if TOS is a non-zero flag</td>
+</tr>
+<tr><td>within</td>
+<td>xlu-f</td>
+<td>Is (x) within lower (l) and upper (u) bounds?</td>
+</tr>
+<tr><td>variable:</td>
+<td>n&quot;-</td>
+<td>Create a new variable with an initial value</td>
+</tr>
+<tr><td>variable</td>
+<td>&quot;-</td>
+<td>Create a new variable with an initial value
+of 0</td>
+</tr>
+<tr><td>constant</td>
+<td>n&quot;-</td>
+<td>Create a numeric constant</td>
+</tr>
+<tr><td>string:</td>
+<td>$&quot;-</td>
+<td>Create a string constant</td>
+</tr>
+<tr><td>allot</td>
+<td>n-</td>
+<td>Allocate space in the heap</td>
+</tr>
+<tr><td>elements</td>
+<td>n&quot;-</td>
+<td>Create a series of variables</td>
+</tr>
+<tr><td>decimal</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Switch <strong>base</strong> to 10</td>
+</tr>
+<tr><td>hex</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Switch <strong>base</strong> to 16</td>
+</tr>
+<tr><td>octal</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Switch <strong>base</strong> to  8</td>
+</tr>
+<tr><td>binary</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Switch <strong>base</strong> to  2</td>
+</tr>
+<tr><td>toString</td>
+<td>n-$</td>
+<td>Convert a number into a string</td>
+</tr>
+<tr><td>clear</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Clear the display</td>
+</tr>
+<tr><td>space</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display a space character (ASCII 32)</td>
+</tr>
+<tr><td>putn</td>
+<td>n-</td>
+<td>Display a number</td>
+</tr>
+<tr><td>.parse</td>
+<td>a-</td>
+<td>Class for parsing prefixes</td>
+</tr>
+<tr><td>parsing</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set most recent function to <strong>.parse</strong> class</td>
+</tr>
+<tr><td>__$</td>
+<td>$-n</td>
+<td>Prefix; treat number as hexadecimal (base 16)</td>
+</tr>
+<tr><td>__#</td>
+<td>$-n</td>
+<td>Prefix; treat number as decimal (base 10)</td>
+</tr>
+<tr><td>__%</td>
+<td>$-n</td>
+<td>Prefix; treat number as binary (base 2)</td>
+</tr>
+<tr><td>__'</td>
+<td>$-n</td>
+<td>Return character following '</td>
+</tr>
+<tr><td>dicts</td>
+<td>-a</td>
+<td>Array; used by chained vocabularies and
+search order code</td>
+</tr>
+<tr><td>%%</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Close a vocabulary. Use with caution</td>
+</tr>
+<tr><td>&lt;%&gt;</td>
+<td>a-</td>
+<td>Open a vocabulary. Use with caution</td>
+</tr>
+<tr><td>.chain</td>
+<td>a-</td>
+<td>Class for vocabularies</td>
+</tr>
+<tr><td>chain:</td>
+<td>&quot;-</td>
+<td>Create a new vocabulary</td>
+</tr>
+<tr><td>;chain</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>End a vocabulary</td>
+</tr>
+<tr><td>:with</td>
+<td>a-</td>
+<td>Add a vocabulary to the search order (by
+pointer)</td>
+</tr>
+<tr><td>with</td>
+<td>&quot;-</td>
+<td>Add a vocabulary to the search order (parses
+for name)</td>
+</tr>
+<tr><td>without</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Remove a vocabulary from the search order</td>
+</tr>
+<tr><td>global</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Remove all vocabularies from the search
+order, leaving just the global dictionary</td>
+</tr>
+<tr><td>findInChain</td>
+<td>$a-df</td>
+<td>Open a chain (using <strong>:with</strong>) and search for
+a name. Closes the chain when done.</td>
+</tr>
+<tr><td>with|</td>
+<td>&quot;-</td>
+<td>Open a series of vocabularies, ending when
+<tt class="docutils literal">|</tt>  is encountered</td>
+</tr>
+<tr><td>rename:</td>
+<td>a&quot;-</td>
+<td>Rename a function</td>
+</tr>
+<tr><td>STRING-LENGTH</td>
+<td>-n</td>
+<td>Return the max length for a string</td>
+</tr>
+<tr><td>STRING-BUFERS</td>
+<td>-n</td>
+<td>Return number of temporary string buffers</td>
+</tr>
+<tr><td>tempString</td>
+<td>a-a</td>
+<td>Move a string to a temporary buffer</td>
+</tr>
+<tr><td>__&quot;</td>
+<td>&quot;-$</td>
+<td>Prefix; parse and return a string</td>
+</tr>
+<tr><td>&quot;</td>
+<td>&quot;-$</td>
+<td>Parse and return a string</td>
+</tr>
+<tr><td>formatted</td>
+<td>-a</td>
+<td>Variable; toggles whether <strong>puts</strong> uses
+escape sequences or not</td>
+</tr>
+<tr><td>depth</td>
+<td>-n</td>
+<td>Return number of items on stack</td>
+</tr>
+<tr><td>reset</td>
+<td>...-</td>
+<td>Remove all items from stack</td>
+</tr>
+<tr><td>.s</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display all items on stack</td>
+</tr>
+<tr><td>words</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>List all names in dictionary</td>
+</tr>
+<tr><td>save</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Save the image</td>
+</tr>
+<tr><td>bye</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Exit Retro</td>
+</tr>
+<tr><td>getToken</td>
+<td>&quot;-$</td>
+<td>Read a string, stopping at first whitespace</td>
+</tr>
+<tr><td>getNumber</td>
+<td>&quot;-n</td>
+<td>Read a number from the input stream</td>
+</tr>
+<tr><td>:include</td>
+<td>$-</td>
+<td>Include a file</td>
+</tr>
+<tr><td>include</td>
+<td>&quot;-</td>
+<td>Same as <strong>:include</strong>, but parse for file name</td>
+</tr>
+<tr><td>time</td>
+<td>-n</td>
+<td>Return the current unix time</td>
+</tr>
+<tr><td>delay</td>
+<td>n-</td>
+<td>Delay for (approximately) n seconds</td>
+</tr>
+<tr><td>getEnv</td>
+<td>a$-</td>
+<td>Get a copy of environment variable $ in
+buffer</td>
+</tr>
+<tr><td>later</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Defer execution of caller until a later time</td>
+</tr>
+<tr><td>yield</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Return from a function, with execution
+resuming from point after <strong>yield</strong> when the
+function is next called</td>
+</tr>
+<tr><td>__^</td>
+<td>&quot;-</td>
+<td>Allow direct access to functions in a chain</td>
+</tr>
+<tr><td>needs</td>
+<td>&quot;-</td>
+<td>Load a vocabulary from the <em>library</em>
+if it is not already loaded <a class="footnote-reference" href="#id33" id="id28">[5]</a></td>
+</tr>
+<tr><td>doc{</td>
+<td>&quot;-</td>
+<td>Parse tokens up to <em>}doc</em> and ignore. This is
+intended as a means of embedding docs into
+libraries.</td>
+</tr>
+<tr><td>variables|</td>
+<td>&quot;-</td>
+<td>Create a series of variables</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="buffer">
+<h1>buffer'</h1>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>start</td>
+<td>-a</td>
+<td>Get starting address of buffer</td>
+</tr>
+<tr><td>end</td>
+<td>-a</td>
+<td>Address at end of buffer</td>
+</tr>
+<tr><td>add</td>
+<td>c-</td>
+<td>Add value to end of buffer</td>
+</tr>
+<tr><td>get</td>
+<td>-c</td>
+<td>Read and remove value from buffer</td>
+</tr>
+<tr><td>empty</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Remove everything from the buffer</td>
+</tr>
+<tr><td>size</td>
+<td>-n</td>
+<td>Number of values in buffer</td>
+</tr>
+<tr><td>set</td>
+<td>a-</td>
+<td>Set buffer to memory address and empty it</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="strings">
+<h1>strings'</h1>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>search</td>
+<td>$$-f</td>
+<td>Search for a string (2) within a string (1);
+return string starting with substring</td>
+</tr>
+<tr><td>findChar</td>
+<td>$c-a</td>
+<td>Search for a character within a string;
+return string starting at the character</td>
+</tr>
+<tr><td>chop</td>
+<td>$-$</td>
+<td>Return a new string, with the last byte
+removed</td>
+</tr>
+<tr><td>getSubset</td>
+<td>$nn-$</td>
+<td>Return a subset of ($) starting at (n1) with
+length of (n2)</td>
+</tr>
+<tr><td>trimLeft</td>
+<td>$-$</td>
+<td>Trim whitespace from left side of string</td>
+</tr>
+<tr><td>trimRight</td>
+<td>$-$</td>
+<td>Trim whitespace from right side of string</td>
+</tr>
+<tr><td>append</td>
+<td>$$-$</td>
+<td>Append second string to first</td>
+</tr>
+<tr><td>appendChar</td>
+<td>$c-$</td>
+<td>Append character to a string</td>
+</tr>
+<tr><td>prepend</td>
+<td>$$-$</td>
+<td>Append first string to second</td>
+</tr>
+<tr><td>toLower</td>
+<td>$-$</td>
+<td>Convert a string to all lower case</td>
+</tr>
+<tr><td>toUpper</td>
+<td>$-$</td>
+<td>Convert a string to all upper case</td>
+</tr>
+<tr><td>reverse</td>
+<td>$-$</td>
+<td>Reverse the characters in a string; returns
+a new string</td>
+</tr>
+<tr><td>split</td>
+<td>$n-$$</td>
+<td>Split a string into two parts</td>
+</tr>
+<tr><td>splitAtChar</td>
+<td>$c-$$</td>
+<td>Search for a character and return two strings
+(up to and including (c), and after ($2))</td>
+</tr>
+<tr><td>splitAtChar:</td>
+<td>$&quot;-$$</td>
+<td>Parse for a character and call
+<strong>splitAtChar</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="types">
+<h1>types'</h1>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ARRAY</td>
+<td>-n</td>
+<td>Type constant for arrays</td>
+</tr>
+<tr><td>BUFFER</td>
+<td>-n</td>
+<td>Type constant for buffers</td>
+</tr>
+<tr><td>STRING</td>
+<td>-n</td>
+<td>Type constant for strings</td>
+</tr>
+<tr><td>LIST</td>
+<td>-n</td>
+<td>Type constant for linked lists</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="footnotes">
+<h1>Footnotes</h1>
+<table class="docutils footnote" frame="void" id="id29" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id3">3</a>, <a class="fn-backref" href="#id4">4</a>, <a class="fn-backref" href="#id5">5</a>, <a class="fn-backref" href="#id6">6</a>, <a class="fn-backref" href="#id7">7</a>, <a class="fn-backref" href="#id8">8</a>, <a class="fn-backref" href="#id9">9</a>, <a class="fn-backref" href="#id10">10</a>, <a class="fn-backref" href="#id11">11</a>, <a class="fn-backref" href="#id12">12</a>, <a class="fn-backref" href="#id13">13</a>, <a class="fn-backref" href="#id14">14</a>, <a class="fn-backref" href="#id16">15</a>, <a class="fn-backref" href="#id18">16</a>, <a class="fn-backref" href="#id19">17</a>, <a class="fn-backref" href="#id20">18</a>)</em> This corresponds to an Ngaro instruction.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id30" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id15">1</a>, <a class="fn-backref" href="#id17">2</a>)</em> Shifting by a negative amount is undefined behavior. Don't do it.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id31" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id21">[3]</a></td><td><strong>puts</strong> supports escape sequences which alter the stack usage.</td></tr>
+</tbody>
+</table>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="21%" />
+<col width="15%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Sequence</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>%s</td>
+<td>$-</td>
+<td>Display a string</td>
+</tr>
+<tr><td>%d</td>
+<td>n-</td>
+<td>Display a number (decimal)</td>
+</tr>
+<tr><td>%x</td>
+<td>n-</td>
+<td>Display a number (hexadecimal)</td>
+</tr>
+<tr><td>%o</td>
+<td>n-</td>
+<td>Display a number (octal)</td>
+</tr>
+<tr><td>%c</td>
+<td>c-</td>
+<td>Display a character</td>
+</tr>
+<tr><td>\n</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Newline</td>
+</tr>
+<tr><td>\'</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display a double quote (&quot;)</td>
+</tr>
+<tr><td>\[</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Start an ANSI escape sequence</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id32" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td><em>(<a class="fn-backref" href="#id22">1</a>, <a class="fn-backref" href="#id23">2</a>, <a class="fn-backref" href="#id24">3</a>, <a class="fn-backref" href="#id25">4</a>, <a class="fn-backref" href="#id26">5</a>, <a class="fn-backref" href="#id27">6</a>)</em> These are updated each time the image is loaded.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id33" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id28">[5]</a></td><td>This parses for a vocabulary name, which should end in a single
+apostrophe. The apostrophe will be cut, and the a suffix of
+<em>.rx</em> added. The system will attempt to load the file from the
+<em>library</em> subdirectory in the current working directory.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

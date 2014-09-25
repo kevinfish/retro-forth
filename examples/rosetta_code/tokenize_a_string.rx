@@ -1,0 +1,25 @@
+needs array'
+
+{{
+  variable char
+  : tokenize ( $-$$ )
+    @char ^strings'splitAtChar withLength 1- over + 0 swap ! tempString ;
+  : action   ( $-   )
+    keepString ^buffer'add ;
+---reveal---
+  : split    ( $cb- )
+    ^buffer'set !char
+    @char ^strings'appendChar
+    0 ^buffer'add
+    [ tokenize action dup 1 <> ] while drop
+    ^buffer'get drop
+    ^buffer'size ^buffer'start ! ;
+}}
+
+create strings
+  100 allot
+
+"Hello,How,Are,You,Today?" ', strings split
+
+strings [ 0; "%s:" puts ] ^array'apply
+

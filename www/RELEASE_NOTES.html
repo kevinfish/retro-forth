@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Release Notes</title>
+<style type="text/css">
+
+body {
+  font: 100% sans-serif;
+  background: #ffffff;
+  color: black;
+  margin: 2em;
+  padding: 0em 2em; }
+
+p.topic-title {
+  font-weight: bold; }
+
+table.docinfo {
+  text-align: left;
+  margin: 2em 0em; }
+
+a[href] {
+  color: #436976;
+  background-color: transparent; }
+
+a.toc-backref {
+  text-decoration: none; }
+
+h1 a[href] {
+  color: #003a6b;
+  text-decoration: none;
+  background-color: transparent; }
+
+a.strong {
+  font-weight: bold; }
+
+img {
+  margin: 0;
+  border: 0; }
+
+p {
+  margin: 0.5em 0 1em 0;
+  line-height: 1.5em; }
+
+p a:visited {
+  color: purple;
+  background-color: transparent; }
+
+p a:active {
+  color: red;
+  background-color: transparent; }
+
+a:hover {
+  text-decoration: none; }
+
+p img {
+  border: 0;
+  margin: 0; }
+
+p.rubric {
+  font-weight: bold;
+  font-style: italic; }
+
+h1.title {
+  color: #003a6b;
+  font-size: 250%;
+  margin-bottom: 0em; }
+
+h2.subtitle {
+  color: #003a6b;
+  border-bottom: 0px; }
+
+h1, h2, h3, h4, h5, h6 {
+  color: #555;
+  background-color: transparent;
+  margin: 0em;
+  padding-top: 0.5em; }
+
+h1 {
+  font-size: 160%;
+  margin-bottom: 0.5em;
+  border-bottom: 2px solid #aaa; }
+
+h2 {
+  font-size: 140%;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid #aaa; }
+
+h3 {
+  font-size: 130%;
+  margin-bottom: 0.5em; }
+
+h4 {
+  font-size: 110%;
+  font-weight: bold;
+  margin-bottom: 0.5em; }
+
+h5 {
+  font-size: 105%;
+  font-weight: bold;
+  margin-bottom: 0.5em; }
+
+h6 {
+  font-size: 100%;
+  font-weight: bold;
+  margin-bottom: 0.5em; }
+
+dt {
+  font-style: italic; }
+
+dd {
+  margin-bottom: 1.5em; }
+
+div.admonition, div.note, div.tip, div.caution, div.important {
+  margin: 2em 2em;
+  padding: 0em 1em;
+  border-top: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-bottom: 2px solid #555;
+  border-right: 2px solid #555; }
+
+div.important {
+  background: transparent url('../images/important.png') 10px 2px no-repeat; }
+
+div.caution {
+  background: transparent url('../images/caution.png') 10px 2px no-repeat; }
+
+div.note {
+  background: transparent url('../images/note.png') 10px 2px no-repeat; }
+
+div.tip {
+  background: transparent url('../images/tip.png') 10px 2px no-repeat; }
+
+div.admonition-example {
+  background: transparent url('../images/tip.png') 10px 2px no-repeat; }
+
+div.admonition-critical-example {
+  background: transparent url('../images/important.png') 10px 2px no-repeat; }
+
+p.admonition-title {
+  font-weight: bold;
+  border-bottom: 1px solid #aaa;
+  padding-left: 30px; }
+
+table.docutils {
+  text-align: left;
+  border: 1px solid gray;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0em; }
+
+table.docutils caption {
+  font-style: italic; }
+
+table.docutils td, table.docutils th {
+  padding: 0.25em 0.5em; }
+
+table.docutils th {
+  background-color: #dddddd; }
+
+div.sidebar {
+  width: 33%;
+  float: right;
+  margin: 0em 2em;
+  padding: 0em 1em;
+  border-top: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-bottom: 2px solid #555;
+  border-right: 2px solid #555; }
+
+p.sidebar-title {
+  margin-bottom: 0em;
+  color: #003a6b;
+  border-bottom: 1px solid #aaa;
+  font-weight: bold; }
+
+p.sidebar-subtitle {
+  margin-top: 0em;
+  font-style: italic;
+  color: #003a6b; }
+
+pre.literal-block {
+  margin-left: 1em;
+  margin-right: 1em;
+  background: #dddddd; }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+td.label {
+  width: 8%; }
+
+table.corefunc td:nth-child(2n) { text-align: center; }
+table.corefunc {
+  text-align: left;
+  border: 1px solid gray;
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0em; }
+
+table.corefunc caption {
+  font-style: italic; }
+
+table.corefunc td, table.corefunc th {
+  padding: 0.25em 0.5em; }
+
+table.corefunc th {
+  background-color: #dddddd; }
+
+</style>
+</head>
+<body>
+<div class="document" id="release-notes">
+<h1 class="title">Release Notes</h1>
+<h2 class="subtitle" id="retro-11-3">Retro 11.3</h2>
+
+<div class="section" id="compatibility-issues">
+<h1>Compatibility Issues</h1>
+<p>This release of Retro brings a number of changes that may require small
+alterations to existing sources. Specifically:</p>
+<blockquote>
+<ul class="simple">
+<li>maximum string length is now 256 cells by default</li>
+<li>hidden functions are no longer revectorable</li>
+</ul>
+</blockquote>
+<p>The first is not a big deal. It's now possible to alter both the maximum
+string length and the number of temporary buffers. To restore a 512 cell
+size as in 11.2:</p>
+<pre class="literal-block">
+here 512 allot constant &lt;512-TIB&gt;
+[ &lt;512-TIB&gt; ] is tib
+[ 512 ] is STRING-LENGTH
+</pre>
+<p>The second change shouldn't be too critical. Basically it means that this
+will no longer work:</p>
+<pre class="literal-block">
+{{
+  : foo  ( - ) 50 ;
+---reveal---
+  : bar1  foo foo + ;
+  [ 100 ] is foo
+}}
+</pre>
+<p>Any private definitions are no longer revectorable. If you have no
+<strong>---reveal---</strong> in a namespace, all functions are non-revectorable. This
+won't break anything in the standard language or libraries, but could
+be a problem if you rely on the old behavior in your code.</p>
+</div>
+<div class="section" id="core-language-standard-image">
+<h1>core language / standard image</h1>
+<blockquote>
+<ul class="simple">
+<li>new method of implementing quotes</li>
+<li>maximum string length can be altered now</li>
+<li>number of string buffers can be altered now</li>
+<li>internal factors in kernel are no longer revectorable</li>
+<li>removed use of low level conditionals outside of the kernel</li>
+<li>reduced amount of padding in kernel</li>
+<li>reduced default string length to 256 cells</li>
+<li>metacompiler now strips unused space at end of kernel</li>
+<li>reduced image size to under 9k cells</li>
+<li>added until loop combinator</li>
+<li>hidden functions are no longer revectorable</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="libraries">
+<h1>libraries</h1>
+<blockquote>
+<ul class="simple">
+<li>fixed all reported bugs</li>
+<li>added diet' library for reducing memory usage by trimming string size, buffers</li>
+<li>added fiction' library for simple interactive fiction games</li>
+<li>documentation blocks have consistent formatting now</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="extensions">
+<h1>extensions</h1>
+<blockquote>
+<ul class="simple">
+<li>include lua bindings (now updated for the lua 5.2 release)</li>
+<li>include sqlite bindings</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="ngaro-vm">
+<h1>ngaro vm</h1>
+<blockquote>
+<ul class="simple">
+<li>c<ul>
+<li>add --help flag</li>
+<li>load image from $RETROIMAGE environment variable if not found in working directory</li>
+<li>added variant for Windows users (can be built with tcc)</li>
+</ul>
+</li>
+<li>golang<ul>
+<li>updated to work with current weekly builds</li>
+<li>added README to explain how to build it and cover concurrency additions</li>
+</ul>
+</li>
+<li>php<ul>
+<li>fixed bugs in host environment queries, now feature complete</li>
+</ul>
+</li>
+<li>embedded<ul>
+<li>support pic32 boards running RetroBSD</li>
+<li>updates to arduino implementation from Oleksandr<ul>
+<li>now supports MEGA 2560 and Nano boards</li>
+</ul>
+</li>
+<li>slightly lower memory usage in mbed implementation</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="examples">
+<h1>examples</h1>
+<blockquote>
+<ul class="simple">
+<li>fixed bugs</li>
+<li>updated to use new language features</li>
+<li>added bingo card generator</li>
+<li>added hex dump utility</li>
+<li>added tab completion example (from Luke)</li>
+<li>added example of building strings using a combinator</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="documentation">
+<h1>documentation</h1>
+<blockquote>
+<ul class="simple">
+<li>add single file covering all of the libraries</li>
+<li>expansions to quick reference</li>
+<li>minor updates to fix small mistakes, clarify things</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="other">
+<h1>other</h1>
+<blockquote>
+<ul class="simple">
+<li>properly support multi-line strings in vim highlighter</li>
+<li>the debugger now has a source display view</li>
+</ul>
+</blockquote>
+</div>
+</div>
+</body>
+</html>

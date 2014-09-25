@@ -1,0 +1,23 @@
+( Adapted from Forth Dimensions Vol 4 Num 1 page 13 )
+(          Fractional Arithmetic by Leo Brodie      )
+
+needs math'
+
+chain: fixed'
+{{
+16384 constant +1
+: putSign  ( n -- n ) dup 0 < [ '- putc ] ifTrue ;
+: putWhole ( n -- n ) dup 10000 >= [ 10000 /mod ] [ 0 ] if putn ;
+: putFrac  ( n -- ) '. putc 10000 4 [ 10 / tuck /mod putn swap ] times 2drop ;    
+: pDec     ( n -- ) putSign ^math'abs putWhole putFrac ;
+: */       ( n1 n2 n3 -- result ) [ * ] dip / ;
+
+---reveal---
+: *.   ( n1 n2 -- result ) +1 */ ;
+: /.   ( n1 n2 -- result ) +1 swap */ ;
+: D->F ( d -- fraction   ) drop 10000 /. ;
+: .F   ( fraction --     ) 10000 *. pDec cr ;
+: __d ^strings'splitAtChar: . ^strings'chop toNumber [ toNumber ] dip ; parsing
+}}
+;chain
+

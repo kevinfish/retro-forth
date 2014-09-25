@@ -1,0 +1,41 @@
+needs test'
+needs bad'
+
+with| test' assertion' |
+
+
+TEST: ^bad'pool
+  100 ^bad'pool !
+  ^bad'pool @ 100 assert= ;
+
+TEST: ^bad'newPool
+  50 ^bad'newPool
+  ^bad'pool @ 100 <> assert ;
+
+TEST: ^bad'pack
+  'a 'b 'c 'd ^bad'pack 1684234849 assert= ;
+
+TEST: ^bad'unpack
+   1684234849 ^bad'unpack
+  'd assert= 'c assert= 'b assert= 'a assert= ;
+
+TEST: ^bad'b!
+  'a 0 ^bad'b!
+  'b 1 ^bad'b!
+     0 ^bad'b@ 'a assert= ;
+
+TEST: ^bad'b@
+  0 ^bad'b@ 'a assert=
+  1 ^bad'b@ 'c = not assert
+  1 ^bad'b@ 'b assert= ;
+
+TEST: ^bad'b@+
+  0 ^bad'b@+ 'a assert= ^bad'b@+ 'b assert= drop ;
+
+TEST: ^bad'b!+
+  'c 'd 'e 0 3 [ ^bad'b!+ ] times drop
+  0 ^bad'b@+ 'e assert= ^bad'b@+ 'd assert= ^bad'b@ 'c assert= ;
+
+runTests
+bye
+

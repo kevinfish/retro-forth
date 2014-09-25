@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>linkedList'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="linkedlist">
+<h1 class="title">linkedList'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>While linked lists are a simple data structure, they are very useful.
+This vocabulary provides a foundation for creating and using them in
+a predicatable, consistent way.</p>
+<p>The <strong>linkedList'</strong> vocabulary provides support for single linked
+lists.</p>
+<div class="section" id="back-linked-lists">
+<h2>Back Linked Lists</h2>
+<p>In this form a list consists of a series of nodes that each point to
+the prior node. The list pointer variable is updated with each <strong>add</strong>
+or <strong>remove</strong> to point to the newest node in the chain.</p>
+</div>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<div class="section" id="creating-a-list">
+<h2>Creating A List</h2>
+<pre class="literal-block">
+^linkedList'new: L
+</pre>
+</div>
+<div class="section" id="adding-a-value-to-a-list">
+<h2>Adding A Value To A List</h2>
+<pre class="literal-block">
+100 L ^linkList'add
+</pre>
+</div>
+<div class="section" id="removing-a-value-from-a-list">
+<h2>Removing A Value From A List</h2>
+<pre class="literal-block">
+L ^linkList'remove
+</pre>
+</div>
+<div class="section" id="accessing-a-specific-node">
+<h2>Accessing A Specific Node</h2>
+<pre class="literal-block">
+10 L ^linkList'nth
+</pre>
+</div>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="10%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>node</td>
+<td>&quot;-</td>
+<td>Structure for list nodes</td>
+</tr>
+<tr><td>.prior</td>
+<td>a-a</td>
+<td>Access prior node field</td>
+</tr>
+<tr><td>.value</td>
+<td>a-a</td>
+<td>Access value field</td>
+</tr>
+<tr><td>new:</td>
+<td>&quot;-</td>
+<td>Create a list. This gives a variable pointing
+to a <strong>node</strong> structure</td>
+</tr>
+<tr><td>add</td>
+<td>nL-</td>
+<td>Add a value to a list. Allocates a new node</td>
+</tr>
+<tr><td>remove</td>
+<td>L-n</td>
+<td>Remove a node from a list and return its value</td>
+</tr>
+<tr><td>addNode</td>
+<td>NL-</td>
+<td>Add a node to a list</td>
+</tr>
+<tr><td>removeNode</td>
+<td>L-N</td>
+<td>Remove a node from a list. Returns the node</td>
+</tr>
+<tr><td>nth</td>
+<td>nL-N</td>
+<td>Return the <em>nth</em> node from the list. Indexing
+starts at <em>1</em>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

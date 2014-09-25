@@ -1,0 +1,51 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Hangman for Retro Console                                    )
+(  * System dictionary access.                                 )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2010-11, Marc Simpson                          )
+( License: ISC                                                 )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+needs math'
+
+( --[ Variables ]--------------------------------------------- )
+
+: sys-dict "wordlist.txt" ^files':R ;
+
+variables| dict dict-size |
+create dict-word 80 allot
+
+( --[ Access ]------------------------------------------------ )
+
+: open-dict  ( -h ) sys-dict ^files'open dup 0 <
+                    [ "\nError: can't open dictionary." puts ] ifTrue ;
+
+: init       ( -h ) open-dict dup 0 < if;
+                    [ [ !dict ] [ ^files'size !dict-size ] bi ] sip ;
+
+: initialise ( -  ) @dict 0 = [ init 0 >
+                      [ "successful" ]
+                      [ "failed"     ] if "\nInitialization %s." puts
+                    ] ifTrue ;
+
+: toRandom  ( n-n ) ^math'random swap mod ;
+: rand-off   ( -n ) @dict-size toRandom ;
+: rand-pos   ( -n ) rand-off @dict ^files'seek drop ;
+
+: >line      ( -  ) repeat @dict ^files'read 10 = if; again ;
+: fread!     ( ha-f ) swap ^files'read dup rot ! ;
+: (readline) ( -  ) dict-word repeat @dict over fread! drop
+                    dup @ 10 = if; 1+ again ;
+: readline   ( a- ) (readline) 0 swap ! ;
+
+: rand-word  ( -  ) rand-pos >line readline ;
+: close-dict ( -  ) @dict ^files'close 0 <>
+                    [ "Error: Can't close dictionary." puts ] ifTrue ;
+
+( --[ Retrieval ]--------------------------------------------- )
+
+: get-word   (  -$  )
+  rand-word dict-word dup ^strings'toLower over withLength copy ;
+
+( ============================================================ )
+

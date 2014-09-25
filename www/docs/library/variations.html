@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>variations'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="variations">
+<h1 class="title">variations'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library provides some functions for determining the differences between
+VM implementations and conditionally evaluating code blocks based on these
+differences.</p>
+<p>Specifically, it provides functions for determining the number of bits per
+cell and the endian nature of an implementation.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>size</td>
+<td>-n</td>
+<td>Return the number of bits per cell</td>
+</tr>
+<tr><td>endian</td>
+<td>-n</td>
+<td>Return 0 for little endian or 1 for big endian</td>
+</tr>
+<tr><td>bits{</td>
+<td>n&quot;-</td>
+<td>Execute code up to <strong>}</strong> if the bits per cell
+matches <em>n</em></td>
+</tr>
+<tr><td>bigEndian</td>
+<td>&quot;-</td>
+<td>Execute code up to <strong>}</strong> if endian is big</td>
+</tr>
+<tr><td>littleEndian</td>
+<td>&quot;-</td>
+<td>Execute code up to <strong>}</strong> if endian is little</td>
+</tr>
+<tr><td>}</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Does nothing</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

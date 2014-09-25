@@ -1,0 +1,101 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+(           A simple Dungeons and Dragons Combat Simulator              )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+needs math'
+needs Coroutine'
+
+{{
+: ->name     0 + @ ;
+: ->hp       1 + ;
+: ->ac       2 + @ ;
+: ->thac0    3 + @ ;
+: ->dmgnum   4 + @ ;
+: ->dmgsize  5 + @ ;
+: ->dmgmod   6 + @ ;
+: ->startHP  7 + ;
+
+variable accumulator
+
+: dieRange ( range -- val )
+    ^math'random swap mod 1+ ;
+
+: numDice ( num range -- val )
+    swap [ dup dieRange +accumulator ] times
+    drop @accumulator ;
+
+: rollDie ( num range modifier -- val )
+    0 !accumulator 2rot numDice + ;
+    
+: rollD20 ( -- val )
+    1 20 0 rollDie ;
+    
+: rollD10 ( -- val )
+    1 10 0 rollDie ;
+
+: calcDamage ( attacker -- damage )
+    [ ->dmgnum ] [ ->dmgsize ] [ ->dmgmod ] tri rollDie ;
+
+: calcHit ( attacker defender -- t | f )
+    ->ac [ ->thac0 ] dip - rollD20 <= ;
+
+: printAttack ( attacker defender damage -- defender damage )
+    2rot swap ->name puts space 2over
+    [ @->hp ] sip ->name
+    "hits %s (%d) for %d points of damage. "
+    puts swap ;
+
+: printVictim ( defender damage -- )
+    over @->hp swap - over !->hp 
+    [ @->hp ] sip ->name
+    "%s is reduced to %d hp." puts cr ;
+
+: alive? ( player -- t | f )
+    @->hp 0 > ;
+
+: attack ( attacker defender -- )
+    2over calcHit
+    [ over calcDamage cr printAttack printVictim ]
+    [ [ ->name ] bi@ swap cr "%s misses %s." puts cr ] if ;
+
+: initiative ( attacker defender -- )
+    2 [ rollD10 ] times > [ swap ] ifTrue
+    over ->name cr "%s wins initiative." puts cr ;
+
+: round ( attacker defender -- )
+    initiative 2over attack dup alive?
+    [ 2over swap attack ] ifTrue ;
+
+: endcombat ( attacker defender -- )
+    dup alive? [ drop ] [ nip ] if
+    ->name "%s dies. " puts cr ;
+    
+: co_combat
+    2over round [ alive? ] bi@ and ;
+    
+: co_round
+    2LPop co_combat [ 2LPush -1 dup LPush ] 
+    [ cr endcombat 0 dup LPush ] if ;
+
+---reveal---
+: co_startcombat localStack !
+    @LSP 1 < [ 2LPush -1 LPush ] 
+    [ LPop [ co_round ] [ 0 dup LPush ] if ] if ;
+    
+}}
+
+( name, currenthp, ac, thac0, numdice, dicerange, dicemodifier, startinghp )
+    
+create alice "Alice" , 14 , 5 , 18 , 1 , 6 , 0 , 14 ,
+create bob   "Bob"   , 12 , 7 , 16 , 2 , 4 , 0 , 12 ,
+
+create john "John" , 14 , 5 , 18 , 1 , 6 , 0 , 14 ,
+create jay  "Jay"   , 12 , 7 , 16 , 2 , 4 , 0 , 12 ,
+
+create ron "Ron" , 14 , 5 , 18 , 1 , 6 , 0 , 14 ,
+create jack  "Jack"   , 12 , 7 , 16 , 2 , 4 , 0 , 12 ,
+
+alice bob &co_startcombat newCoroutine variable: battle
+john jay &co_startcombat newCoroutine variable: battle2
+ron jack &co_startcombat newCoroutine variable: battle3
+
+[ @battle do @battle2 do or @battle3 do or ] while

@@ -1,0 +1,93 @@
+( ~~ online help system for retro ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2012 Charles Childers                                 )
+( Copyright [c] 2012 Michal J Wallace                                 )
+
+needs dissect'
+needs vt' with vt'
+
+: :doc ( $- ) keepString last @ d->doc ! ;
+ "( $- ) assign documentation to last defined function" :doc
+
+( crc wrote these in chat a while back. I'm making them all parse     )
+( for input so that new users don't segfault from an underflow trying )
+( them out. -mjw                                                      )
+{{
+variable needle
+: decompile ( ``-a ) [ ^dissect'decompile ] sip "%d %s\n" puts ;
+: showmatching !needle last
+  [ d->name dup @needle ^strings'search [ puts space ] [ drop ] if ]
+  ^types'LIST each@ ;
+---reveal---
+: matching "( `` ) parse for token and show all words containing it" :doc
+  getToken showmatching ;
+
+: see "( ``- ) parse for word and show the raw instructions " :doc
+  ' [ decompile dup 1- ^dissect'endOfWord? not ] while drop ;
+  
+: chains "( - ) show all words containing ' (should be mostly chains)" :doc
+  last [ dup @d->class &.chain == [ d->name puts space ] [ drop ] if ]
+  ^types'LIST each@ ;   ( TODO : "chains" should show ONLY the chains )
+  
+: chwords
+   ' dup xt->d @d->class &.chain ==
+     [ .chain words "%%" find drop @d->xt do ]
+     [ drop "not a chain!" puts ] if ;
+  "( ``- ) parse for a chain and show all words inside " :doc
+}}
+
+
+
+: exists? dup 0 = not ;
+  "( a-af ) true if the address <> 0" :doc
+
+: doc ( "- ) d' exists?
+  [ d->doc @ exists? [ |g ] [ drop |m "undocumented" ] if ]
+  [ |r " unknown" ] if
+  puts |w ;
+  "( ''- ) fetch a token and show documentation for it" :doc
+
+: libraries  ( - )
+  "The following libraries are available:\n\n" puts
+  "array'      assertion'  bad'          bstrings'       calendar'    canvas'\n" puts
+  "casket'     char'       combinators'  console'        crypto'      decimal'\n" puts
+  "decompose'  decorator'  diet'         docstrings'     double'      dump'\n" puts
+  "enum'       eval'       fiction'      files'          fixed'       forth'\n" puts
+  "hash'       help'       infix'        introspection'  linkedList'  math'\n" puts
+  "private'    queries'    stack'        struct'         subcell'     test'\n" puts
+  "unsigned'   values'     variations'   vt'\n" puts
+  cr cr ;
+  "( - ) Display a list of all vocabularies available to load" :doc
+
+{{
+: |! dup [ |W ] [ |C ] if  ;
+: |. dup [ |w ] [ |c ] if  ;
+: |- puts cr not ;
+---reveal---
+: help ( - )
+  clear cr
+  |b "===" wr |B "[ "  wr
+  |W "help for Retro " wr |w version wr 
+  |B " ]" wr |b "================" wrln cr
+  |m "word          " wr    "purpose                        " wrln
+  |K "--------      " wr    "-------------------------------" wrln
+  0 ( stripe flag )
+  |! "words         " wr |. "show all the words you can type" |-
+  |! "doc wd        " wr |. "show help for word " wr |! "wd"  |-
+  |! "see wd        " wr |. "show disassembled instructions for " wr |! "wd" |-
+  |! "matching s    " wr |. "show words matching string " wr |! "s"  |-
+  |! "chains        " wr |. "show words with a quote (mostly chains)" |-
+  |! "chwords       " wr |. "show words inside a chain" |-
+  |! "help          " wr |. "show this screen" |-
+  |! "needs         " wr |. "load a library. ex: " wr |! "needs math'" |-
+  |! "libraries     " wr |. "list all libraries available to load" |-
+  |! "save          " wr |. "save the image to disk" |-
+  cr
+  |R "bye           " wr |r "exit the system                " wrln
+  drop ( stripe flag )
+  |w ;
+  "( - ) shows some helpful words and what they do" :doc
+}}
+
+
+( TODO : 'man chain' for doc{ }doc )
+without

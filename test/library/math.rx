@@ -1,0 +1,50 @@
+needs assertion'
+needs test'
+needs math'
+
+with| test' assertion' |
+
+TEST: ^math'squareRoot
+  144 ^math'squareRoot 12 assert=
+   36 ^math'squareRoot  6 assert= ;
+
+TEST: ^math'gcd
+  36 12 ^math'gcd 12 assert=
+  44 55 ^math'gcd 11 assert= ;
+
+TEST: ^math'lcm
+  96 144 ^math'lcm 288 assert= ;
+
+TEST: ^math'divisor?
+  100 25 ^math'divisor? -1 assert=
+  100 31 ^math'divisor?  0 assert= ;
+
+TEST: ^math'even?
+  100 ^math'even? -1 assert=
+  109 ^math'even?  0 assert= ;
+
+TEST: ^math'odd?
+  100 ^math'odd?  0 assert=
+  109 ^math'odd? -1 assert= ;
+
+TEST: ^math'pow
+  2 3 ^math'pow 8 assert=
+  3 2 ^math'pow 9 assert= ;
+
+TEST: ^math'abs
+  -1 ^math'abs 1 assert=
+   1 ^math'abs 1 assert= ;
+
+TEST: ^math'min
+   1 10 ^math'min  1 assert=
+  91 10 ^math'min 10 assert= ;
+
+TEST: ^math'max
+   1 10 ^math'max 10 assert=
+  91 10 ^math'max 91 assert= ;
+
+TEST: ^math'random
+  ^math'random ^math'random = 0 assert= ;
+
+runTests bye
+

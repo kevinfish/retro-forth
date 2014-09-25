@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>char'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="char">
+<h1 class="title">char'</h1>
+
+<p>This library provides a vocabulary for simple operations on ASCII characters.</p>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs char'
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+97 ^char'isChar?
+'a dup ^char'isUpper? [ ^char'toLower ] ifTrue
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="13%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>isChar?</td>
+<td>c-f</td>
+<td>Return true if a given value is an alphabetic
+character (A-Z or a-z). If not, return false</td>
+</tr>
+<tr><td>isUpper?</td>
+<td>c-f</td>
+<td>Return true if character is uppercase, false
+otherwise</td>
+</tr>
+<tr><td>isLower?</td>
+<td>c-f</td>
+<td>Return true if character is lowercase, false
+otherwise</td>
+</tr>
+<tr><td>isNumeric?</td>
+<td>c-f</td>
+<td>Return true if character is between 0 - 9
+inclusive, or false otherwise</td>
+</tr>
+<tr><td>isWhitespace?</td>
+<td>c-f</td>
+<td>Return true if character is a space, tab, or
+end of line. Returns false otherwise</td>
+</tr>
+<tr><td>isVisible?</td>
+<td>c-f</td>
+<td>Return true if character is visible, or false
+if it is a control-type character</td>
+</tr>
+<tr><td>toUpper</td>
+<td>c-c</td>
+<td>Convert a lowercase character to uppercase.
+This will only work on a lowercase character.</td>
+</tr>
+<tr><td>toLower</td>
+<td>c-c</td>
+<td>Convert an upperacase character to lowercase.
+This will only work on an uppercase character.</td>
+</tr>
+<tr><td>toString</td>
+<td>c-$</td>
+<td>Convert a character into a string</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

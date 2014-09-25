@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>array'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="array">
+<h1 class="title">array'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library provides functions for creating and working with simple
+arrays.</p>
+</div>
+<div class="section" id="implementation">
+<h1>Implementation</h1>
+<p>Arrays are stored as a linear sequence of values. In memory, they
+are represented like:</p>
+<pre class="literal-block">
++---+--------------------+
+| 0 | number of elements |
++---+--------------------+
+| 1 | first value        |
++---+--------------------+
+| 2 | second value       |
++---+--------------------+
+| n | ... nth value ...  |
++---+--------------------+
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+( Create an array with four elements )
+^array'new{ 1 2 3 4 } constant a
+
+( Add 10 to each element in an array )
+a [ 10 + ] ^array'map
+
+( Display an array )
+a ^array'display
+
+( Average the values in an array )
+^array'new{ 1 2 3 4 5 } [ ^array'sum ] [ ^array'length ] bi /
+
+( Create an array of strings )
+[ &quot;abc&quot;  &quot;def&quot;  &quot;ghi&quot; ] ^array'fromQuote
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>new{</td>
+<td>&quot;-a</td>
+<td>Create a new array. Parses and adds numbers to
+the array until &quot;}&quot; is reached. Returns a
+pointer to the new array.</td>
+</tr>
+<tr><td>display</td>
+<td>a-</td>
+<td>Display all values in the array</td>
+</tr>
+<tr><td>in?</td>
+<td>na-</td>
+<td>Returns -1 if value (n) is a value in the array</td>
+</tr>
+<tr><td>stringIn?</td>
+<td>$n-</td>
+<td>Returns -1 if string ($) is a string in the
+array</td>
+</tr>
+<tr><td>map</td>
+<td>aq-</td>
+<td>Apply quote to each item in the array. Updates
+the array with the values returned by the quote</td>
+</tr>
+<tr><td>apply</td>
+<td>aq-</td>
+<td>Apply quote to each item in the array. Does not
+modify the array contents.</td>
+</tr>
+<tr><td>sum</td>
+<td>a-n</td>
+<td>Add all values in an array</td>
+</tr>
+<tr><td>length</td>
+<td>a-n</td>
+<td>Get the number of items in an array</td>
+</tr>
+<tr><td>reverse</td>
+<td>a-</td>
+<td>Reverse the order of all elements in an array</td>
+</tr>
+<tr><td>append</td>
+<td>aa-a</td>
+<td>Append two arrays and return a new one</td>
+</tr>
+<tr><td>fromQuote</td>
+<td>q-a</td>
+<td>Generate an array from the values returned by a
+quote</td>
+</tr>
+<tr><td>toQuote</td>
+<td>a-q</td>
+<td>Generate a quote from the values stored in an
+array</td>
+</tr>
+<tr><td>sort:bubble</td>
+<td>a-</td>
+<td>Sort the items in an array using bubble sort</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

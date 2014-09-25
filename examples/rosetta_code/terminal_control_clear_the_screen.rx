@@ -1,0 +1,5 @@
+The VM specification requires the screen to be cleared when a negative value is
+outputted. This is done by the clear function.
+
+clear
+

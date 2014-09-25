@@ -1,0 +1,25 @@
+chain: unsigned'
+{{
+  %100000000000000000000000000000 constant MASK
+---reveal---
+  : signsDiffer?  ( nn-f )  xor MASK and 0 <> ;
+  : u<  ( uu-f )  2over signsDiffer? [ nip ] [ - ] if 0 < ;
+  : u>  ( uu-f )  swap u< ;
+}}
+;chain
+
+
+
+doc{
+=========
+unsigned'
+=========
+
+--------
+Overview
+--------
+This vocabulary will provide support for creation and use of unsigned values.
+
+
+}doc
+

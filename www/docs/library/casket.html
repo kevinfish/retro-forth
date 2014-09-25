@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>casket'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="casket">
+<h1 class="title">casket'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>Casket is a lightweight framework intended to simplify the development of
+web apps in Retro.</p>
+<p>Casket grew out of my work on the Corpse blog and later through work on the
+Rancid IRC log viewer.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="9%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>serve:</td>
+<td>&quot;&quot;&quot;-</td>
+<td>Serve a file with a specific mime type</td>
+</tr>
+<tr><td>decode</td>
+<td>$-</td>
+<td>Decode a URL encoded string</td>
+</tr>
+<tr><td>dispatch</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Look for a view handler (e.g., /index) and call
+it, or call <strong>/404</strong> if none is found</td>
+</tr>
+<tr><td>doBeforeDispatch</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Code to execute before processing paths. This is
+always called before <strong>dispatch</strong>.</td>
+</tr>
+<tr><td>/</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Default index page</td>
+</tr>
+<tr><td>/404</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Default 404 error page</td>
+</tr>
+<tr><td>withTemplate</td>
+<td>$-</td>
+<td>Include and render a template file using the
+<strong>tputs</strong> function</td>
+</tr>
+<tr><td>withFile</td>
+<td>$-</td>
+<td>Include and render a raw file</td>
+</tr>
+<tr><td>tputs</td>
+<td>...$-</td>
+<td>This is a replacement for <strong>puts</strong>, which adds
+additional escape sequences for use with the
+templates.</td>
+</tr>
+<tr><td>eputs</td>
+<td>$-</td>
+<td>This is a replacement for <strong>puts</strong>, which escapes
+html entities for use with &lt;pre&gt; and such</td>
+</tr>
+<tr><td>Content-type:</td>
+<td>&quot;-</td>
+<td>Generate a MIME header for a file or view</td>
+</tr>
+<tr><td>getFormData</td>
+<td>-$</td>
+<td>Process a form and return the elements as a text
+string</td>
+</tr>
+<tr><td>getRequest</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Internal: Read the PATH_INFO environment variable
+and parse for <strong>casket:path</strong> and
+<strong>casket:options</strong></td>
+</tr>
+<tr><td>casket:url</td>
+<td>-a</td>
+<td>Function returning application url</td>
+</tr>
+<tr><td>casket:root</td>
+<td>-a</td>
+<td>Function returning path to application root</td>
+</tr>
+<tr><td>casket:form</td>
+<td>-a</td>
+<td>Internal buffer for form data</td>
+</tr>
+<tr><td>casket:buffer</td>
+<td>-a</td>
+<td>Internal buffer</td>
+</tr>
+<tr><td>casket:options</td>
+<td>-a</td>
+<td>Returns optional data following view)</td>
+</tr>
+<tr><td>casket:path</td>
+<td>-a</td>
+<td>Returns requested view (e.g., /index)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example">
+<h1>Example</h1>
+<div class="section" id="application-rx">
+<h2>application.rx</h2>
+<pre class="literal-block">
+ needs casket'
+ with casket'
+
+: /index
+   Content-type: text/html
+   &quot;index.erx&quot; withTemplate ;
+
+ : /test
+   Content-type: text/html
+   casket:options &quot;test.erx&quot; withTemplate ;
+
+ [ ( -$ ) &quot;/path/to/app/&quot; ] is casket:root
+ [ ( -$ ) &quot;http://domain.ext/path/to/cgi&quot; ] is casket:url
+ &amp;/index is /
+ &amp;dispatch is boot
+ save bye
+</pre>
+</div>
+<div class="section" id="index-erx">
+<h2>index.erx</h2>
+<pre class="literal-block">
+&lt;html&gt;
+&lt;body&gt;&lt;h1&gt;Test of Casket&lt;/h1&gt;
+&lt;p&gt;&lt;a href='%u/test/apple'&gt;test apple&lt;/a&gt;
+   or &lt;a href='%u/test/banana'&gt;test banana&lt;/a&gt;.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre>
+</div>
+<div class="section" id="test-erx">
+<h2>test.erx</h2>
+<pre class="literal-block">
+&lt;html&gt;&quot;  tputs
+&lt;body&gt;&lt;h1&gt;You requested...&lt;/h1&gt;
+&lt;p&gt;An %s.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre>
+</div>
+</div>
+</div>
+</body>
+</html>

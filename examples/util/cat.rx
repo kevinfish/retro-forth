@@ -1,0 +1,4 @@
+needs files'
+
+: cat ( $- )
+  here swap ^files'slurp drop here cr puts ;

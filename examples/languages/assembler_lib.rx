@@ -1,0 +1,251 @@
+( Ngaro Assembler, Standard Library                   )
+( This is to provide some basic functionality for use )
+( by programs written in the assembler                )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2008 - 2012, Charles Childers         )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+
+:wait
+  #0 #0 out,
+  wait,
+  ret,
+
+doc{
+====
+wait
+====
+
+Wait for an I/O event. This resets port 0, and then invokes the
+**wait,** opcode.
+}doc
+
+
+
+:putc
+  0;
+  #1 #2 out,  ( console character output )
+  call wait
+  #0 #3 out,  ( force display update [needed by some vm implementations] )
+  ret,
+
+doc{
+====
+putc
+====
+
+Display a character. Expects an ASCII character on the stack.
+
+Example:
+
+::
+
+    'A #
+    call putch
+
+Dependencies: **wait**
+}doc
+
+
+
+:(puts)
+  repeat
+    dup,
+    @,
+    0;
+    call putc
+    #1 +,
+  again
+
+:puts
+  call (puts)
+  drop,
+  ret,
+
+doc{
+====
+puts
+====
+
+Display a zero-terminated string. Expects a pointer on
+the stack.
+
+Example:
+
+::
+
+    :HELLO
+      "hello, world!" $,
+
+    :main
+      HELLO #
+      call puts
+
+Dependencies: **wait**, **putc**
+}doc
+
+
+
+:getc
+  #1 #1 out,  ( keyboard input port )
+  call wait
+  #1 in,      ( read keypress       )
+  ret,
+
+doc{
+====
+getc
+====
+
+Read a single keypress. Returns the ASCII code on
+the stack. This does not display the character.
+
+Example:
+
+::
+
+    :main
+      call getc
+      call putc
+
+Dependencies: **wait**
+}doc
+
+
+
+:BREAK 0 m,
+
+:(gets)
+  repeat
+    call getc
+    dup,
+    call putc
+    dup,
+    BREAK #
+    @,
+    =if
+      drop,
+      ret,
+    then
+    swap,
+    dup,
+    push,
+    !,
+    pop,
+    1+,
+  again
+
+:gets
+  BREAK #
+  !,
+  call (gets)
+  #0
+  swap,
+  !,
+  ret,
+
+doc{
+====
+gets
+====
+
+Read a string into a buffer. Pass it a buffer address and the
+delimiter character.
+
+Example:
+
+::
+
+    :BUFFER
+      0 m, 0 m, 0 m, 0 m, 0 m,
+      0 m, 0 m, 0 m, 0 m, 0 m,
+      0 m, 0 m, 0 m, 0 m, 0 m,
+      0 m, 0 m, 0 m, 0 m, 0 m,
+      0 m, 0 m, 0 m, 0 m, 0 m,
+
+    :main
+      BUFFER #    ( buffer address      )
+      #32         ( delimiter character )
+      call gets
+
+Dependencies: **wait**, **getc**, **putc**
+}doc
+
+
+
+( incoming ===================================== )
+
+:==   ( xy-f  )
+  =if
+    #-1
+    ret,
+  then
+  #0
+  ret,
+
+:!=   ( xy-f  )
+  !if
+    #-1
+    ret,
+  then
+  #0
+  ret,
+
+:>=   ( xy-f  )
+  >if
+    #-1
+    ret,
+  then
+  #0
+  ret,
+
+:<=   ( xy-f  )
+  <if
+    #-1
+    ret,
+  then
+  #0
+  ret,
+
+:<    ( xy-f  )
+  >if
+    #0
+    ret,
+   then
+   #-1
+   ret,
+
+:>    ( xy-f  )
+  <if
+    #0
+    ret,
+  then
+  #-1
+  ret,
+
+:string.compare  ( $$-f )
+  repeat
+    dup,
+    @,
+    push,
+      1+,
+      swap,
+      dup,
+      @,
+      push,
+        1+,
+      pop,
+      dup,
+    pop,
+    !if
+      drop,
+      drop,
+      dup,
+      xor,
+      ret,
+    then
+  #0 12 m, m,
+  drop,
+  drop,
+  #-1
+  ret

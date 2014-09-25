@@ -1,0 +1,21 @@
+( devector everything )
+last [ dup @d->class &.data <> [ @d->xt :devector ] [ d->name puts space ] if ] ^types'LIST each@
+
+( strip "compiler-only" back to "immediate" )
+: c: ( "- ) &.macro reclass: ;
+c: pop    c: push   c: 0;     c: ;;    c: ;      c: repeat c: again
+
+d' nip heap !
+
+( unhide 'vector' )
+d' tabAsWhitespace 10 - d' tabAsWhitespace !
+
+( reset last entry to tabAsWhitespace )
+d' tabAsWhitespace last !
+
+( essentials )
+: save  1 4 out wait ;
+: bye  -9 5 out wait ;
+
+save bye
+

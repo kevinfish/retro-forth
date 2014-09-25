@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>forth'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="forth">
+<h1 class="title">forth'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This vocabulary will make Retro closer to a traditional Forth system. When
+it is visible, some things will be significantly different than in a standard
+Retro system, but it will also be easier to port existing Forth code.</p>
+<p>Eventually this should provide a large subset of the ANS Forth standard, with
+the limitation that only lowercase function names are provided.</p>
+</div>
+<div class="section" id="notes">
+<h1>Notes</h1>
+<div class="section" id="strings">
+<h2>Strings</h2>
+<p>Strings in ANS Forth are represented either as counted, or address and length
+pairs.</p>
+<p>This differs from the strings in Retro which are represented as null-terminated
+character arrays. So existing functions can't be directly used with strings
+created by the functions this vocabulary provides, and these functions can not
+be used freely with Retro strings.</p>
+<p>For counted strings, you get a pointer to a structure in memory that looks like:</p>
+<pre class="literal-block">
+length,characters
+</pre>
+<p>These can be unpacked into address/length pairs using <strong>count</strong>.</p>
+</div>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="13%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>if</td>
+<td>f-</td>
+<td>Start a conditional sequence</td>
+</tr>
+<tr><td>else</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Start the second half of a conditional sequence</td>
+</tr>
+<tr><td>then</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>End a conditional sequence</td>
+</tr>
+<tr><td>0&lt;</td>
+<td>n-f</td>
+<td>Return true flag if n is less than zero</td>
+</tr>
+<tr><td>0=</td>
+<td>n-f</td>
+<td>Return true flag if n is equal to zero</td>
+</tr>
+<tr><td>for</td>
+<td>n-</td>
+<td>Start a counted loop</td>
+</tr>
+<tr><td>next</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>End a counted loop</td>
+</tr>
+<tr><td>r&#64;</td>
+<td>-n</td>
+<td>Return a copy of the top item on the address stack</td>
+</tr>
+<tr><td><tt class="docutils literal">&gt;r</tt></td>
+<td>n-</td>
+<td>Push a value to the address stack</td>
+</tr>
+<tr><td><tt class="docutils literal">r&gt;</tt></td>
+<td>-n</td>
+<td>Pop a value off the address stack</td>
+</tr>
+<tr><td>2dup</td>
+<td>xy-xyxy</td>
+<td>Duplicate the top two items on the stack</td>
+</tr>
+<tr><td>emit</td>
+<td>c-</td>
+<td>Display a character</td>
+</tr>
+<tr><td>key</td>
+<td>-c</td>
+<td>Read a keypress</td>
+</tr>
+<tr><td>type</td>
+<td>an-</td>
+<td>Display n characters from string</td>
+</tr>
+<tr><td>spaces</td>
+<td>n-</td>
+<td>Display a series of spaces</td>
+</tr>
+<tr><td>state</td>
+<td>-a</td>
+<td>Same as <strong>compiler</strong></td>
+</tr>
+<tr><td><tt class="docutils literal">[']</tt></td>
+<td>&quot;-a</td>
+<td>Return the address of a function. Compile-time
+version of <strong>'</strong></td>
+</tr>
+<tr><td>recurse</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Compile a call to the current function into the
+function</td>
+</tr>
+<tr><td><tt class="docutils literal">*/mod</tt></td>
+<td>abc-rq</td>
+<td>Multiply a by b, then divide the results by c.
+Returns the remainder and the quotient.</td>
+</tr>
+<tr><td>rshift</td>
+<td>ab-c</td>
+<td>Shift bits right</td>
+</tr>
+<tr><td>lshift</td>
+<td>ab-c</td>
+<td>Shift bits left</td>
+</tr>
+<tr><td>fm/mod</td>
+<td>ab-mq</td>
+<td>Floored divide and remainder</td>
+</tr>
+<tr><td>sm/mod</td>
+<td>ab-mq</td>
+<td>Symmetric divide and remainder</td>
+</tr>
+<tr><td><tt class="docutils literal">c&quot;</tt></td>
+<td><tt class="docutils literal"><span class="pre">&quot;-a</span></tt></td>
+<td>Parse and return a counted string</td>
+</tr>
+<tr><td><tt class="docutils literal">s&quot;</tt></td>
+<td><tt class="docutils literal"><span class="pre">&quot;-an</span></tt></td>
+<td>Parse and return a string and its length</td>
+</tr>
+<tr><td>count</td>
+<td>a-an</td>
+<td>Convert a counted string to an addr/len pair</td>
+</tr>
+<tr><td><tt class="docutils literal">[</tt></td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Turn <strong>compiler</strong> off</td>
+</tr>
+<tr><td><tt class="docutils literal">]</tt></td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Turn <strong>compiler</strong> on</td>
+</tr>
+<tr><td>char</td>
+<td><tt class="docutils literal"><span class="pre">&quot;-c</span></tt></td>
+<td>Parse for and return an ASCII character</td>
+</tr>
+<tr><td><tt class="docutils literal">[char]</tt></td>
+<td><tt class="docutils literal"><span class="pre">&quot;-c</span></tt></td>
+<td>Compile-time version of <strong>char</strong></td>
+</tr>
+<tr><td>lateBinding</td>
+<td><tt class="docutils literal">$-</tt></td>
+<td>&quot;on&quot; binds names to functions after execution of
+<strong>;</strong>, &quot;off&quot; binds immediately</td>
+</tr>
+<tr><td>pick</td>
+<td>...n-..m</td>
+<td>Evil function to access arbitrary stack items</td>
+</tr>
+<tr><td>roll</td>
+<td>xu xu-1
+... x0 u
+-- xu-1
+... x0 xu</td>
+<td>Remove u. Rotate u+1 items on the top of the stack</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

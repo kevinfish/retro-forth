@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Retro Language Quick Reference</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="retro-language-quick-reference">
+<h1 class="title">Retro Language Quick Reference</h1>
+
+<div class="section" id="displaying-things">
+<h1>Displaying Things</h1>
+<div class="section" id="numbers">
+<h2>Numbers</h2>
+<pre class="literal-block">
+100 putn
+</pre>
+</div>
+<div class="section" id="characters">
+<h2>Characters</h2>
+<pre class="literal-block">
+'a putc
+</pre>
+</div>
+<div class="section" id="strings">
+<h2>Strings</h2>
+<pre class="literal-block">
+&quot;hello, world&quot; puts
+</pre>
+</div>
+<div class="section" id="mixed">
+<h2>Mixed</h2>
+<pre class="literal-block">
+1 2 3 &quot;%d - %d = %d\n&quot; puts
+&quot;Charles&quot;  &quot;Hello %s\n&quot; puts
+</pre>
+</div>
+</div>
+<div class="section" id="input">
+<h1>Input</h1>
+<div class="section" id="id1">
+<h2>Characters</h2>
+<pre class="literal-block">
+getc
+</pre>
+</div>
+<div class="section" id="id2">
+<h2>Strings</h2>
+<div class="section" id="standard">
+<h3>Standard</h3>
+<pre class="literal-block">
+&quot;this is a string&quot;
+&quot;   this string has leading and trailing whitespace   &quot;
+</pre>
+</div>
+<div class="section" id="whitespace-delimited">
+<h3>Whitespace Delimited</h3>
+<pre class="literal-block">
+getToken
+</pre>
+</div>
+<div class="section" id="character-delimited">
+<h3>Character Delimited</h3>
+<pre class="literal-block">
+'c accept tib
+</pre>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Numbers</h2>
+<pre class="literal-block">
+getNumber
+</pre>
+</div>
+</div>
+<div class="section" id="conditionals">
+<h1>Conditionals</h1>
+<div class="section" id="equality">
+<h2>Equality</h2>
+<pre class="literal-block">
+2 3 =
+</pre>
+</div>
+<div class="section" id="inequality">
+<h2>Inequality</h2>
+<pre class="literal-block">
+3 4 &lt;&gt;
+</pre>
+</div>
+<div class="section" id="greather-than">
+<h2>Greather Than</h2>
+<pre class="literal-block">
+3 4 &gt;
+</pre>
+</div>
+<div class="section" id="less-than">
+<h2>Less Than</h2>
+<pre class="literal-block">
+3 4 &lt;
+</pre>
+</div>
+<div class="section" id="greater-than-or-equal-to">
+<h2>Greater Than or Equal To</h2>
+<pre class="literal-block">
+3 4 &gt;=
+</pre>
+</div>
+<div class="section" id="less-than-or-equal-to">
+<h2>Less Than or Equal To</h2>
+<pre class="literal-block">
+3 4 &lt;=
+</pre>
+</div>
+<div class="section" id="string-equality">
+<h2>String Equality</h2>
+<pre class="literal-block">
+&quot;hello&quot;   &quot;world&quot;  compare
+</pre>
+</div>
+<div class="section" id="string-inequality">
+<h2>String Inequality</h2>
+<pre class="literal-block">
+&quot;hello&quot;   &quot;world&quot;  compare not
+</pre>
+</div>
+<div class="section" id="if-then">
+<h2>If / Then</h2>
+<pre class="literal-block">
+1 2 = [ &quot;true&quot; ] [ &quot;false&quot; ] if
+1 2 = [ &quot;true&quot; ] ifTrue
+1 2 = [ &quot;false&quot; ] ifFalse
+</pre>
+</div>
+<div class="section" id="multiple-comparisons">
+<h2>Multiple Comparisons</h2>
+<pre class="literal-block">
+[ &#64;base
+  [  8 = ] [ &quot;octal&quot;       ] whend
+  [ 10 = ] [ &quot;decimal&quot;     ] whend
+  [ 16 = ] [ &quot;hexadecimal&quot; ] whend
+  drop ( default case ) ] do
+
+[ &#64;base
+  [  8 = ] [ &quot;base is octal: %d&quot;   puts ] when
+  [ 10 = ] [ &quot;base is decimal: %d&quot; puts ] when
+  drop ( default case ) ] do
+</pre>
+</div>
+</div>
+<div class="section" id="function-defintions">
+<h1>Function Defintions</h1>
+<div class="section" id="quotes-anonymous">
+<h2>Quotes (Anonymous)</h2>
+<pre class="literal-block">
+[  ( code )  ]
+</pre>
+<p>Quotes can be nested.</p>
+</div>
+<div class="section" id="named">
+<h2>Named</h2>
+<pre class="literal-block">
+: name  ( stack comment )
+  ( code ) ;
+</pre>
+<p>Quotes can be nested inside a named function.</p>
+</div>
+</div>
+<div class="section" id="loops">
+<h1>Loops</h1>
+<div class="section" id="unconditional">
+<h2>Unconditional</h2>
+<pre class="literal-block">
+repeat ( code ) again
+</pre>
+<p>Conditional loops are generally preferable.</p>
+</div>
+<div class="section" id="counted">
+<h2>Counted</h2>
+<pre class="literal-block">
+( simple, no index on stack )
+10 [ 'a putc ] times
+
+( index on stack, counts up )
+10 [ putn ] iter
+
+( index on stack, counts down )
+10 [ putn ] iterd
+</pre>
+</div>
+<div class="section" id="conditional">
+<h2>Conditional</h2>
+<pre class="literal-block">
+10 [ 1- dup putn dup 0 &lt;&gt; ] while
+</pre>
+</div>
+</div>
+<div class="section" id="math">
+<h1>Math</h1>
+<div class="section" id="addition">
+<h2>Addition</h2>
+<pre class="literal-block">
+100 200 +
+</pre>
+</div>
+<div class="section" id="subtraction">
+<h2>Subtraction</h2>
+<pre class="literal-block">
+400 32 -
+</pre>
+</div>
+<div class="section" id="multiplication">
+<h2>Multiplication</h2>
+<pre class="literal-block">
+98 12 *
+</pre>
+</div>
+<div class="section" id="division">
+<h2>Division</h2>
+<pre class="literal-block">
+200 4 /
+</pre>
+</div>
+<div class="section" id="remainder">
+<h2>Remainder</h2>
+<pre class="literal-block">
+203 4 mod
+</pre>
+</div>
+<div class="section" id="power">
+<h2>Power</h2>
+<p>Raise 3 to the second power.</p>
+<pre class="literal-block">
+3 2 pow
+</pre>
+</div>
+<div class="section" id="absolute-value">
+<h2>Absolute Value</h2>
+<pre class="literal-block">
+-76 abs
+</pre>
+</div>
+<div class="section" id="minimum-and-maximum-value">
+<h2>Minimum and Maximum Value</h2>
+<pre class="literal-block">
+34 8 min
+34 8 max
+</pre>
+</div>
+</div>
+<div class="section" id="vocabularies">
+<h1>Vocabularies</h1>
+<div class="section" id="creation">
+<h2>Creation</h2>
+<pre class="literal-block">
+chain: name'
+  ... contents ...
+;chain
+</pre>
+<p>Vocabulary names should end in a single apostrophe.</p>
+</div>
+<div class="section" id="add-to-search-order">
+<h2>Add To Search Order</h2>
+<pre class="literal-block">
+with name'
+with| name' and' more' names' |
+</pre>
+</div>
+<div class="section" id="remove-from-search-order">
+<h2>Remove From Search Order</h2>
+<pre class="literal-block">
+( remove the most recently added vocabulary )
+without
+
+( remove all vocabularies )
+global
+</pre>
+</div>
+<div class="section" id="access-a-function-in-a-vocabulary">
+<h2>Access a Function in a Vocabulary</h2>
+<pre class="literal-block">
+^vocabulary'function
+</pre>
+</div>
+</div>
+</div>
+</body>
+</html>

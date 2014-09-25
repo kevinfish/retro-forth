@@ -1,0 +1,13 @@
+: hextbl "0123456789ABCDEF" ;
+: hexdig $F and hextbl + @ putc ;
+
+: hex8
+  dup $F0000000 and $10000000 / hexdig 
+  dup $F000000  and $1000000 / hexdig 
+  dup $F00000   and $100000 / hexdig
+  dup $F0000    and $10000 / hexdig
+  dup $F000     and $1000 / hexdig
+  dup $F00      and $100 / hexdig
+  dup $F0       and $10 / hexdig
+  hexdig ;
+

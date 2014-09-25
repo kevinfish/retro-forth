@@ -1,0 +1,149 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Proposed hash function for Retro -- based on djb2, Bernstein                )
+(                                                                             )
+( see: http://www.cse.yorku.ca/~oz/hash.html, for example.                    )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2010, Marc Simpson                                            )
+( License: ISC                                                                )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+needs math'
+
+chain: hash'
+  ( Dan Bernstein, comp.lang.c with 'abs' hack )
+  : djb2 ( $-n )
+    5381 over getLength
+    [ [ dup 5 << + over ] dip + @ + ] iter nip ^math'abs ;
+
+  ( 193, 389, 769 are all pretty good; if you expect to have )
+  ( a lot of keys, use a larger prime.                       )
+  389 variable: hash-prime
+
+  ( Vector the favoured hash function -- we intend to offer  )
+  ( a range of implementations and allow the user to choose  )
+  : hash ( $-n ) djb2 @hash-prime mod ;
+
+  ( Mat, backport from metro )
+
+  : havn64 ( n64-n10 )
+    5381
+    5 << over $FF               and + 
+    5 << over $FF00             and 8  >> + 
+    5 << over $FF0000           and 16 >> + 
+    5 << over $FF000000         and 24 >> + 
+    5 << over $FF00000000       and 32 >> + 
+    5 << over $FF0000000000     and 40 >> + 
+    5 << over $FF000000000000   and 48 >> + 
+    5 << swap $FF00000000000000 and 56 >> +
+    
+    dup dup $FF and swap $FF00 and 8 >> + 
+    over $FF0000 and 16           >> + 
+    over $FF000000 and 24         >> + 
+    over $FF00000000 and 32       >> + 
+    over $FF0000000000 and 40     >> + 
+    over $FF000000000000 and 48   >> + 
+    swap $FF00000000000000 and 56 >> + ;
+
+  : havn32 ( n32-n10 )
+    5381
+    5 << over $FF               and + 
+    5 << over $FF00             and 8  >> + 
+    5 << over $FF0000           and 16 >> + 
+    5 << swap $FF000000         and 24 >> + 
+
+    dup dup $FF and swap $FF00 and 8 >> + 
+    over $FF0000 and 16           >> + 
+    swap $FF000000 and 24         >> + ;
+
+  : havn16 ( n16-n10 )
+    5381 5 << over $FF and + 5 << swap $FF00 and 8 >> +
+    dup dup $FF and swap $FF00 and 8 >> + ; 
+
+;chain
+
+doc{
+=====
+hash'
+=====
+
+
+--------
+Overview
+--------
+This library provides a vocabulary for generating hashes from strings.
+
+Most documented hash functions leverage unsigned longs during computation.
+Here we use *signed* cells as unsigned words are not offered by Retro at
+the present time.  So that we avoid returning negative hash values, hashing
+is filtered through **abs**.  (Negative values emerge due to shifting into
+the sign bit.)
+
+The **hash-prime** variable has been selected to provide a reasonable balance
+between clashing and key size -- this is to ensure that associative arrays
+built using **hash** don't need to allocate too much heap.  This can be
+adjusted by revectoring **hash** in the [unlikely] event of large tables.
+
+havn:
+
+The algorithm uses a djb2 variant as seed and shuffle the result with
+the k&r approach. Parameter is a packed string array of fixed 64,32 or 16
+bit depth (AND NOT A RETRO STYLE STRING).
+
+-------
+Loading
+-------
+The following should suffice:
+
+::
+
+  needs hash'
+
+
+--------
+Examples
+--------
+
+::
+
+  needs hash'
+  "hello" ^hash'hash
+
+
+---------
+Functions
+---------
+
++----------+-----------+---------------------------------+
+| Name     | Stack     | Usage                           |
++==========+===========+=================================+
+| djb2     | $-n       | Generate a djb2 hash. This is   |
+|          |           | the default option.             |
++----------+-----------+---------------------------------+
+| hash     | $-n       | Generate a hash from a string.  |
+|          |           | Normally this is all you need to|
+|          |           | use.                            |
++----------+-----------+---------------------------------+
+| havn64   | n1-n2     | Generate a hash from a packed   |
+|          |           | 64 bit wide array of ASCII      |
+|          |           | characters                      |
++----------+-----------+---------------------------------+
+| havn32   | n1-n2     | Generate a hash from a packed   |
+|          |           | 32 bit wide array of ASCII      |
+|          |           | characters                      |
++----------+-----------+---------------------------------+
+| havn16   | n1-n2     | Generate a hash from a packed   |
+|          |           | 16 bit wide array of ASCII      |
+|          |           | characters                      |
++----------+-----------+---------------------------------+
+
+
+---------------
+Data Structures
+---------------
+
++------------+-----------+---------------------------------+
+| Name       | Stack     | Usage                           |
++============+===========+=================================+
+| hash-prime |  -a       | Prime used by hashing algorithim|
++------------+-----------+---------------------------------+
+}doc

@@ -1,0 +1,42 @@
+( ~~ extended virtual terminal support [ fancy colors, etc ] ~~~~~~~~ )
+( Copyright [c] 2012 Michal J Wallace                                 )
+
+chain: vt'
+
+( -- low level io stuff -- )
+: io:send ( nn- ) out wait ;
+
+( -- ports -- )
+: to:chgen ( n- ) 2 io:send ;
+: to:xterm ( n- ) 8 io:send ;
+
+( -- virtual terminal -- )
+variables| vt:fgc vt:bgc |
+: vt:emit ( n - ) 1 to:chgen ; ( draw char at cursor )
+: vt:cls ( - ) -1 putc ; ( clear screen )
+: vt:curs ( x:n y:n - )  3 to:xterm ;
+: vt:lo ( n - ) "\[0m" puts ;
+: vt:hi ( n - ) "\[1m" puts ;
+: vt:fg ( n - ) 2 to:xterm ;
+: vt:bg ( n - ) 3 to:xterm ;
+
+( -- set fg color -- )
+: |k 0 vt:lo vt:fg ;  : |K |k vt:hi ; ( blacK / dark gray )
+: |r 1 vt:lo vt:fg ;  : |R |r vt:hi ; ( red )
+: |g 2 vt:lo vt:fg ;  : |G |g vt:hi ; ( green )
+: |y 3 vt:lo vt:fg ;  : |Y |y vt:hi ; ( brown / yellow )
+: |b 4 vt:lo vt:fg ;  : |B |b vt:hi ; ( blue )
+: |m 5 vt:lo vt:fg ;  : |M |m vt:hi ; ( magenta )
+: |c 6 vt:lo vt:fg ;  : |C |c vt:hi ; ( cyan )
+: |w 7 vt:lo vt:fg ;  : |W |w vt:hi ; ( light gray / white )
+
+: vt:colors
+  |k "|k " puts |r "|r " puts |g "|g " puts |y "|y " puts
+  |b "|b " puts |m "|m " puts |c "|c " puts |w "|w " puts
+  |K "|K " puts |R "|R " puts |G "|G " puts |Y "|Y " puts
+  |B "|B " puts |M "|M " puts |C "|C " puts |W "|W " puts |w ;
+
+: wr puts ;
+: wrln puts cr ;
+
+;chain

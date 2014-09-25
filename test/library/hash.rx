@@ -1,0 +1,21 @@
+needs assertion'
+needs test'
+needs hash'
+
+with| test' assertion' |
+
+TEST: ^hash'hash-prime
+  ^hash'hash-prime @ 389 assert= ;
+
+TEST: ^hash'djb2
+  "hello" ^hash'djb2 261238937 assert=
+  "world" ^hash'djb2 279393645 assert=
+  "foobar" ^hash'djb2 35364674 assert= ;
+
+TEST: ^hash'hash
+  "hello" ^hash'hash 152 assert=
+  "world" ^hash'hash 230 assert=
+  "booya" ^hash'hash 329 assert= ;
+
+runTests bye
+

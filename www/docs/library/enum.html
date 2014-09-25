@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>enum'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="enum">
+<h1 class="title">enum'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This vocabulary adds support for enumerated values.</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage</h1>
+<pre class="literal-block">
+0 enum A enum B enum C enum D drop
+</pre>
+<p>Or</p>
+<pre class="literal-block">
+0 enum| A B C D |
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="9%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>step</td>
+<td>n-n</td>
+<td>Increment for next enumerated value. Defaults to <strong>1+</strong>
+but can be revectored as needed</td>
+</tr>
+<tr><td>enum</td>
+<td>n&quot;-n</td>
+<td>Create an enumerated constant, and increment the value
+using <strong>step</strong></td>
+</tr>
+<tr><td><tt class="docutils literal">enum|</tt></td>
+<td>n&quot;-</td>
+<td>Create a series of enumerated values, incremented by
+<strong>step</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

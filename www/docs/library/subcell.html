@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>subcell'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="subcell">
+<h1 class="title">subcell'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library provides functions for accessing 16-bit and 8-bit subsets of cells.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>highWord</td>
+<td>cellAddr -- highwordAddr</td>
+</tr>
+<tr><td>lowWord</td>
+<td>cellAddr -- lowwordAddr</td>
+</tr>
+<tr><td>w&#64;</td>
+<td>wordAddr -- val</td>
+</tr>
+<tr><td>w&#64;+</td>
+<td>wordAddr -- wordAddr val</td>
+</tr>
+<tr><td>w!</td>
+<td>val wordAddr --</td>
+</tr>
+<tr><td>w!+</td>
+<td>val wordAddr -- wordAddr+1</td>
+</tr>
+<tr><td>highByte</td>
+<td>wordAddr -- highbyteAddr</td>
+</tr>
+<tr><td>lowByte</td>
+<td>wordAddr -- lowbyteAddr</td>
+</tr>
+<tr><td>c&#64;</td>
+<td>byteAddr -- val</td>
+</tr>
+<tr><td>c&#64;+</td>
+<td>byteAddr -- byteAddr val</td>
+</tr>
+<tr><td>c!</td>
+<td>val byteaddr --</td>
+</tr>
+<tr><td>c!+</td>
+<td>val byteAddr -- byteAddr+1</td>
+</tr>
+<tr><td>highNibble</td>
+<td>byteAddr -- highnibbleAddr</td>
+</tr>
+<tr><td>lowNibble</td>
+<td>byteAddr -- lownibbleAddr</td>
+</tr>
+<tr><td>nibble&#64;</td>
+<td>nibbleAddr -- val</td>
+</tr>
+<tr><td>nibble&#64;+</td>
+<td>nibbleAddr -- nibbleAddr val</td>
+</tr>
+<tr><td>nibble!</td>
+<td>val nibbleAddr --</td>
+</tr>
+<tr><td>nibble!+</td>
+<td>val nibbleAddr -- nibbleAddr+1</td>
+</tr>
+<tr><td>packString</td>
+<td>strAddr --</td>
+</tr>
+<tr><td>printPack</td>
+<td>strAddr --</td>
+</tr>
+<tr><td>getPackedLength</td>
+<td>strAddr -- strLen</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

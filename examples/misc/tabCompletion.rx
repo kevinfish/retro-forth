@@ -1,0 +1,63 @@
+chain: stringBuffer'
+{{
+  tib variable: buffer
+  @buffer variable: pointer
+  : terminate (  -   ) 0 @pointer ! ;
+  : bs?       ( c-cf ) dup 8 = ;
+  : remove    ( c-   )
+    drop pointer -- @pointer @buffer <= [ @buffer !pointer ] ifTrue terminate ;
+  : add       ( c-   ) @pointer ! pointer ++ terminate ;
+---reveal---
+  : addToBuffer   ( c-  ) bs? &remove &add if ;
+  : getFromBuffer (  -c ) pointer -- @pointer @ terminate ;
+  : endOfBuffer   (  -a ) repeat @pointer dup @ 0; 2drop pointer ++ again ;
+  : sizeOfBuffer  (  -n ) @pointer @buffer - ;
+  : emptyBuffer   (  -  ) @buffer !pointer terminate ;
+  : setBuffer     ( a-  ) !buffer emptyBuffer ;
+}}
+;chain
+
+with stringBuffer'
+with strings'
+
+chain: tabCompletion'
+{{
+  create completions 100 allot
+  completions dup !
+  : addCompletion completions ++ @completions ! ;
+  : getCompletion @completions @ completions -- ;
+  : numCompletions @completions completions - ;
+  : findCompletions
+    last repeat
+      @ 0;
+      dup d->name
+      tib getLength 0 swap getSubset
+      tib compare [ dup addCompletion ] ifTrue
+    again ;
+  : showCompletions
+    cr space space completions numCompletions
+    [ getCompletion d->name puts space ] times ;
+  : finishCompletion
+    numCompletions 0; 1 =
+    [ getCompletion d->name tib over getLength 1+ copy endOfBuffer ]
+    [ showCompletions ] if ;
+  variable delimiter
+  : testDelimiter @delimiter = dup [ nip ] ifTrue ;
+  : testTrigger 9 = dup [ nip ] ifTrue ;
+  : doTrigger findCompletions finishCompletion cr tib puts drop ;
+  : eatLeading ( - ) repeat getc &putc sip @delimiter [ addToBuffer 0 ] ifTrue 0; 2drop again ;
+  : newaccept ( "- )
+    !delimiter emptyBuffer eatLeading
+    repeat
+      getc dup testDelimiter not 0; drop
+      dup testTrigger [ doTrigger ] [ dup putc addToBuffer ] if
+    again ;
+  ---reveal---
+  : start tabAsWhitespace off [ newaccept space ] &accept :is ;
+  : finish &accept :devector ;
+  : accept newaccept ;
+}}
+;chain
+
+global with tabCompletion'
+start

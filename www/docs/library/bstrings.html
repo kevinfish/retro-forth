@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>bstrings'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="bstrings">
+<h1 class="title">bstrings'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library builds on the <em>byte addressing</em> vocabulary (<strong>bad'</strong>) to provide
+support for creating and working with byte-packed strings.</p>
+<p>Generally it's better to use the cell-based strings. They are larger in memory,
+but much faster to work with. If space is critical though, this library can be
+used to significantly reduce the memory consumed, at the cost of performance.</p>
+<p>As an example of how this works, consider a simple string: &quot;This is a test.&quot;</p>
+<pre class="literal-block">
+&quot;This is a test.&quot;
+</pre>
+<p>Retro will create a string in memory that looks like:</p>
+<pre class="literal-block">
+0000 T
+0001 h
+0002 i
+0003 s
+0004 &lt;space&gt;
+0005 i
+0006 s
+0007 &lt;space&gt;
+0008 a
+0009 &lt;space&gt;
+0010 t
+0011 e
+0012 s
+0013 t
+0014 .
+0015 &lt;terminator&gt;
+</pre>
+<p>So 16 cells used. If we byte pack this, it reduces considerably:</p>
+<pre class="literal-block">
+0000 This
+0001  is
+0002 a te
+0003 st&lt;terminator&gt;
+</pre>
+<p>Down to four cells. It's a straightforward 4:1 reduction.</p>
+</div>
+<div class="section" id="terminology">
+<h1>Terminology</h1>
+<p><em>byte</em>: A unit of memory consisting of eight bits.</p>
+<p><em>cell</em>: A unit of memory consisting of thirty two bits.</p>
+</div>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<pre class="literal-block">
+needs bstrings'
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="12%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>pack</td>
+<td>$-a</td>
+<td>Convert a standard string into a byte packed
+string</td>
+</tr>
+<tr><td>getLength</td>
+<td>a-n</td>
+<td>Return the length of a byte packed string (in
+characters)</td>
+</tr>
+<tr><td>unpack</td>
+<td>a-$</td>
+<td>Convert a byte packed string into a standard
+string</td>
+</tr>
+<tr><td>withLength</td>
+<td>a-an</td>
+<td>Return the length (in characters) and address
+of a byte-packed string</td>
+</tr>
+<tr><td>puts</td>
+<td>a-</td>
+<td>Display a bye packed string</td>
+</tr>
+<tr><td>toLower</td>
+<td>a-a</td>
+<td>Convert a byte packed string to lowercase</td>
+</tr>
+<tr><td>toUpper</td>
+<td>a-a</td>
+<td>Convert a byte packed string to uppercase</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

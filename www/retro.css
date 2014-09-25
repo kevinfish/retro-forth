@@ -1,0 +1,10 @@
+div { float: left; padding: 10px; width: 35%; }
+.head { font-size: large; color: navy; font-weight: bold; }
+.Constant { color: #ff40ff; font-weight: bold; }
+.Statement { color: #ffff00; font-weight: bold; }
+.Identifier { color: #00ffff; font-weight: bold; }
+.Special { color: #ff6060; font-weight: bold; }
+pre { font-family: monospace; color: #ffffff; background-color: #000000; }
+.Comment { color: #00ffff; font-weight: bold; }
+.PreProc { color: #8080ff; font-weight: bold; }
+

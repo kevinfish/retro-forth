@@ -1,0 +1,24 @@
+Like the rest of Retro, this implementation is provided under the ISC license.
+However, there is an additional license in play here. Several files are provided
+under the Apache License, Version 2.0.
+
+These files are:
+
++------------------+---------+
+| File             | License |
++==================+=========+
+| | canvastext.js  | ISC     |
+| | dumpImage.rx   |         |
+| | index.html     |         |
+| | ngaro.js       |         |
+| | retroImage.js  |         |
+| | retro.css      |         |
++------------------+---------+
+| | css/*          | Apache  |
+| | js/*           |         |
+| | img/*          |         |
++------------------+---------+
+
+See http://www.apache.org/licenses/LICENSE-2.0 for the full License text for the
+Bootstrap files.
+

@@ -1,0 +1,3 @@
+: bar 500 [ "Hello, World! Again and Again AnD aGaIn." ^strings'toUpper ^strings'toLower drop ] times bye ;
+&bar is boot
+save bye

@@ -1,0 +1,51 @@
+needs regAB'
+
+create r_DataStack 100 allot ;
+create r_ReturnStack 100 allot ;
+create r_Image 10000 allot ;
+create r_OPS 31 allot ;
+
+variable r_startImage
+variable r_PC
+variable r_image_start
+variable r_RS
+
+r_DataStack   !A
+r_ReturnStack r_RS !
+r_Image !B
+r_Image r_image_start !
+
+r_OPS
+( NOP )       [] swap !+
+( LIT )       [ +B@ ] swap !+
+( DUP )       [ A@+ A! ] swap !+
+( DROP )      [ A -- ] swap !+
+( SWAP )      [ A@- A@ swap A!+ A! ] swap !+
+( PUSH )      [ r_RS ++ A@- r_RS ! ] swap !+
+( POP )       [ r_RS dup -- swap @ +A! ] swap !+
+( LOOP )      [ A@ 1- A! [ B+@ B! ] [ B ++ A -- ] if ] swap !+
+( JUMP )      [ +B@ B! ] swap !+
+( RETURN )    [ B@- r_PC ! ] swap !+
+( LT_JUMP )   [ A@- A@- < [ B+@ B! ][ B ++ ] if ] swap !+
+( GT_JUMP )   [] swap !+
+( NE_JUMP )   [] swap !+
+( EQ_JUMP )   [] swap !+
+( FETCH )     [] swap !+
+( STORE )     [] swap !+
+( ADD )       [ A@- A@ + A! ] swap !+
+( SUBTRACT )  [] swap !+
+( MULTIPLY )  [] swap !+
+( DIVMOD )    [] swap !+
+( AND )       [] swap !+
+( OR )        [] swap !+
+( XOR )       [] swap !+
+( SHL )       [] swap !+
+( SHR )       [] swap !+
+( ZERO_EXIT ) [] swap !+
+( INC )       [] swap !+
+( DEC )       [] swap !+
+( IN )        [] swap !+
+( OUT )       [] swap !+
+( WAIT )      [] swap !+
+drop
+

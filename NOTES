@@ -1,0 +1,78 @@
+*This is a random collection of notes and snippits related to things I'm working on*
+
+== Ideas for 11.4 ==
+
+- add secondary time port for millisecond time resolution
+
+  Probably this will be purely optional, with VM or OSes that
+  don't support it returning zero.
+
+- ngaro vm test suite
+
+  A set of images to test the instruction set and IO functionality
+
+- fully document casket and decompose, add detailed instructions
+  on setting this up
+
+- further expansions to the library
+
+  - simple vectors
+  - expand operatins on arrays
+  - rewrite console' to use vm-level console support
+  - form processing for casket apps
+  - finish the calendar' vocabulary
+
+- rewrite rancid to be pure retro + html
+
+- cleanp css for documentaion
+
+
+== Embedded Boards ==
+
+arduino
+mega 2560
+ATmega2560
+16MHz, 256K flash (8K for bootloader), 8K RAM, 4K EEPRON
+
+Oleksandr is working on an implementation for this.
+
+
+mbed
+NXP LPX1768
+Cortex-M3
+96MHz, 512K flash, 32K RAM, ARM
+
+On the mbed LPX1768, we have 14000 cells for the image. This is sufficient, once the
+diet' vocabulary is loaded. You'll have around 3k cells for your application. Or a bit
+more if you do a ^diet'extreme before saving the image and converting to 16-bit. 
+
+NXP LPC11U24
+Cortex-M0
+48MHz, 32K flash, 8K RAM, ARM
+
+The mbed implemenation does not support this board. If we adapt the VM to use an SD
+card as the memory, read/write caching, and take some care, we could probably make it
+work slowly. I don't have plans for this though.
+
+
+ubw32
+PIC32MX795
+80MHz, 512K Flash, 128K RAM, MIPS
+
+This one looks like a nice target. Not too pricey, lots of RAM, and plenty of flash.
+As of February 1, Retro is able to run under RetroBSD on this (and similar) boards.
+
+
+== Image Naming ==
+
+retroImage
+
+Followed by an optional suffix referring to bits per cell:
+
+  16  for 16-bit
+  64  for 64-bit
+
+And a final optional suffix for endian:
+
+  BE  for big endian
+

@@ -1,0 +1,17 @@
+Using the decompose' library which allows creation of HTML using quotes and combinators:
+
+  needs decompose'
+  needs math'
+  with| decompose' math' |
+
+  : rnd ( -$ ) random 1000 mod toString ;
+
+  [ [ [     ] td [ "x" ] td [ "y" ] td [ "z" ] td ] tr
+    [ [ "1" ] td [ rnd ] td [ rnd ] td [ rnd ] td ] tr
+    [ [ "2" ] td [ rnd ] td [ rnd ] td [ rnd ] td ] tr
+    [ [ "3" ] td [ rnd ] td [ rnd ] td [ rnd ] td ] tr
+    [ [ "4" ] td [ rnd ] td [ rnd ] td [ rnd ] td ] tr
+    [ [ "5" ] td [ rnd ] td [ rnd ] td [ rnd ] td ] tr
+    [ [ "6" ] td [ rnd ] td [ rnd ] td [ rnd ] td ] tr
+  ] table
+

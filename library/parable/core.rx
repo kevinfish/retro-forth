@@ -1,0 +1,11 @@
+chain: parable/core'
+  : define  ( quote string - )
+    header @last !d->xt &.word reclass ;
+
+  : describe  ( string string - )  drop drop ;
+
+  : variable  ( string - )
+    header &.word reclass 128 allot ;
+
+;chain
+

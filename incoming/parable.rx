@@ -1,0 +1,36 @@
+chain: parable'
+
+create memory
+   5000 128 * allot
+
+create map
+   5000 allot
+
+create dictionary
+   1000 33 * allot
+
+: toSlice  ( n-a )
+  128 * memory + ;
+
+: memory.request  ( -n )
+  map [ repeat @+ 0; drop again ] do 1- map - dup map + on ;
+
+: memory.release  ( n- )
+  map + off ;
+
+
+;chain
+
+doc{
+========
+parable'
+========
+
+
+--------
+Overview
+--------
+This library attempts to provide a functional implementation of Parable in
+Retro.
+
+}doc

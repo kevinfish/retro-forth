@@ -1,0 +1,39 @@
+chain: private'
+
+: A @last 4 - .data ; compile-only
+: B @last 3 - .data ; compile-only
+: C @last 2 - .data ; compile-only
+: D @last 1 - .data ; compile-only
+
+: withPrivate: ( parse:"name" - ) 4 allot : ;
+
+;chain
+
+doc{
+========
+private'
+========
+
+
+--------
+Overview
+--------
+This library provides a vocabulary which adds private variables to functions.
+
+Basically this works by allocating space before the header. Four cells
+(named A, B, C, and D) are provided. These are not reentrant, but can be
+helpful if you need a quick place to stash values temporarily.
+
+
+-------
+Example
+-------
+
+::
+
+    needs private'
+    with private'
+
+    withPrivate: foo
+      !A !B    @A @B + ;
+}doc

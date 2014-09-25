@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Contributing</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="contributing">
+<h1 class="title">Contributing</h1>
+
+<p>Starting with the 11.3 release, we are using the services of <a class="reference external" href="https://launchpad.net/">Launchpad</a> to
+manage the repositories and bug tracking. While not mandatory, it is
+recommended that you <a class="reference external" href="https://login.launchpad.net/+new_account">create a Launchpad account</a> if you plan to contribute
+to the main repository.</p>
+<div class="section" id="bug-reports">
+<h1>Bug Reports</h1>
+<p>Bugs can be reported to the <a class="reference external" href="http://groups.google.com/group/retro-10">mailing list</a> or via the <a class="reference external" href="https://bugs.launchpad.net/retro-language">bug tracker</a> on
+Launchpad. I would prefer use of the bug tracker.</p>
+</div>
+<div class="section" id="bazaar">
+<h1>Bazaar</h1>
+<p>With 11.3, we have moved development to a <a class="reference external" href="http://bazaar.canonical.com/en/">Bazaar</a> repository. This should
+make handling incoming patches somewhat easier. You can make a branch, and
+we can merge it into the main repository as necessary.</p>
+<ul class="simple">
+<li>Create a Launchpad account</li>
+<li>Register an SSH key</li>
+</ul>
+<p>Then:</p>
+<pre class="literal-block">
+bzr branch lp:retro-language retro-language
+</pre>
+<p>In your branch, make changes and commit:</p>
+<pre class="literal-block">
+bzr add &lt;files&gt;
+bzr status
+bzr commit -m &quot;commit message&quot;
+</pre>
+<p>I recommend using <strong>bzr status</strong> to check exactly which files are being
+committed.</p>
+<p>And push to a new branch:</p>
+<pre class="literal-block">
+bzr push lp:~&lt;username&gt;/retro-language/&lt;branchname&gt;
+</pre>
+<p>Replace &lt;username&gt; and &lt;branchname&gt; with your Launchpad account name and
+the name of your branch. Once this is done, future <strong>bzr push</strong> invocations
+should use the specified branch by default.</p>
+<p>When you're ready for me to merge, <a class="reference external" href="https://help.launchpad.net/Code/Review#Proposing_a_merge">file a merge request</a> on Launchpad, or
+send me an email.</p>
+</div>
+<div class="section" id="patches">
+<h1>Patches</h1>
+<p>If you can not use Bazaar and Launchpad, you can email patches (or modified
+files and instructions) to <a class="reference external" href="mailto:crc&#64;retroforth.org">crc&#64;retroforth.org</a>. Note that patches will take
+longer to merge into the main repository.</p>
+</div>
+<div class="section" id="legal">
+<h1>Legal</h1>
+<p>Retro is distributed under the <a class="reference external" href="http://en.wikipedia.org/wiki/ISC_license">ISC license</a>. This is provided in the <a class="reference external" href="http://bazaar.launchpad.net/~crc-x/retro-language/retro/view/head:/LICENSE">LICENSE</a>
+file. Unless otherwise noted, any contributions are added under this license.
+If this is not acceptable, please advise with any emails or merge requests.
+I am willing to accept code under other permissive licenses (e.g., the modern
+BSD licenses, MIT/X11 license), but will not include code that is GPL'd or
+LGPL'd.</p>
+<p>If contributing, please add your name to the end of the LICENSE file, along with
+the current year(s). It's also recommended that you add your name and copyright
+year(s) to any modified source files.</p>
+</div>
+</div>
+</body>
+</html>

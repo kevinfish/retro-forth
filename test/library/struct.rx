@@ -1,0 +1,38 @@
+needs test'
+needs assertion'
+needs struct'
+
+with| test' assertion' |
+
+with struct'
+
+{
+  1 field .a
+  2 field .b
+  3 fields 1 .c 3 .d 5 .e
+} foo
+
+foo bar
+
+
+( These are tested implicitly by the above code )
+TEST: ^struct'{   ;
+TEST: ^struct'}   ;
+TEST: ^struct'field  ;
+TEST: ^struct'fields  ;
+
+TEST: ^struct'size
+  &foo size 12 assert= ;
+
+TEST: ^struct'clone
+  &foo clone here swap - 12 assert= ;
+
+TEST: ...
+  "Testing field access: " puts
+  1 bar .a !
+  2 bar .c !
+  bar .a @ 1 assert=
+  bar .c @ 2 assert= ;
+
+runTests bye
+

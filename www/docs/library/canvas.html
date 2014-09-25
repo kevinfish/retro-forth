@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>canvas'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="canvas">
+<h1 class="title">canvas'</h1>
+
+<p>This library provides support for the canvas device provided by the
+JavaScript implementation of Ngaro.</p>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<p>Since the JavaScript implementation has no file I/O, build an image with
+this loaded manually.</p>
+<pre class="literal-block">
+needs infix'
+include vm/web/dumpImage.rx
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+100 100 50 ^canvas'red ^canvas'solid ^canvas'circle
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="15%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>mouse</td>
+<td>-xy</td>
+<td>Current mouse coordinates</td>
+</tr>
+<tr><td>click?</td>
+<td>-f</td>
+<td>Is mouse button clicked?</td>
+</tr>
+<tr><td>setColor</td>
+<td>c-</td>
+<td>Set color to <em>c</em>. Used by various other words</td>
+</tr>
+<tr><td>pixel</td>
+<td>xy-</td>
+<td>Draw a pixel in the current color</td>
+</tr>
+<tr><td>solid</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Modifier; tells <strong>box</strong> and <strong>circle</strong> to draw
+a filled in shape rather than an outline</td>
+</tr>
+<tr><td>box</td>
+<td>xyhw-</td>
+<td>Draw a box</td>
+</tr>
+<tr><td>vline</td>
+<td>xyh-</td>
+<td>Draw a vertical line</td>
+</tr>
+<tr><td>hline</td>
+<td>xyw-</td>
+<td>Draw a horizontal line</td>
+</tr>
+<tr><td>circle</td>
+<td>xyw-</td>
+<td>Draw a circle</td>
+</tr>
+<tr><td>black</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>blue</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>green</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>cyan</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>red</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>purple</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brown</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>gray</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>darkGray</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightBlue</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightGreen</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightCyan</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightRed</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>magenta</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>yellow</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>white</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>dimensions</td>
+<td>-hw</td>
+<td>Return height and width of canvas</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+chain: introspection'
+  : isRevectorable?  ( a-f )
+    xt->d dup [ [ @d->class &.data != ] [ @d->xt @+ swap @ [ 0 == ] bi@ and ] bi and ] ifTrue ;
+
+  : getClass  ( a-a )
+    xt->d dup [ @d->class ] ifTrue ;
+
+  : isVisible?  ( a-f )
+    xt->d 0 != ;
+
+  : startOfBuffers  ( -a )
+    @memory        STRING-LENGTH   -  ( tib     )
+                   STRING-LENGTH   -  ( scratch )
+    STRING-BUFFERS STRING-LENGTH * -  ( buffers )
+    HEADERS [ STRING-LENGTH * ] [ 3 * ] bi + - ( headers ) ;
+
+  : reserved   ( -n )  @memory startOfBuffers - ;
+  : freeSpace  ( -n )  startOfBuffers here - ;
+;chain
+
+
+doc{
+==============
+introspection'
+==============
+
+--------
+Overview
+--------
+This vocabulary provides functions for examining functions and data structures.
+
+---------
+Functions
+---------
+
++------------------+-------+----------------------------------------------------+
+| Function         | Stack | Usage                                              |
++==================+=======+====================================================+
+| isRevectorable?  | a-f   | Returns -1 if a function can be revectored, or 0   |
+|                  |       | if not.                                            |
++------------------+-------+----------------------------------------------------+
+| isVisible?       | a-f   | Returns -1 if a function is visible in the current |
+|                  |       | dictionary, or 0 if not                            |
++------------------+-------+----------------------------------------------------+
+| getClass         | a-a   | Return the class of a function, or 0 if not found  |
++------------------+-------+----------------------------------------------------+
+| startOfBuffers   | -a    | Address where system buffers begin                 |
++------------------+-------+----------------------------------------------------+
+| reserved         | -n    | Amount of memory used for buffers                  |
++------------------+-------+----------------------------------------------------+
+| freeSpace        | -n    | Amount of free space (between **here** and         |
+|                  |       | **startOfBuffers**                                 |
++------------------+-------+----------------------------------------------------+
+}doc
+

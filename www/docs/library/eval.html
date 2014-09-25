@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>eval'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="eval">
+<h1 class="title">eval'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library provides a vocabulary for evaluating code contained in strings.</p>
+<p>Retro was not designed to allow textual strings to be evaluated. This works
+by remapping the keyboard input to read from a string, until the string is
+exhausted. Additionally, it has a built-in varient of the listener to process
+input immediately, rather than after the function returns.</p>
+<p>This library should be used only if there's no other (clean) way to solve a
+problem.</p>
+</div>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs eval'
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+: foo  ( -n )  99 &quot;54 + putn&quot; ^eval'eval 5 ;
+
+^eval'ifNotDefined foo { 100 constant foo }
+^eval'ifDefined foo { foo 10 * putn }
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="8%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>eval</td>
+<td>$-</td>
+<td>Evaluate a string</td>
+</tr>
+<tr><td>ifDefined</td>
+<td>&quot;&quot;-</td>
+<td>Parse for a name, if found, execute code in the following string
+block. Otherwise ignore the string block.</td>
+</tr>
+<tr><td>ifNotDefined</td>
+<td>&quot;&quot;-</td>
+<td>Parse for a name, if not found, execute code in the following
+string block. If found, ignore the string block.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

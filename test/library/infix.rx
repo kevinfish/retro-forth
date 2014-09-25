@@ -1,0 +1,29 @@
+needs assertion'
+needs test'
+needs infix'
+
+with| test' assertion' infix' |
+
+TEST: ^infix'+
+  1 + 2 + 3 6 assert= ;
+
+TEST: ^infix'-
+  6 - 4 2 assert= ;
+
+TEST: ^infix'*
+  2 * 3 6 assert= ;
+
+TEST: ^infix'/
+  6 / 2 3 assert= ;
+
+TEST: ^infix'mod
+  7 mod 2 1 assert= ;
+
+TEST: ^infix'/mod
+  7 /mod 2 3 assert= 1 assert= ;
+
+TEST: ^infix'^
+  2 ^ 3 8 assert= ;
+
+runTests bye
+

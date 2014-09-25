@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>introspection'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="introspection">
+<h1 class="title">introspection'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This vocabulary provides functions for examining functions and data structures.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="9%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>isRevectorable?</td>
+<td>a-f</td>
+<td>Returns -1 if a function can be revectored, or 0
+if not.</td>
+</tr>
+<tr><td>isVisible?</td>
+<td>a-f</td>
+<td>Returns -1 if a function is visible in the current
+dictionary, or 0 if not</td>
+</tr>
+<tr><td>getClass</td>
+<td>a-a</td>
+<td>Return the class of a function, or 0 if not found</td>
+</tr>
+<tr><td>startOfBuffers</td>
+<td>-a</td>
+<td>Address where system buffers begin</td>
+</tr>
+<tr><td>reserved</td>
+<td>-n</td>
+<td>Amount of memory used for buffers</td>
+</tr>
+<tr><td>freeSpace</td>
+<td>-n</td>
+<td>Amount of free space (between <strong>here</strong> and
+<strong>startOfBuffers</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

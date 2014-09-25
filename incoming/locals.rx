@@ -1,0 +1,18 @@
+chain: locals'
+{{
+  variables| cnt stack base |
+  : get    ( -a ) @stack ;
+  : new    ( "- ) here dup , set 20 allot !stack ;
+  : push   ( n- ) get &++ [ @ ! ] bi ;
+  : pop    ( -n ) get &@ [ -- @ ] bi ;
+---reveal---
+  : locals{
+    8 , here 0 , new @stack !base here swap ! 
+    getNumber dup !cnt [ ` push ] times ; immediate
+  : a       ( -a ) @base 1 + .data ; immediate
+  : b       ( -a ) @base 2 + .data ; immediate
+  : c       ( -a ) @base 3 + .data ; immediate
+  : d       ( -a ) @base 4 + .data ; immediate
+  : }locals @cnt [ ` pop ` drop ] times ; immediate
+}}
+

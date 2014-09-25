@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>hash'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="hash">
+<h1 class="title">hash'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library provides a vocabulary for generating hashes from strings.</p>
+<p>Most documented hash functions leverage unsigned longs during computation.
+Here we use <em>signed</em> cells as unsigned words are not offered by Retro at
+the present time.  So that we avoid returning negative hash values, hashing
+is filtered through <strong>abs</strong>.  (Negative values emerge due to shifting into
+the sign bit.)</p>
+<p>The <strong>hash-prime</strong> variable has been selected to provide a reasonable balance
+between clashing and key size -- this is to ensure that associative arrays
+built using <strong>hash</strong> don't need to allocate too much heap.  This can be
+adjusted by revectoring <strong>hash</strong> in the [unlikely] event of large tables.</p>
+</div>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs hash'
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+needs hash'
+&quot;hello&quot; ^hash'hash
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="20%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>djb2</td>
+<td>$-n</td>
+<td>Generate a djb2 hash. This is
+the default option.</td>
+</tr>
+<tr><td>hash</td>
+<td>$-n</td>
+<td>Generate a hash from a string.
+Normally this is all you need to
+use.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-structures">
+<h1>Data Structures</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="20%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>hash-prime</td>
+<td>-a</td>
+<td>Prime used by hashing algorithim</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

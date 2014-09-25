@@ -1,0 +1,23 @@
+needs files'
+
+variables| in out |
+
+: seekDocBlock ( - )
+  [ @in ^files'readLine "doc{" compare ] until ;
+
+: extractDocBlock ( - )
+  [ @in ^files'readLine dup
+    "}doc" compare [ drop -1 ] [ @out ^files'writeLine 0 ] if ] until ;
+
+: changeSuffix ( $-$ )
+  3 [ ^strings'chop ] times ".rst" ^strings'append ;
+
+: extractDocs ( $- )
+  dup ^files':R ^files'open !in changeSuffix ^files':W ^files'open !out
+  seekDocBlock
+  extractDocBlock
+  "" @out ^files'writeLine
+  @in @out [ ^files'close drop ] bi@ ;
+
+: getDocsFrom ( "- )
+  getToken extractDocs bye ;

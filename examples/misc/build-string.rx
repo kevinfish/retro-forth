@@ -1,0 +1,14 @@
+( It's sometimes useful to be able to generate a string using code. )
+( Rather than doing this all manually, adding a new combinator can  )
+( keep things much cleaner.                                         )
+
+: buildString ( q-$ )
+  depth [ do ] dip depth swap - 1- [ ^strings'append ] times ;
+
+: login  ( "- )
+  [ "\n"  "Hello, " getToken "\n\n"  ] buildString puts ;
+
+login crc
+bye
+
+

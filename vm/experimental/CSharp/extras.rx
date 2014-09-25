@@ -1,0 +1,15 @@
+
+: key? ( -- t|f )
+    #1 #20 out #0 #0 out wait #20 in ;
+
+: readKey ( -- key|f ) 
+    key? [ #2 #20 out #0 #0 out wait #20 in ] [ 0 ] if ;
+
+: time ( -- ms sec )
+    #-8 #5 out wait #26 in #5 in ;
+
+: timeSpan ( ms1 sec1 ms2 sec2 -- ms )
+    [ swap ] dip swap - #1000 * + swap - ;
+
+: sleep ( ms -- )
+    #1 #21 out wait ;

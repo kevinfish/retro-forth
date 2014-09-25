@@ -1,0 +1,30 @@
+needs assertion'
+needs test'
+needs enum'
+
+with| test' assertion' enum' |
+
+
+1 enum a enum b enum c drop
+
+TEST: ^enum'enum
+  a 1 assert=
+  b 2 assert=
+  c 3 assert= ;
+
+1 enum| d e f |
+
+TEST: ^enum'enum|
+  d 1 assert=
+  e 2 assert=
+  f 3 assert= ;
+
+[ 10 + ] is step
+0 enum| g h i |
+
+TEST: ^enum'step
+  g 00 assert=
+  h 10 assert=
+  i 20 assert= ;
+
+runTests bye

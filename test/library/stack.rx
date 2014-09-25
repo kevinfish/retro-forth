@@ -1,0 +1,59 @@
+needs test'
+needs assertion'
+needs stack'
+include examples/autopsy.rx
+
+with| autopsy' assertion' test' |
+
+
+^stack'new: foo
+^stack'new: bar
+
+TEST: ^stack'new:
+  foo bar <> assert ;
+
+variables| a b |
+
+TEST: ^stack'new
+  ^stack'new ^stack'get !a
+  ^stack'new ^stack'get !b
+  @a @b <> assert
+  @a foo <> assert
+  @b bar <> assert ;
+
+TEST: ^stack'get
+  ^stack'get @b assert= ;
+
+TEST: ^stack'set
+  @a ^stack'set
+  @a ^stack'get assert=
+  foo ^stack'set
+  bar ^stack'get <> assert ;
+
+variable d
+TEST: ^stack'push
+  depth !d
+  @a ^stack'set
+  100 200 ^stack'push depth @d - 1 assert=
+          ^stack'push depth @d - 0 assert=
+  bar ^stack'set
+  400 300 ^stack'push depth @d - 1 assert=
+          ^stack'push depth @d - 0 assert= ;
+
+TEST: ^stack'pop
+  @a ^stack'set
+  [ ^stack'pop ^stack'pop ] expected: { 200 100 }
+  bar ^stack'set
+  [ ^stack'pop ^stack'pop ] expected: { 300 400 } ;
+
+TEST: ^stack'depth
+  depth !d
+  @a ^stack'set
+  100 200 ^stack'push depth @d - 1 assert=
+          ^stack'push depth @d - 0 assert=
+  ^stack'depth 2 assert=
+  ^stack'pop 100 assert=
+  ^stack'depth 1 assert= ;
+
+runTests bye
+

@@ -1,0 +1,15 @@
+1000 constant HEADERS
+3000 constant SLOTS
+ 256 constant SIZE
+
+create image
+  'P , 'I ,
+  HEADERS ,  SLOTS ,  SIZE ,
+  HEADERS 3 * allot
+  SLOTS allot
+  SLOTS SIZE * allot
+
+: headers  ( -a )  ;
+: map      ( -a )  ;
+: slots    ( -a )  ;
+

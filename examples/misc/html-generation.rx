@@ -1,0 +1,9 @@
+needs decompose'
+with  decompose'
+
+: /  ( - )
+  [ [ [ "demo" ] title ] head
+    [ [ "this is a test" ] h1
+      [ "this is a paragraph" ] p
+      [ "and another one." ] p ] body ] html ;
+

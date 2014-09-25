@@ -1,0 +1,2150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>The Ngaro Virtual Machine</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="the-ngaro-virtual-machine">
+<h1 class="title">The Ngaro Virtual Machine</h1>
+
+<div class="section" id="abstract">
+<h1>Abstract</h1>
+<p>Ngaro is a minimalistic virtual machine emulating a dual stack computer with
+a simple instruction set and a few basic I/O devices.</p>
+<p>At present, there are full implementations in Assembly (x86), C, F#, Go, Common
+Lisp, PHP, Python, and Ruby, and minimal implementations in C#, Forth, Lua, JavaScript,
+Java, Perl, and Scheme.</p>
+</div>
+<div class="section" id="memory-access">
+<h1>Memory Access</h1>
+<p>Ngaro provides a memory space consisting of 32-bit, signed integer values.
+The first address is mapped to zero, with subsequent values following in a
+strictly linear fashion.</p>
+<p>Each addressable 32-bit unit is called a <em>cell</em>. There is no support in the
+instruction set for accessing values larger or smaller than a single cell.</p>
+</div>
+<div class="section" id="registers">
+<h1>Registers</h1>
+<p>Ngaro exposes no registers directly.</p>
+</div>
+<div class="section" id="stacks">
+<h1>Stacks</h1>
+<p>Ngaro emulates two LIFO stacks. The primary one is the <em>data stack</em>, and
+serves as a place for holding data, and passing data between instructions.</p>
+<p>The other is the <em>address stack</em>, which is used to hold return addresses from
+calls, and can be used to temporarily hold small amounts of data.</p>
+<p>The current depth of a stack can be determined by using the I/O ports to
+query the VM.</p>
+<p>A standard implementation will provide at least 128 cells for data stack, and
+1024 for the address stack.</p>
+</div>
+<div class="section" id="image-files">
+<h1>Image Files</h1>
+<p>On startup, Ngaro will load an <em>image file</em>. This is a flat, linear array of
+signed integer values. On disk, images are stored in little endian format, but
+the VM may convert them to big endian internally.</p>
+<p>If an implementation uses big endian internally, this must be reported via the
+queries I/O port.</p>
+<p>The first value loaded is mapped to address zero, and subsequent values are
+loaded to sequential addresses in the Ngaro memory space.</p>
+<p>An image file does not contain copies of the stacks or any internal registers
+used by the VM.</p>
+</div>
+<div class="section" id="i-o-ports">
+<h1>I/O Ports</h1>
+<p>Interfacing with the underlying OS and hardware devices is done by reading and
+writing I/O ports.</p>
+<p>Ports 0 - 12 are reserved for current and future standard I/O devices. A VM
+may provide non-standard devices on port numbers above or below this range.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Port</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>Triggering I/O events</td>
+</tr>
+<tr><td>1</td>
+<td>Keyboard</td>
+</tr>
+<tr><td>2</td>
+<td>Text Output</td>
+</tr>
+<tr><td>3</td>
+<td>Force Video Update</td>
+</tr>
+<tr><td>4</td>
+<td>File I/O</td>
+</tr>
+<tr><td>5</td>
+<td>Querying the VM</td>
+</tr>
+<tr><td>6</td>
+<td>Canvas</td>
+</tr>
+<tr><td>7</td>
+<td>Mouse</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="port-0-wait-for-hardware-event">
+<h2>Port 0: Wait for Hardware Event</h2>
+<p>This port is used to synchronize communication between the ngaro and
+the virtual hardware devices.</p>
+<p>See the description of the WAIT opcode for details.</p>
+<p>Usage Example:</p>
+<pre class="literal-block">
+#0 #0 out, wait,
+</pre>
+</div>
+<div class="section" id="port-1-read-from-the-keyboard">
+<h2>Port 1: Read from the Keyboard</h2>
+<p>To read a value from the keyboard, set port 1 to 1, wait for an I/O event,
+then read the key value from port 1.</p>
+<p>Usage Example:</p>
+<pre class="literal-block">
+#1 #1 out,
+#0 #0 out, wait,
+#1 in,
+</pre>
+</div>
+<div class="section" id="port-2-character-generator">
+<h2>Port 2: Character Generator</h2>
+<p>Ngaro provides a hardware character generator. This takes data off the stack,
+so you should make sure the character value is <em>on the stack</em> before using it.
+To use this, write the value 1 to port 2 and wait for an I/O event.</p>
+<p>When a negative value is passed, the VM should clear the screen and position
+the cursor in the upper left corner.</p>
+<p>Usage Example:</p>
+<pre class="literal-block">
+#98 #1 #2 out,
+#0 #0 out, wait,
+</pre>
+</div>
+<div class="section" id="port-3-force-video-update">
+<h2>Port 3: Force Video Update</h2>
+<p>To help improve performance, an Ngaro implementation is permitted to cache
+output and update the display periodically. For implementations that do this,
+seting this port will force an immediate update.</p>
+<p>An implementation that caches output must check this routinely, and respond
+immediately. No waiting for an I/O event is neccessary for this.</p>
+<p>Example:</p>
+<pre class="literal-block">
+#0 #3 out,
+</pre>
+</div>
+<div class="section" id="port-4-file-operations">
+<h2>Port 4: File Operations</h2>
+<p>If your Ngaro implementation allows saving images, you can use this port
+to do so. To save, set port 4 to 1 and <em>wait</em>.</p>
+<p>Other operations can be done using negative values, if the VM supports this.
+To use these, setup the stack, write the operation code to port 4, <em>wait</em>,
+then read the value back in from port 4.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="32%" />
+<col width="13%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Op</th>
+<th class="head">Takes</th>
+<th class="head">Returns</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>1</td>
+<td><ul class="first last simple">
+<li></li>
+</ul>
+</td>
+<td>0</td>
+<td>Save the image</td>
+</tr>
+<tr><td>2</td>
+<td>filename</td>
+<td>0</td>
+<td>Include a file ( like --with )</td>
+</tr>
+<tr><td>-1</td>
+<td>filename, mode</td>
+<td>handle</td>
+<td>Open a file</td>
+</tr>
+<tr><td>-2</td>
+<td>handle</td>
+<td>byte</td>
+<td>Read a byte from a file</td>
+</tr>
+<tr><td>-3</td>
+<td>character, handle</td>
+<td>flag</td>
+<td>Write a byte to a file</td>
+</tr>
+<tr><td>-4</td>
+<td>handle</td>
+<td>flag</td>
+<td>Close a file</td>
+</tr>
+<tr><td>-5</td>
+<td>handle</td>
+<td>offset</td>
+<td>Return current location in file</td>
+</tr>
+<tr><td>-6</td>
+<td>offset, handle</td>
+<td>flag</td>
+<td>Seek a new location in file</td>
+</tr>
+<tr><td>-7</td>
+<td>handle</td>
+<td>size</td>
+<td>Return the size of a file</td>
+</tr>
+<tr><td>-8</td>
+<td>filename</td>
+<td>flag</td>
+<td>Delete a file.</td>
+</tr>
+</tbody>
+</table>
+<p>Valid modes for opening files are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="47%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Value</th>
+<th class="head">Used For</th>
+<th class="head">Create if not existing?</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>Open file for reading</td>
+<td>No</td>
+</tr>
+<tr><td>1</td>
+<td>Open file for writing</td>
+<td>Yes</td>
+</tr>
+<tr><td>2</td>
+<td>Open file for append</td>
+<td>Yes</td>
+</tr>
+<tr><td>3</td>
+<td>Open file for modification</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Reading and modification should <em>not</em> create a file if none exist. Writing
+and append modes <em>should</em> create a file if it does not exist.</p>
+<p>The write mode should create a new file, removing the contents of existing
+files with the same name.</p>
+<p>The append mode should set the file read/write position to the end of the
+file.</p>
+<p>If opening fails, the returned handle should be zero. Any non-zero handle
+is considered valid.</p>
+<p>When closing a valid handle, <em>close</em> should return zero.</p>
+<p>The <em>write</em> operation should return a value of 1. Any other value indicates
+an error.</p>
+<p>The <em>delete</em> operation should return -1 if the file is deleted, or 0 if
+the deletion fails.</p>
+</div>
+<div class="section" id="port-5-queries-into-the-vm-devices">
+<h2>Port 5: Queries Into the VM Devices</h2>
+<p>Set port 5 to one of the following values; wait; then read the result back.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">value</th>
+<th class="head">returns</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>-1</td>
+<td>Memory Size</td>
+</tr>
+<tr><td>-2</td>
+<td>Does a Canvas device exist?</td>
+</tr>
+<tr><td>-3</td>
+<td>Canvas Width</td>
+</tr>
+<tr><td>-4</td>
+<td>Canvas Height</td>
+</tr>
+<tr><td>-5</td>
+<td>Data Stack Depth</td>
+</tr>
+<tr><td>-6</td>
+<td>Address Stack Depth</td>
+</tr>
+<tr><td>-7</td>
+<td>Does a Mouse device exist?</td>
+</tr>
+<tr><td>-8</td>
+<td>Current time (in seconds, Unix-style)</td>
+</tr>
+<tr><td>-9</td>
+<td>Exit the VM</td>
+</tr>
+<tr><td>-10</td>
+<td>Query for an enivronment variable</td>
+</tr>
+<tr><td>-11</td>
+<td>Console Width</td>
+</tr>
+<tr><td>-12</td>
+<td>Console Height</td>
+</tr>
+<tr><td>-13</td>
+<td>Number of bits per cell</td>
+</tr>
+<tr><td>-14</td>
+<td>0 for little endian, 1 for big endian</td>
+</tr>
+<tr><td>-15</td>
+<td>-1 if Port 8 enabled, 0 if disabled</td>
+</tr>
+<tr><td>-16</td>
+<td>Return max depth of data stack</td>
+</tr>
+<tr><td>-17</td>
+<td>Return max depth of address stack</td>
+</tr>
+</tbody>
+</table>
+<p>At a minimum, an implementation must provide support for -1, -5, -6, -8, and -9.</p>
+<p>For -5 and -6, &quot;depth&quot; refers to the number of items on the specified stack.</p>
+<p>For -10, the application must provide a buffer address on the stack, and a
+pointer to a string. The VM should search the system environment for the
+string and copy its value to the application memory, starting at the provided
+buffer address. If an environment variable is not found, the VM should store a
+value of zero in the provided buffer address.</p>
+<p>For -13, if the returned value is zero, the image can assume a 32-bit environment.</p>
+<p>For -14, if the VM is using big endian internally, this should return a value of 1.</p>
+</div>
+<div class="section" id="port-6-canvas">
+<h2>Port 6: Canvas</h2>
+<p>Some Ngaro implementations allow for drawing to a <em>canvas</em> device. Setup
+the data stack as shown in the table, and write the appropriate values
+to port 6.</p>
+<p><em>This device is optional.</em></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="9%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">value</th>
+<th class="head">stack</th>
+<th class="head">action performed</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>1</td>
+<td>n-</td>
+<td>set color for drawing operations</td>
+</tr>
+<tr><td>2</td>
+<td>xy-</td>
+<td>draw a pixel at coordinates x, y</td>
+</tr>
+<tr><td>3</td>
+<td>xyhw-</td>
+<td>draw a rectangle of specified width (w) and height (h). The
+top corner is denoted by the x, y pair</td>
+</tr>
+<tr><td>4</td>
+<td>xyhw-</td>
+<td>draw a filled rectangle of specified width (w) and height
+(h). The top corner is denoted by the x, y pair</td>
+</tr>
+<tr><td>5</td>
+<td>xyh-</td>
+<td>draw a vertical line of height (h) starting at x, y</td>
+</tr>
+<tr><td>6</td>
+<td>xyw-</td>
+<td>draw a horizontal line of width (w) starting at x, y</td>
+</tr>
+<tr><td>7</td>
+<td>xyw-</td>
+<td>draw a circle of width (w) starting at x, y</td>
+</tr>
+<tr><td>8</td>
+<td>xyw-</td>
+<td>draw a filled circle of width (w) starting at x, y</td>
+</tr>
+</tbody>
+</table>
+<p>For setting colors, the following values are guarateed safe:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">code</th>
+<th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>black</td>
+</tr>
+<tr><td>1</td>
+<td>dark blue</td>
+</tr>
+<tr><td>2</td>
+<td>dark green</td>
+</tr>
+<tr><td>3</td>
+<td>dark cyan</td>
+</tr>
+<tr><td>4</td>
+<td>dark red</td>
+</tr>
+<tr><td>5</td>
+<td>purple</td>
+</tr>
+<tr><td>6</td>
+<td>brown</td>
+</tr>
+<tr><td>7</td>
+<td>dark gray</td>
+</tr>
+<tr><td>8</td>
+<td>gray</td>
+</tr>
+<tr><td>9</td>
+<td>blue</td>
+</tr>
+<tr><td>10</td>
+<td>green</td>
+</tr>
+<tr><td>11</td>
+<td>cyan</td>
+</tr>
+<tr><td>12</td>
+<td>red</td>
+</tr>
+<tr><td>13</td>
+<td>magenta</td>
+</tr>
+<tr><td>14</td>
+<td>yellow</td>
+</tr>
+<tr><td>15</td>
+<td>white</td>
+</tr>
+</tbody>
+</table>
+<p>Additional colors may be supported, but are not guaranteed to exist.</p>
+</div>
+<div class="section" id="port-7-mouse">
+<h2>Port 7: Mouse</h2>
+<p>Set port 7 to one of the following values and wait. The results will be
+pushed to the data stack.</p>
+<p><em>This device is optional.</em></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">value</th>
+<th class="head">returns</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>1</td>
+<td>Mouse X and Y coordinates. Y will be
+on TOS when done. X will be NOS.</td>
+</tr>
+<tr><td>2</td>
+<td>Is mouse button pressed? 0 = false,
+non-zero is true. True values <em>may</em>
+indicate the button being pressed, but
+this is not required.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="port-8-enhanced-text-console">
+<h2>Port 8: Enhanced Text Console</h2>
+<p>Set port 8 to one of the following values and wait.</p>
+<p><em>This device is optional.</em></p>
+<p>Due to platform constraints, implementations may not offer all of these
+functions. An implementation providing this port should at least support
+cursor positioning. <em>Any non-implemented functions should be silently
+ignored.</em></p>
+<p>An implementation may provide additional, non-standard functionality
+using negative values.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">value</th>
+<th class="head">stack</th>
+<th class="head">action</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>1</td>
+<td>rc-</td>
+<td>Move the cursor to the specified row and column</td>
+</tr>
+<tr><td>2</td>
+<td>n-</td>
+<td>Set the foreground text color</td>
+</tr>
+<tr><td>3</td>
+<td>n-</td>
+<td>Set the background color</td>
+</tr>
+</tbody>
+</table>
+<p>The VM is expected to understand the following colors:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">value</th>
+<th class="head">color</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>Black</td>
+</tr>
+<tr><td>1</td>
+<td>Red</td>
+</tr>
+<tr><td>2</td>
+<td>Green</td>
+</tr>
+<tr><td>3</td>
+<td>Yellow</td>
+</tr>
+<tr><td>4</td>
+<td>Blue</td>
+</tr>
+<tr><td>5</td>
+<td>Magenta</td>
+</tr>
+<tr><td>6</td>
+<td>Cyan</td>
+</tr>
+<tr><td>7</td>
+<td>White</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="instruction-set">
+<h1>Instruction Set</h1>
+<p>One instruction per memory location. Instructions with an <em>x</em> in the <em>A</em>
+column take an additional value in the following memory location.</p>
+<p>All opcode numbers are listed in decimal. Stack diagrams are for the
+data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="25%" />
+<col width="25%" />
+<col width="7%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">opcode</th>
+<th class="head">name</th>
+<th class="head">assembler</th>
+<th class="head">A</th>
+<th class="head">stack</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>NOP</td>
+<td>nop,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">-</tt></td>
+</tr>
+<tr><td>1</td>
+<td>LIT</td>
+<td>lit,</td>
+<td>x</td>
+<td><tt class="docutils literal"><span class="pre">-n</span></tt></td>
+</tr>
+<tr><td>2</td>
+<td>DUP</td>
+<td>dup,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">n-nn</span></tt></td>
+</tr>
+<tr><td>3</td>
+<td>DROP</td>
+<td>drop,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">n-</tt></td>
+</tr>
+<tr><td>4</td>
+<td>SWAP</td>
+<td>swap,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-yx</span></tt></td>
+</tr>
+<tr><td>5</td>
+<td>PUSH</td>
+<td>push,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">n-</tt></td>
+</tr>
+<tr><td>6</td>
+<td>POP</td>
+<td>pop,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">-n</span></tt></td>
+</tr>
+<tr><td>7</td>
+<td>LOOP</td>
+<td>loop,</td>
+<td>x</td>
+<td><tt class="docutils literal"><span class="pre">n-n</span></tt></td>
+</tr>
+<tr><td>8</td>
+<td>JUMP</td>
+<td>jump,</td>
+<td>x</td>
+<td><tt class="docutils literal">-</tt></td>
+</tr>
+<tr><td>9</td>
+<td>RETURN</td>
+<td>;,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">-</tt></td>
+</tr>
+<tr><td>10</td>
+<td>LT_JUMP</td>
+<td>&lt;jump,</td>
+<td>x</td>
+<td><tt class="docutils literal">xy-</tt></td>
+</tr>
+<tr><td>11</td>
+<td>GT_JUMP</td>
+<td>&gt;jump,</td>
+<td>x</td>
+<td><tt class="docutils literal">xy-</tt></td>
+</tr>
+<tr><td>12</td>
+<td>NE_JUMP</td>
+<td>!jump,</td>
+<td>x</td>
+<td><tt class="docutils literal">xy-</tt></td>
+</tr>
+<tr><td>13</td>
+<td>EQ_JUMP</td>
+<td>=jump,</td>
+<td>x</td>
+<td><tt class="docutils literal">xy-</tt></td>
+</tr>
+<tr><td>14</td>
+<td>FETCH</td>
+<td>&#64;,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">a-n</span></tt></td>
+</tr>
+<tr><td>15</td>
+<td>STORE</td>
+<td>!,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">na-</tt></td>
+</tr>
+<tr><td>16</td>
+<td>ADD</td>
+<td>+,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>17</td>
+<td>SUBTRACT</td>
+<td>-,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>18</td>
+<td>MULTIPLY</td>
+<td><tt class="docutils literal">*</tt>,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>19</td>
+<td>DIVMOD</td>
+<td>/mod,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-rq</span></tt></td>
+</tr>
+<tr><td>20</td>
+<td>AND</td>
+<td>and,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>21</td>
+<td>OR</td>
+<td>or,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>22</td>
+<td>XOR</td>
+<td>xor,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>23</td>
+<td>SHL</td>
+<td>&lt;&lt;,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>24</td>
+<td>SHR</td>
+<td>&gt;&gt;,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">xy-z</span></tt></td>
+</tr>
+<tr><td>25</td>
+<td>ZERO_EXIT</td>
+<td>0;</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">n-?</span></tt></td>
+</tr>
+<tr><td>26</td>
+<td>INC</td>
+<td>1+,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">x-y</span></tt></td>
+</tr>
+<tr><td>27</td>
+<td>DEC</td>
+<td>1-,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">x-y</span></tt></td>
+</tr>
+<tr><td>28</td>
+<td>IN</td>
+<td>in,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">p-n</span></tt></td>
+</tr>
+<tr><td>29</td>
+<td>OUT</td>
+<td>out,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">np-</tt></td>
+</tr>
+<tr><td>30</td>
+<td>WAIT</td>
+<td>wait,</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal">-</tt></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="instruction-processing">
+<h2>Instruction Processing</h2>
+<p>The instruction pointer is incremented, then the opcode at the current address
+is handled. Execution ends when the instruction pointer is greater than the
+end of the simulated memory space.</p>
+<p>A psuedocode in Retro:</p>
+<pre class="literal-block">
+-1 !ip
+[ ip ++ processOpcode &#64;ip 1000000 &lt; ] while
+</pre>
+<p>And in Lua:</p>
+<pre class="literal-block">
+ip = 0
+while ip &lt; 1000000 do
+  processOpcode()
+  ip = ip + 1
+end
+</pre>
+</div>
+<div class="section" id="the-instructions">
+<h2>The Instructions</h2>
+<div class="section" id="opcode-0-nop">
+<h3>Opcode 0: NOP</h3>
+<p>Does nothing.</p>
+</div>
+<div class="section" id="opcode-1-lit">
+<h3>Opcode 1: LIT</h3>
+<p>Push the value in the following memory location to the data stack. Advances
+the instruction pointer by one.</p>
+<p>In memory this might appear as:</p>
+<pre class="literal-block">
+0000 LIT
+0001 101
+</pre>
+<p>After LIT executes, the IP would be set at 0001, and the top item on the
+data stack would be 101.</p>
+</div>
+<div class="section" id="opcode-2-dup">
+<h3>Opcode 2: DUP</h3>
+<p>Make a duplicate copy of the top item on the data stack and push the copy to
+the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-3-drop">
+<h3>Opcode 3: DROP</h3>
+<p>Remove the top item from the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-4-swap">
+<h3>Opcode 4: SWAP</h3>
+<p>Remove the top two items from the stack, and push them back in the reverse
+order.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>1</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-5-push">
+<h3>Opcode 5: PUSH</h3>
+<p>Remove the top item from the data stack, and push it to the address stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-6-pop">
+<h3>Opcode 6: POP</h3>
+<p>Remove the top item from the address stack, and push it to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-7-loop">
+<h3>Opcode 7: LOOP</h3>
+<p>Decrement the top value on the stack and advance the instruction pointer. If
+the top item on the stack is greater than zero, jump to the address following
+the LOOP instruction, otherwise discard the top item on the stack and continue
+execution normally.</p>
+</div>
+<div class="section" id="opcode-8-jump">
+<h3>Opcode 8: JUMP</h3>
+<p>Set the instruction pointer to the address in the cell following the JUMP
+instruction.</p>
+<p>This instruction needs to decrement the requested address by one to
+account for the increment of the instruction pointer by the opcode process
+cycle. E.g., if the jump target is 1234, JUMP needs to set the instruction
+pointer to 1233.</p>
+<p>To improve performance, this instruction may skip leading NOP's at the
+destination address.</p>
+</div>
+<div class="section" id="opcode-9-return">
+<h3>Opcode 9: RETURN</h3>
+<p>Return from a call to a subroutine. This will pop the return address from
+the address stack, and set the instruction pointer to it.</p>
+</div>
+<div class="section" id="opcode-10-lt-jump">
+<h3>Opcode 10: LT_JUMP</h3>
+<p>Increment the instruction pointer.</p>
+<p>Pop the top two values from the stack. If the first stack item is less than
+the second item, set the instruction pointer to the address stored at the
+memory location following this instruction. If not, continue execution.</p>
+<p>This instruction needs to decrement the requested address by one to
+account for the increment of the instruction pointer by the opcode process
+cycle. E.g., if the jump target is 1234, the instruction pointer should be
+set to 1233.</p>
+<p>In memory, this will be stored as:</p>
+<pre class="literal-block">
+0000 LT_JUMP
+0001 destination
+</pre>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-11-gt-jump">
+<h3>Opcode 11: GT_JUMP</h3>
+<p>Increment the instruction pointer.</p>
+<p>Pop the top two values from the stack. If the first stack item is greater than
+the second item, set the instruction pointer to the address stored at the
+memory location following this instruction. If not, continue execution.</p>
+<p>This instruction needs to decrement the requested address by one to
+account for the increment of the instruction pointer by the opcode process
+cycle. E.g., if the jump target is 1234, the instruction pointer should be
+set to 1233.</p>
+<p>In memory, this will be stored as:</p>
+<pre class="literal-block">
+0000 GT_JUMP
+0001 destination
+</pre>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-12-ne-jump">
+<h3>Opcode 12: NE_JUMP</h3>
+<p>Increment the instruction pointer.</p>
+<p>Pop the top two values from the stack. If the first stack item is not equal to
+the second item, set the instruction pointer to the address stored at the
+memory location following this instruction. If not, continue execution.</p>
+<p>This instruction needs to decrement the requested address by one to
+account for the increment of the instruction pointer by the opcode process
+cycle. E.g., if the jump target is 1234, the instruction pointer should be
+set to 1233.</p>
+<p>In memory, this will be stored as:</p>
+<pre class="literal-block">
+0000 NE_JUMP
+0001 destination
+</pre>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-13-eq-jump">
+<h3>Opcode 13: EQ_JUMP</h3>
+<p>Increment the instruction pointer.</p>
+<p>Pop the top two values from the stack. If the first stack item is equal to
+the second item, set the instruction pointer to the address stored at the
+memory location following this instruction. If not, continue execution.</p>
+<p>This instruction needs to decrement the requested address by one to
+account for the increment of the instruction pointer by the opcode process
+cycle. E.g., if the jump target is 1234, the instruction pointer should be
+set to 1233.</p>
+<p>In memory, this will be stored as:</p>
+<pre class="literal-block">
+0000 EQ_JUMP
+0001 destination
+</pre>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-14-fetch">
+<h3>Opcode 14: FETCH</h3>
+<p>Remove the top item from the data stack. Lookup the value stored in the memory
+address this value points to, and push the value read to the data stack.</p>
+<p>Assuming that memory at 1234 contains 45:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1234</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>45</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-15-store">
+<h3>Opcode 15: STORE</h3>
+<p>Take two values from the stack. The top item will be a destination address, and
+the second will be a value. Modify the contents of the specified memory address
+to be equal to the value.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>In this, 1 would be the address, and 2 would be the value to store there.</p>
+</div>
+<div class="section" id="opcode-16-add">
+<h3>Opcode 16: ADD</h3>
+<p>Take two values from the data stack, add them together, and push the results
+to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-17-subtract">
+<h3>Opcode 17: SUBTRACT</h3>
+<p>Take two values from the data stack. Subtract the top item from the second
+item, and push the results back to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>4</td>
+</tr>
+<tr><td>9</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>5</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-18-multiply">
+<h3>Opcode 18: MULTIPLY</h3>
+<p>Take two values from the data stack. Multiply them and push the results back
+to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>6</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-19-divmod">
+<h3>Opcode 19: DIVMOD</h3>
+<p>Take two values from the data stack. The top item is the divisor, and the
+second item is the dividend. Perform the division, and push the quotient
+and remainder to the stack. After execution the quotient should be on top,
+with the remainder below it.</p>
+<p><em>Division is symmetric, not floored</em>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>5</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-20-and">
+<h3>Opcode 20: AND</h3>
+<p>Remove the top two items on the data stack. Perform a bitwise AND operation
+and push the result back to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-21-or">
+<h3>Opcode 21: OR</h3>
+<p>Remove the top two items on the data stack. Perform a bitwise OR operation
+and push the result back to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-22-xor">
+<h3>Opcode 22: XOR</h3>
+<p>Remove the top two items on the data stack. Perform a bitwise XOR operation
+and push the result back to the data stack.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>-1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-23-shl">
+<h3>Opcode 23: SHL</h3>
+<p>Take two values from the data stack. Perform a bitwise left shift on the
+second item by the number of bits specified by the top item. Push the results
+back to the data stack.</p>
+<p>The values in these tables are in binary.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>11</td>
+</tr>
+<tr><td>111000111</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>111000111000</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The results of a negative shift are implementation specific.</p>
+</div>
+<div class="section" id="opcode-24-shr">
+<h3>Opcode 24: SHR</h3>
+<p>Take two values from the data stack. Perform a bitwise right shift on the
+second item by the number of bits specified by the top item. Push the results
+back to the data stack.</p>
+<p>The values in these tables are in binary.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>11</td>
+</tr>
+<tr><td>111000111000</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>111000111</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The results of a negative shift are implementation specific.</p>
+</div>
+<div class="section" id="opcode-25-zero-exit">
+<h3>Opcode 25: ZERO_EXIT</h3>
+<p>If the top item on the stack is zero, remove and discard it, then pop the
+top item from the address stack and set the instruction pointer to it.</p>
+<p>If the top item is not zero, leave it alone and do nothing.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>0</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-26-inc">
+<h3>Opcode 26: INC</h3>
+<p>Increase the value on the top of the stack by one.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-27-dec">
+<h3>Opcode 27: DEC</h3>
+<p>Decrease the value on the top of the stack by one.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="opcode-28-in">
+<h3>Opcode 28: IN</h3>
+<p>Take a value from the data stack. Read the value stored in the I/O port
+corresponding to the value read from the stack, and push this value to
+the data stack.</p>
+<p>After reading, set the value of the port read to zero.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>?</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The value returned will vary depending on the I/O device subsystem and
+specific port requested.</p>
+</div>
+<div class="section" id="opcode-29-out">
+<h3>Opcode 29: OUT</h3>
+<p>Take two values off the data stack. The top value will be an I/O port number,
+and the second will be a value. Store the value in the I/O port specified.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">before</th>
+<th class="head">after</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><table border="1" class="first last docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>2</td>
+</tr>
+<tr><td>1</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>With the values in this table, port 2 would be set to a value of 1.</p>
+</div>
+<div class="section" id="opcode-30-wait">
+<h3>Opcode 30: WAIT</h3>
+<p>Run the simulated device handler, provided that port 0 is set to 0,
+and at least one other port is set to a value other than 0. Otherwise,
+continue execution as normal.</p>
+<p>If the device handler runs, it will setting port 0 to 1, thus preventing
+itself from running again until the code sets port 0 back to 0. Therefore,
+programs should always set I/O port 0 to 0 before invoking WAIT.</p>
+</div>
+<div class="section" id="opcodes-above-30">
+<h3>Opcodes Above 30</h3>
+<p>Any opcode above 30 is treated as an <em>implicit call</em>.</p>
+<p>The VM will push the current value of the instruction pointer to the address stack
+and set the instruction pointer to the value of the opcode. Note that like jumps,
+the VM must decrement this value by one to account for the increment that will happen
+before the next instruction is processed.</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+doc{
+As of Retro 11.4, there is VM-level support for some console functionality.
+}doc
+
+needs console'
+
+: hello  6 3  ( row, column )  ^console'setCursor "Hello" puts ;
+

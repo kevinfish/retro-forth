@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>bad'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="bad">
+<h1 class="title">bad'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>The Ngaro virtual machine underlying Retro does not provide access to memory
+in units other than a standard cell. This simplifies things in many ways, but
+can be very wasteful of memory, especially when dealing with large amounts of
+text. This library provides support for dealing with byte-level access to the
+Ngaro memory.</p>
+</div>
+<div class="section" id="terminology">
+<h1>Terminology</h1>
+<p><em>byte</em>: A unit of memory consisting of eight bits.</p>
+<p><em>cell</em>: A unit of memory consisting of thirty two bits.</p>
+</div>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<pre class="literal-block">
+needs bad'
+</pre>
+</div>
+<div class="section" id="example">
+<h1>Example</h1>
+<pre class="literal-block">
+1024 ^bad'newPool
+'e 0 ^bad'b!
+'f 1 ^bad'b!
+'g 2 ^bad'b!
+'h 3 ^bad'b!
+^bad'pool &#64; putn
+2 ^bad'b&#64; putn
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="12%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>pool</td>
+<td>-a</td>
+<td>Variable. This holds a pointer to the current
+byte addressable memory pool</td>
+</tr>
+<tr><td>unpack</td>
+<td>c-bbbb</td>
+<td>Given a byte-packed cell on the stack return
+the bytes it contains</td>
+</tr>
+<tr><td>pack</td>
+<td>bbbb-c</td>
+<td>Pack four byes into a cell, return the cell on
+the stack</td>
+</tr>
+<tr><td>b&#64;</td>
+<td>a-b</td>
+<td>Fetch a byte from the active byte addressable
+memory pool</td>
+</tr>
+<tr><td>b!</td>
+<td>ba-</td>
+<td>Store a byte into the currently active byte
+addressable memory pool</td>
+</tr>
+<tr><td>b&#64;+</td>
+<td>a-ab</td>
+<td>Fetch a byte from the active byte addressable
+memory pool. Returns next byte address and the
+byte fetched</td>
+</tr>
+<tr><td>b!+</td>
+<td>ba-a</td>
+<td>Store a byte into the currently active byte
+addressable memory pool. Returns next byte
+address</td>
+</tr>
+<tr><td>newPool</td>
+<td>n-</td>
+<td>Allocate a new pool of <em>n</em> characters and set
+<strong>pool</strong> to point to it</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

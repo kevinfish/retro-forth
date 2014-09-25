@@ -1,0 +1,41 @@
+needs help'
+
+[ "<link href='http://kevinburke.bitbucket.org/markdowncss/markdown.css' rel='stylesheet'></link>\n" puts
+  [ dup '< == [ drop "&lt;" puts ] [ dup '> == [ drop "&gt;" puts ] [ default: putc ] if ] if ] &putc :is
+  global
+
+  "# Global Functions\n" puts
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+
+  "# vt'\n" puts
+  &vt' .chain
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+  "%%" find drop @d->xt do
+
+  "# dissect'\n" puts
+  &dissect' .chain
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+  "%%" find drop @d->xt do
+
+  "# types'\n" puts
+  &types' .chain
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+  "%%" find drop @d->xt do
+
+  "# strings'\n" puts
+  &strings' .chain
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+  "%%" find drop @d->xt do
+
+  "# buffer'\n" puts
+  &buffer' .chain
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+  "%%" find drop @d->xt do
+
+  "# internals'\n" puts
+  &internals' .chain
+  last [ cr dup d->name "## %s\n" puts d->doc @ exists? [ ') ^strings'splitAtChar [ 1+ ] dip "\n    %s\n\n" puts puts ] [ drop "undocumented" puts ] if cr ] ^types'LIST each@
+  "%%" find drop @d->xt do
+  "# all\n" puts chains
+  bye ] is boot
+save bye

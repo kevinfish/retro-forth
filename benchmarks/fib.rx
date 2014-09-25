@@ -1,0 +1,6 @@
+: fib ( n-m )
+  dup [ 0 = ] [ 1 = ] bi or if; [ 1- fib ] sip 2 - fib + ;
+
+: bar 100 [ 20 fib drop ] times bye ;
+&bar is boot
+save bye

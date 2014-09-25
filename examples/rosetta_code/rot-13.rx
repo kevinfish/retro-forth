@@ -1,0 +1,13 @@
+needs char'
+
+{{
+  : rotate  ( cb-c ) tuck - 13 + 26 mod + ;
+  : rotate? (  c-c )
+    [ ^char'isLower? ]  [ 'a rotate ] when
+    [ ^char'isUpper? ]  [ 'A rotate ] when ;
+---reveal---
+  : rot13   (  s-s ) dup [ [ @ rotate? ] sip ! ] ^types'STRING each@ ;
+}}
+
+"abcdef123GHIJKL" rot13 dup puts cr rot13 puts
+"abjurer NOWHERE" rot13 puts

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>crypto'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="crypto">
+<h1 class="title">crypto'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>I enjoy dabbling with logic puzzles and classical forms of encryption.
+This vocabulary is intended to be a tool to help with these diversions.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="9%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ceaser</td>
+<td>$n-$</td>
+<td>Encrypt (or decrypt) a string using the ceaser
+algorithm. The value n is the number of
+characters to shift the alphabet by.</td>
+</tr>
+<tr><td>rot13</td>
+<td>$-$</td>
+<td>Encrypt or decrypt a string using rot13. This
+is a trivial variant of the ceaser algorithm.</td>
+</tr>
+<tr><td>tapcode:encrypt</td>
+<td>$-a</td>
+<td>Encrypt a string into a tapcode array</td>
+</tr>
+<tr><td>tapcode:decrypt</td>
+<td>a-$</td>
+<td>Decrypt a tapcode array into a string</td>
+</tr>
+<tr><td>pigpen:encrypt</td>
+<td>$-a</td>
+<td><p class="first">Convert a string into a pigpen encoded array.
+To display the pigpen sequence, try:</p>
+<pre class="last literal-block">
+&quot;ab&quot; ^crypto'toPigpen [ puts space ] ^array'apply
+</pre>
+</td>
+</tr>
+<tr><td>pigpen:decrypt</td>
+<td>a-$</td>
+<td>Decode a pigpen encoded array into a string</td>
+</tr>
+<tr><td>keyword:setKey</td>
+<td>$-</td>
+<td>Set the key to use for keyword encryption. This
+should be 26 characters long.</td>
+</tr>
+<tr><td>keyword:encrypt</td>
+<td>$-$</td>
+<td>Encrypt a string using keyword encryption</td>
+</tr>
+<tr><td>keyword:decrypt</td>
+<td>$-$</td>
+<td>Decrypt a string using keyword encryption</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

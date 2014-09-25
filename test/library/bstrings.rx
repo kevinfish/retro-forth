@@ -1,0 +1,33 @@
+needs test'
+needs assertion'
+needs bstrings'
+
+with| test' assertion' |
+
+TEST: ^bstrings'pack
+  "hello" ^bstrings'pack @ 'h = not assert ;
+
+TEST: ^bstrings'getLength
+  "hello" ^bstrings'pack ^bstrings'getLength 5 assert= ;
+
+TEST: ^bstrings'unpack
+  "hello" ^bstrings'pack dup @ 'h = not assert
+  ^bstrings'unpack @ 'h assert= ;
+
+TEST: ^bstrings'withLength
+  "hello" ^bstrings'pack dup ^bstrings'withLength
+  5 assert=
+  = assert ;
+
+IO: ^bstrings'puts
+
+TEST: ^bstrings'toLower
+  "HeLLo123#" ^bstrings'pack ^bstrings'toLower ^bstrings'unpack
+  "hello123#" compare assert ;
+
+TEST: ^bstrings'toUpper
+  "HeLLo123#" ^bstrings'pack ^bstrings'toUpper ^bstrings'unpack
+  "HELLO123#" compare assert ;
+
+runTests bye
+

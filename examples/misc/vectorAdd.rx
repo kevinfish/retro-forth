@@ -1,0 +1,24 @@
+
+{{
+  variables| A B |
+
+  : A@+ ( -- val )
+    @A @ A ++ ;
+
+  : B@+ ( -- val )
+    @B @ B ++ ;
+---reveal---
+  : vadd ( v3 numElements v1 v2 -- )
+    !A !B
+    [ A@+ B@+ + swap !+ ] times drop ;
+}}
+
+create a 1 , 2 , 3 ,
+create b 4 , 5 , 6 ,
+create c 0 , 0 , 0 ,
+
+: testvadd ( -- )
+   c 3 2over a b vadd
+   [ cr @+ putn ] times drop ;
+
+testvadd

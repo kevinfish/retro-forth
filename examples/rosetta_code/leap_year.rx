@@ -1,0 +1,5 @@
+  : isLeapYear? ( y-f )
+    [ 400 mod 0 = ]  [ -1 ] whend
+    [ 100 mod 0 = ]  [  0 ] whend
+    4 mod 0 = ;
+

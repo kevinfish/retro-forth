@@ -1,0 +1,1140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>An Introduction to Retro</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="an-introduction-to-retro">
+<h1 class="title">An Introduction to Retro</h1>
+
+<div class="section" id="getting-started">
+<h1>Getting Started</h1>
+<div class="section" id="choosing-a-vm">
+<h2>Choosing a VM</h2>
+<p>Retro runs on a virtual machine. This has been implemented in many languages, and
+allows easy portability to most platforms. For most users, the <em>C</em>, <em>Python</em>, or
+<em>Ruby</em> implementations will be the best choices as the dependencies are easy to
+take care of on most systems.</p>
+<p>Windows users can download a binary distribution which includes the F# (for .NET)
+and C implementations. These are confirmed to work on XP, Vista, and Windows 7.</p>
+</div>
+<div class="section" id="the-image-file">
+<h2>The Image File</h2>
+<p>Once you have selected (and built, if necessary) a VM, you will need to put it
+and the <em>retroImage</em> into a directory. You should then be able to start the VM
+and interact with Retro.</p>
+</div>
+<div class="section" id="the-library">
+<h2>The Library</h2>
+<p>Several implementations of the VM support the use of the standard library via
+<strong>needs</strong>. If you are using one of these, you can copy or symlink the <em>library</em>
+directory into the same directory as your VM and image file.</p>
+</div>
+<div class="section" id="the-way-i-work">
+<h2>The Way I Work</h2>
+<p>When starting a new project I create a directory, with a fresh copy of the image,
+a symlink to the library, and a symlink to the VM I've selected.</p>
+<p>Given a copy of the source in <em>~/retro-language</em> I do:</p>
+<pre class="literal-block">
+mkdir project
+cd project
+cp ~/retro-language/retroImage .
+ln -s ~/retro-language/library
+ln -s ~/retro-language/retro
+</pre>
+</div>
+<div class="section" id="basic-interactions">
+<h2>Basic Interactions</h2>
+<p>When you start Retro, you should see something like the following:</p>
+<pre class="literal-block">
+Retro 11.2 (2012-01-17)
+
+ok
+</pre>
+<p>At this point you are at the <em>listener</em>, which reads and processes your
+input. You are now set to begin exploring Retro.</p>
+<p>Normally Retro will process input as soon as whitespace is encountered <a class="footnote-reference" href="#id7" id="id1">[1]</a>.
+This limits editing options <a class="footnote-reference" href="#id8" id="id2">[2]</a>, but serves to simplify the listener
+significantly.</p>
+<p>To exit, run <strong>bye</strong>:</p>
+<pre class="literal-block">
+bye
+</pre>
+</div>
+</div>
+<div class="section" id="exploring-the-language">
+<h1>Exploring the Language</h1>
+<div class="section" id="names-and-numbers">
+<h2>Names And Numbers</h2>
+<p>At a fundamental level, the Retro language consists of whitespace delimited
+tokens representing either names or numbers.</p>
+<p>The <em>listener</em> will attempt to look up tokens in the <em>dictionary</em>. If found,
+the information in the <em>dictionary header</em> is used to carry out the actions
+specified in the name's <em>definition</em>.</p>
+<p>If a token can't be found in the dictionary, Retro tries to convert it to
+a number. If successful, the number is pushed to the <em>data stack.</em> If not,
+an error is reported.</p>
+<p>Retro permits names to contain any characters other than space, tab, cr, and
+lf. Names are <em>case sensitive</em>, so the following are three <em>different</em> names
+from Retro's perspective:</p>
+<pre class="literal-block">
+foo Foo FOO
+</pre>
+</div>
+<div class="section" id="the-compiler">
+<h2>The Compiler</h2>
+<p>To create new functions, you use the compiler. This is generally started by using
+<strong>:</strong> (pronounced <em>colon</em>). A simple example:</p>
+<pre class="literal-block">
+: foo 1 2 + putn ;
+</pre>
+<p>Breaking this apart:</p>
+<pre class="literal-block">
+: foo
+</pre>
+<p>This creates a new function named <em>foo</em> and starts the compiler. A <strong>:</strong> should
+always be followed by the name of the function to create.</p>
+<pre class="literal-block">
+1
+</pre>
+<p>Normally this would push a <em>1</em> to the data stack. However, since the compiler
+is active, the listener will compile the code needed to push a <em>1</em> to the stack
+into the definition instead.</p>
+<pre class="literal-block">
+2
+</pre>
+<p>And again, but compile a <em>2</em> instead of a <em>1</em>.</p>
+<pre class="literal-block">
++
+</pre>
+<p>Since <em>+</em> is a normal function, the listener compiles a call to it rather than
+calling it immediately.</p>
+<pre class="literal-block">
+putn
+</pre>
+<p><strong>putn</strong> is a function that takes a number from the stack and displays it. When
+encountered in a defintion, the compiler will lay down a call to it and continue.</p>
+<pre class="literal-block">
+;
+</pre>
+<p>Functions are terminated with a <strong>;</strong>. This is a special case as <strong>;</strong> is a <em>compiler
+macro</em>, and is <em>called at compile time</em>, but <em>ignored when the compiler is not
+active.</em></p>
+</div>
+<div class="section" id="hyperstatic-global-environment">
+<h2>Hyperstatic Global Environment</h2>
+<p>This now brings up an interesting subpoint. Retro provides a <em>hyper-static
+global environment.</em> This can be difficult to explain, so let's take a quick
+look at how it works:</p>
+<pre class="literal-block">
+1000 variable: a
+: scale ( x-y ) a &#64; * ;
+3 scale putn
+&gt;&gt;&gt; 3000
+100 a !
+3 scale putn
+&gt;&gt;&gt; 300
+5 variable: a
+3 scale putn
+&gt;&gt;&gt; 300
+a &#64; putn
+&gt;&gt;&gt; 5
+</pre>
+<p>Output is marked with <strong>&gt;&gt;&gt;</strong>.</p>
+<p>Note that we create two variables with the same name (<em>a</em>). The definition for
+<em>scale</em> still refers to the old variable, even though we can no longer directly
+manipulate it.</p>
+<p>In a hyper-static global environment, functions continue to refer to the variables
+and earlier functions that existed when they were defined. If you create a new
+variable or function with the same name as an existing one, it only affects future
+code.</p>
+</div>
+<div class="section" id="classes">
+<h2>Classes</h2>
+<p>Getting back to function creation, it's time for a clarification: in Retro, the
+listener is unaware of how to handle a dictionary entry and has no concept of the
+difference between compiling and interpreting.</p>
+<p>The actual work is handled by something we call <em>class handlers</em>.</p>
+<p>Each dictionary header contains a variety of information:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Offset</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>link to previous</td>
+</tr>
+<tr><td>1</td>
+<td>class handler</td>
+</tr>
+<tr><td>2</td>
+<td>xt</td>
+</tr>
+<tr><td>3+</td>
+<td>name of function</td>
+</tr>
+</tbody>
+</table>
+<p>When a token is found, the listener pushes the contents of the xt field and the
+class handler field to the stack, then calls the <strong>withClass</strong> function. This then
+calls the <em>class handler</em> function, which does something with the <em>xt</em> (pointer
+to the actual compiled code or data).</p>
+<p>So, when you enter:</p>
+<pre class="literal-block">
+1 2 +
+</pre>
+<p>What actually happens is this:</p>
+<ol class="arabic simple">
+<li>The listener tries to find <em>1</em> in the dictionary. This fails, so <em>1</em> is pushed
+to the stack, and the <em>.data</em> class handler is pushed to the stack. <em>withClass</em>
+then passes control to <em>.data</em>.</li>
+<li>The <em>.data</em> class looks at the <em>compiler</em> variable, sees that it's off, and then
+leaves the <em>1</em> on the stack.</li>
+<li>This is repeated for the <em>2</em>.</li>
+<li>When <strong>+</strong> is encountered, it is found to exist in the dictionary. The <em>xt</em> is
+pushed to the stack, and the <em>.word</em> class handler is pushed. Then <em>withClass</em>
+is called.</li>
+<li><em>withClass</em> passes control to <em>.word</em>, which checks <em>compiler</em>, sees that it is
+off, and then calls the <em>xt</em> corresponding to the definition of <strong>+</strong>.</li>
+</ol>
+<p>When you create a definition, the flow is altered slightly:</p>
+<ol class="arabic simple">
+<li>The listener tries to find <em>1</em> in the dictionary. This fails, so <em>1</em> is pushed
+to the stack, and the <em>.data</em> class handler is pushed to the stack. <em>withClass</em>
+then passes control to <em>.data</em>.</li>
+<li>The <em>.data</em> class looks at the <em>compiler</em> variable, sees that it's on, and lays
+down the code needed to push <em>1</em> to the stack.</li>
+<li>This is repeated for the <em>2</em>.</li>
+<li>When <em>+</em> is encountered, it is found to exist in the dictionary. The <em>xt</em> is
+pushed to the stack, and the <em>.word</em> class handler is pushed. Then <em>withClass</em>
+is called.</li>
+<li><em>withClass</em> passes control to <em>.word</em>, which checks <em>compiler</em>, sees that it is
+on, so compiles the necessary code to call the <em>xt</em> corresponding to the
+definition of <em>+</em>.</li>
+</ol>
+<p>This model differs from Forth (and most other languages) in that the listener is
+kept out of the loop. All actions are handled by the function classes. A useful
+side effect is that additional classes can be created at any time, and assigned
+to any named functions or data structures.</p>
+<p>The following classes are defined by default:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>.word</td>
+<td>This is the class handler for normal functions. If the
+<em>compiler</em> is off, it executes the function passed to it.
+If the <em>compiler</em> is on, it compiles a call to the
+function.</td>
+</tr>
+<tr><td>.compiler</td>
+<td>This class handler is used for functions that act as
+compile-time macros. The function pointer is executed if
+the <em>compiler</em> is on. If off, it ignores pointer.</td>
+</tr>
+<tr><td>.primitive</td>
+<td>Used for a small set of functions that can map directly to
+Ngaro instructions. This acts the same as <em>.word</em>, but
+inlines the machine code at compile time rather than lay
+down a call.</td>
+</tr>
+<tr><td>.macro</td>
+<td>Used for general macros. Functions with this class are
+always executed.</td>
+</tr>
+<tr><td>.data</td>
+<td>This is used for data structures. If <em>compiler</em> is off, it
+leaves the pointer on the stack. If the <em>compiler</em> is on
+this compiles the value into another function.</td>
+</tr>
+<tr><td>.parse</td>
+<td>Special class used for <em>parsing prefixes</em>. Acts the same
+as <em>.macro</em></td>
+</tr>
+</tbody>
+</table>
+<p>By default, colon definitions are given a class of <em>.word</em>, and entries made
+by <strong>create</strong>, <strong>variable</strong>, and <strong>constant</strong> get a class of <em>.data</em>. To assign
+the <em>.macro</em> class or the <em>.compiler</em> class, use either <strong>immediate</strong> or
+<strong>compile-only</strong> after the <strong>;</strong>.</p>
+</div>
+<div class="section" id="data-structures">
+<h2>Data Structures</h2>
+<p>You can create named data structures using <strong>create</strong>, <strong>variable</strong>,
+<strong>variable:</strong>, <strong>variables|</strong>, <strong>constant</strong>, and <strong>elements</strong>.</p>
+<div class="section" id="constants">
+<h3>Constants</h3>
+<p>These are the simplest data structure. The <em>xt</em> is set to a value, which is
+either left on the stack or compiled into a definition.</p>
+<pre class="literal-block">
+100 constant ONE-HUNDRED
+</pre>
+<p>By convention, constants in Retro should have names in all uppercase.</p>
+</div>
+<div class="section" id="variables">
+<h3>Variables</h3>
+<p>A variable is a named pointer to a memory location holding a value that may change
+over time. Retro provides two ways to create a variable:</p>
+<pre class="literal-block">
+variable a
+</pre>
+<p>The first, using <strong>variable</strong>, creates a name and allocates one cell for storage.
+The memory is initialized to zero.</p>
+<pre class="literal-block">
+10 variable: b
+</pre>
+<p>The second, <strong>variable:</strong>, takes a value from the stack, and creates a name,
+allocates one cell for storage, and then initializes it to the value specified.
+This is cleaner than doing:</p>
+<pre class="literal-block">
+variable a
+10 a !
+</pre>
+<p>If you are creating a series of variables, you can simplify the declaration by
+using <strong>variables|</strong>:</p>
+<pre class="literal-block">
+variables| a b c d e |
+</pre>
+</div>
+<div class="section" id="custom-structures">
+<h3>Custom Structures</h3>
+<p>You can also create custom data structures by creating a name, and allocating
+space yourself. For instance:</p>
+<pre class="literal-block">
+create test
+  10 , 20 , 30 ,
+</pre>
+<p>This would create a data structure named <em>test</em>, with three values, initialized
+to 10, 20, and 30. The values would be stored in consecutive memory locations.
+If you want to allocate a buffer, you could use <strong>allot</strong> here:</p>
+<pre class="literal-block">
+create buffer
+  2048 allot
+</pre>
+<p>The use of <strong>allot</strong> reserves space, and initializes the space to zero.</p>
+</div>
+<div class="section" id="elements">
+<h3>Elements</h3>
+<p>Elements are a hybrid between variables and custom data structures. They create
+a series of names that point to consecutive cells in memory.</p>
+<pre class="literal-block">
+3 elements a b c
+
+100 a !
+200 b !
+300 c !
+
+a &#64;+ putn
+&gt;&gt;&gt; 100
+&#64;+ putn
+&gt;&gt;&gt; 200
+&#64; putn
+&gt;&gt;&gt; 300
+</pre>
+</div>
+<div class="section" id="strings">
+<h3>Strings</h3>
+<p>In addition to the basic data structures above, Retro also provides support for
+string data.</p>
+<p>Creating a string simply requires wrapping text with quotation marks:</p>
+<pre class="literal-block">
+&quot;this is a string&quot;
+&quot;  this string has leading and trailing spaces  &quot;
+</pre>
+<p>When creating strings, Retro uses a floating, rotating buffer for temporary
+strings. Strings created in a definition are considered permanent.</p>
+<p>You can obtain the length of a string using either <strong>getLength</strong> or <strong>withLength</strong>:</p>
+<pre class="literal-block">
+&quot;this is a string&quot; getLength
+&quot;this is also a string&quot; withLength
+</pre>
+<p><strong>getLength</strong> will consume the string pointer, while <strong>withLength</strong> preserves it.</p>
+</div>
+<div class="section" id="comparisons">
+<h3>Comparisons</h3>
+<p>Strings can be compared using <strong>compare</strong>:</p>
+<pre class="literal-block">
+&quot;test 1&quot;  &quot;test 2&quot;  compare  putn
+&gt;&gt;&gt; 0
+&quot;test&quot;  &quot;test&quot;  compare  putn
+&gt;&gt;&gt; -1
+</pre>
+<p>The comparisons are case sensitive.</p>
+</div>
+<div class="section" id="searching">
+<h3>Searching</h3>
+<div class="section" id="for-a-substring">
+<h4>For a Substring</h4>
+<p>Substrings can be located using <strong>^strings'search</strong>. This will return a pointer
+to the location of the substring or a flag of 0 if the substring is not found.</p>
+<pre class="literal-block">
+&quot;this is a long string&quot;
+&quot;a long&quot; ^strings'search
+.s puts
+</pre>
+</div>
+<div class="section" id="for-a-character">
+<h4>For a Character</h4>
+<p>Searching for specific characters in a string is done using <strong>^strings'findChar</strong>.
+This will return a pointer to the string starting with the character, or a flag
+if 0 if the character is not found.</p>
+<pre class="literal-block">
+&quot;this is a string&quot;
+'a ^strings'findChar
+.s puts
+</pre>
+</div>
+</div>
+<div class="section" id="extracting-a-substring">
+<h3>Extracting a Substring</h3>
+<p>Retro provides three functions for splitting strings.</p>
+<p>The first, <strong>^strings'getSubset</strong>, takes a string, a starting offset, and a
+length. It then returns a new string based on the provided values.</p>
+<pre class="literal-block">
+&quot;this is a string&quot;
+5 8 ^strings'getSubset
+.s puts
+</pre>
+<p>The other two are <strong>^strings'splitAtChar</strong> and <strong>^strings'splitAtChar:</strong>. The
+first form takes a string and character from the stack and returns two
+strings. The second takes a string and parses for a character.</p>
+<pre class="literal-block">
+&quot;This is a test. So is this&quot; '. ^strings'splitAtChar  puts puts
+&quot;This is a test. So is this&quot; ^strings'splitAtChar: .  puts puts
+</pre>
+</div>
+<div class="section" id="trim-whitespace">
+<h3>Trim Whitespace</h3>
+<p>Leading whitespace can be removed with <strong>^strings'trimLeft</strong> and trailing
+whitespace with <strong>^strings'trimRight</strong>.</p>
+<pre class="literal-block">
+: foo
+  cr &quot;    apples&quot;   ^strings'trimLeft puts
+     &quot;are good!   &quot; ^strings'trimRight puts
+  100 putn ;
+foo
+</pre>
+</div>
+<div class="section" id="append-and-prepend">
+<h3>Append and Prepend</h3>
+<p>To append strings, use <strong>^string'append</strong>. This consumes two strings, returning
+a new string starting with the first and ending with the second.</p>
+<pre class="literal-block">
+&quot;hello,&quot;  &quot; world!&quot; ^strings'append puts
+</pre>
+<p>A variant exists for placing the second string first. This is
+<strong>^strings'prepend</strong>.</p>
+<pre class="literal-block">
+: sayHelloTo ( $- ) &quot;hello, &quot; ^strings'prepend puts cr ;
+&quot;world&quot; sayHelloTo
+</pre>
+</div>
+<div class="section" id="case-conversion">
+<h3>Case Conversion</h3>
+<p>To convert a string to uppercase, use <strong>^strings'toUpper</strong>.</p>
+<pre class="literal-block">
+&quot;hello&quot; ^strings'toUpper puts
+</pre>
+<p>To convert a string to lowercase, use <strong>^strings'toLower</strong>.</p>
+<pre class="literal-block">
+&quot;Hello Again&quot; ^strings'toLower puts
+</pre>
+</div>
+<div class="section" id="reversal">
+<h3>Reversal</h3>
+<p>To reverse the order of the text in a string, use <strong>^strings'reverse</strong>.</p>
+<pre class="literal-block">
+&quot;hello, world!&quot; ^strings'reverse puts
+</pre>
+</div>
+<div class="section" id="implementation-notes">
+<h3>Implementation Notes</h3>
+<p>Strings in Retro are null-terminated. They are stored in the image memory. E.g.,
+assuming a starting address of 12345 and a string of &quot;hello&quot;, it will look like
+this in memory:</p>
+<pre class="literal-block">
+12345 h
+12346 e
+12347 l
+12348 l
+12349 o
+12350 0
+</pre>
+<p>You can pass pointers to a string on the stack.</p>
+</div>
+</div>
+<div class="section" id="prefixes">
+<h2>Prefixes</h2>
+<p>Before going further, let's consider the use of prefixes in Retro. The earlier
+examples involving variables used <strong>&#64;</strong> and <strong>!</strong> (for <em>fetch</em> and <em>store</em>) to access
+and modify values. Retro allows these actions to be bound to a name more tightly:</p>
+<pre class="literal-block">
+variable a
+variable b
+
+100 !a
+&#64;a !b
+</pre>
+<p>This would be functionally the same as:</p>
+<pre class="literal-block">
+variable a
+variable b
+
+100 a !
+a &#64; b !
+</pre>
+<p>You can mix these models freely, or just use what you prefer. I personally find
+that the prefixes make things slightly clearer, but most of them are completely
+optional <a class="footnote-reference" href="#id9" id="id3">[3]</a>.</p>
+<p>Other prefixes include:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&amp;</td>
+<td>Return a pointer to a function or data structure</td>
+</tr>
+<tr><td><tt class="docutils literal">+</tt></td>
+<td>Add TOS to the value stored in a variable</td>
+</tr>
+<tr><td><tt class="docutils literal">-</tt></td>
+<td>Subtract TOS from the value stored in a variable</td>
+</tr>
+<tr><td>&#64;</td>
+<td>Return the value stored in a variable</td>
+</tr>
+<tr><td>!</td>
+<td>Store TOS into a variable</td>
+</tr>
+<tr><td>^</td>
+<td>Access a function or data element in a vocabulary</td>
+</tr>
+<tr><td>'</td>
+<td>Return ASCII code for following character</td>
+</tr>
+<tr><td>$</td>
+<td>Parse number as hexadecimal</td>
+</tr>
+<tr><td>#</td>
+<td>Parse number as decimal</td>
+</tr>
+<tr><td>%</td>
+<td>Parse number as binary</td>
+</tr>
+<tr><td>&quot;</td>
+<td>Parse and return a string</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="quotes">
+<h2>Quotes</h2>
+<p>In addition to colon definitions, Retro also provides support for anonymous,
+nestable blocks of code called <em>quotes</em>. These can be created inside definitions,
+or at the interpreter.</p>
+<p>Quotes are essential in Retro as they form the basis for conditional execution,
+loops, and other forms of flow control.</p>
+<p>To create a quote, simply wrap a sequence of code in square brackets:</p>
+<pre class="literal-block">
+[ 1 2 + putn ]
+</pre>
+<p>To make use of quotes, Retro provides <em>combinators</em>.</p>
+</div>
+<div class="section" id="combinators">
+<h2>Combinators</h2>
+<p>A combinator is a function that consumes functions as input. These are
+divided into three primary types: compositional, execution flow, and data
+flow <a class="footnote-reference" href="#id10" id="id4">[4]</a>.</p>
+<div class="section" id="compositional">
+<h3>Compositional</h3>
+<p>A compositional combinator takes elements from the stack and returns a
+new quote.</p>
+<p><strong>cons</strong> takes two values from the stack and returns a new quote that
+will push these values to the stack when executed.</p>
+<pre class="literal-block">
+1 2 cons
+</pre>
+<p>Functionally, this is the same as:</p>
+<pre class="literal-block">
+[ 1 2 ]
+</pre>
+<p><strong>take</strong> pulls a value and a quote from the stack and returns a new
+quote executing the specified quote before pushing the value to the
+stack.</p>
+<pre class="literal-block">
+4 [ 1+ ] take
+</pre>
+<p>Functionally this is the same as:</p>
+<pre class="literal-block">
+[ 1+ 4 ]
+</pre>
+<p><strong>curry</strong> takes a value and a quote and returns a new quote applying
+the specified quote to the specified value. As an example,</p>
+<pre class="literal-block">
+: acc ( n- )  here swap , [ dup ++ &#64; ] curry ;
+</pre>
+<p>This would create an accumulator function, which takes an initial value
+and returns a quote that will increase the accumulator by 1 each time it
+is invoked. It will also return the latest value. So:</p>
+<pre class="literal-block">
+10 acc
+dup do putn
+dup do putn
+dup do putn
+</pre>
+</div>
+<div class="section" id="execution-flow">
+<h3>Execution Flow</h3>
+<p>Combinators of this type execute other functions.</p>
+<div class="section" id="fundamental">
+<h4>Fundamental</h4>
+<p><strong>do</strong> takes a quote and executes it immediately.</p>
+<pre class="literal-block">
+[ 1 putn ] do
+&amp;words do
+</pre>
+</div>
+<div class="section" id="conditionals">
+<h4>Conditionals</h4>
+<p>Retro provides four combinators for use with conditional execution of
+quotes. These are <strong>if</strong>, <strong>ifTrue</strong>, <strong>ifFalse</strong>, and <strong>when</strong>.</p>
+<p><strong>if</strong> takes a flag and two quotes from the stack. If the flag is
+<em>true</em>, the first quote is executed. If false, the second quote is
+executed.</p>
+<pre class="literal-block">
+-1 [ &quot;true\n&quot; puts ] [ &quot;false\n&quot; puts ] if
+ 0 [ &quot;true\n&quot; puts ] [ &quot;false\n&quot; puts ] if
+</pre>
+<p><strong>ifTrue</strong> takes a flag and one quote from the stack. If the flag is true,
+the quote is executed. If false, the quote is discarded.</p>
+<pre class="literal-block">
+-1 [ &quot;true\n&quot; puts ] ifTrue
+ 0 [ &quot;true\n&quot; puts ] ifTrue
+</pre>
+<p><strong>ifFalse</strong> takes a flag and one quote from the stack. If the flag is false,
+the quote is executed. If true, the quote is discarded.</p>
+<pre class="literal-block">
+-1 [ &quot;false\n&quot; puts ] ifFalse
+ 0 [ &quot;false\n&quot; puts ] ifFalse
+</pre>
+<p><strong>when</strong> takes a number and two quotes. The number is duplicated, and the
+first quote is executed. If it returns true, the second quote is executed.
+If false, the second quote is discarded.</p>
+<p>Additionally, if the first quote is true, <strong>when</strong> will exit the calling
+function, but if false, it returns to the calling function.</p>
+<pre class="literal-block">
+: test ( n- )
+  [ 1 = ] [ drop &quot;Yes\n&quot; puts ] when
+  [ 2 = ] [ drop &quot;No\n&quot; puts  ] when
+  drop &quot;No idea\n&quot; puts ;
+</pre>
+</div>
+<div class="section" id="looping">
+<h4>Looping</h4>
+<p>Several combinators are available for handling various looping constructs.</p>
+<p><strong>while</strong> takes a quote from the stack and executes it repeatedly as long
+as the quote returns a <em>true</em> flag on the stack. This flag must be well
+formed and equal <em>-1</em>.</p>
+<pre class="literal-block">
+10 [ dup putn space 1- dup 0 &lt;&gt; ] while
+</pre>
+<p><strong>times</strong> takes a count and quote from the stack. The quote will be executed
+the number of times specified. No indexes are pushed to the stack.</p>
+<pre class="literal-block">
+1 10 [ dup putn space 1+ ] times
+</pre>
+<p>The <strong>iter</strong> and <strong>iterd</strong> varients act similarly, but do push indexes to
+the stacks. <strong>iter</strong> counts up from 0, and <strong>iterd</strong> counts downward to 1.</p>
+<pre class="literal-block">
+10 [ putn space ] iter
+10 [ putn space ] iterd
+</pre>
+</div>
+<div class="section" id="data-flow">
+<h4>Data Flow</h4>
+<p>These combinators exist to simplify stack usage in various circumstances.</p>
+</div>
+<div class="section" id="preserving">
+<h4>Preserving</h4>
+<p>Preserving combinators execute code while preserving portions of the data stack.</p>
+<p><strong>dip</strong> takes a value and a quote, moves the value off the main stack
+temporarily, executes the quote, and then restores the value.</p>
+<pre class="literal-block">
+10 20 [ 1+ ] dip
+</pre>
+<p>Would yield the following on the stack:</p>
+<pre class="literal-block">
+11 20
+</pre>
+<p>This is functionally the same as doing:</p>
+<pre class="literal-block">
+10 20 push 1+ pop
+</pre>
+<p><strong>sip</strong> is similar to <strong>dip</strong>, but leaves a copy of the original value on
+the stack during execution of the quote. So:</p>
+<pre class="literal-block">
+10 [ 1+ ] sip
+</pre>
+<p>Leaves us with:</p>
+<pre class="literal-block">
+11 10
+</pre>
+<p>This is functionally the same as:</p>
+<pre class="literal-block">
+10 dup 1+ swap
+</pre>
+</div>
+<div class="section" id="cleave">
+<h4>Cleave</h4>
+<p>Cleave combinators apply multiple quotations to a single value or set
+of values.</p>
+<p><strong>bi</strong> takes a value and two quotes, it then applies each quote to a
+copy of the value.</p>
+<pre class="literal-block">
+100 [ 1+ ] [ 1- ] bi
+</pre>
+<p><strong>tri</strong> takes a value and three quotes. It then applies each quote to a
+copy of the value.</p>
+<pre class="literal-block">
+100 [ 1+ ] [ 1- ] [ dup * ] tri
+</pre>
+</div>
+<div class="section" id="spread">
+<h4>Spread</h4>
+<p>Spread combinators apply multiple quotations to multiple values. The asterisk
+suffixed to these function names signifies that they are spread combinators.</p>
+<p><strong>bi*</strong> takes two values and two quotes. It applies the first quote to the
+first value and the second quote to the second value.</p>
+<pre class="literal-block">
+1 2 [ 1+ ] [ 2 * ] bi*
+</pre>
+<p><strong>tri*</strong> takes three values and three quotes, applying the first quote to
+the first value, the second quote to the second value, and the third quote
+to the third value.</p>
+<pre class="literal-block">
+1 2 3 [ 1+ ] [ 2 * ] [ 1- ] tri*
+</pre>
+</div>
+<div class="section" id="apply">
+<h4>Apply</h4>
+<p>Apply combinators apply a single quotation to multiple values. The at sign
+suffixed to these function names signifies that they are apply combinators.</p>
+<p><strong>bi&#64;</strong> takes two values and a quote. It then applies the quote to each value.</p>
+<pre class="literal-block">
+1 2 [ 1+ ] bi&#64;
+</pre>
+<p><strong>tri&#64;</strong> takes three values and a quote. It then applies the quote to each
+value.</p>
+<pre class="literal-block">
+1 2 3 [ 1+ ] tri&#64;
+</pre>
+<p><strong>each&#64;</strong> takes a pointer, a quote, and a type constant. It then applies the
+quote to each value in the pointer. In the case of a linear buffer, it also
+takes a length.</p>
+<pre class="literal-block">
+( arrays )
+create a 3 , ( 3 items ) 1 , 2 , 3 ,
+a [ &#64; putn space ] ^types'ARRAY each&#64;
+
+( buffer )
+&quot;hello&quot; withLength [ &#64; putc ] ^types'BUFFER each&#64;
+
+( string )
+&quot;HELLO&quot; [ &#64; putc ] ^types'STRING each&#64;
+
+( linked list )
+last [ &#64; d-&gt;name puts space ] ^types'LIST each&#64;
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>Conditionals</h2>
+<p>Retro has a number of functions for implementing comparisons and conditional
+execution of code.</p>
+<div class="section" id="id6">
+<h3>Comparisons</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="18%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>=</td>
+<td>ab-f</td>
+<td>compare a == b</td>
+</tr>
+<tr><td>&gt;</td>
+<td>ab-f</td>
+<td>compare a &gt; b</td>
+</tr>
+<tr><td>&lt;</td>
+<td>ab-f</td>
+<td>compare a &lt; b</td>
+</tr>
+<tr><td>&gt;=</td>
+<td>ab-f</td>
+<td>compare a &gt;= b</td>
+</tr>
+<tr><td>&lt;=</td>
+<td>ab-f</td>
+<td>compare a &lt;= b</td>
+</tr>
+<tr><td>&lt;&gt;</td>
+<td>ab-f</td>
+<td>compare a &lt;&gt; b</td>
+</tr>
+<tr><td>compare</td>
+<td>$$-f</td>
+<td>compare two strings</td>
+</tr>
+<tr><td>if;</td>
+<td>f-</td>
+<td>if flag is true, exit function</td>
+</tr>
+<tr><td>0;</td>
+<td>n-?</td>
+<td>if n &lt;&gt; 0, leave n on stack and continue
+if n = 0, drop n and exit function</td>
+</tr>
+<tr><td>if</td>
+<td>fqq-</td>
+<td>Execute one of two quotes depending on
+value of flag</td>
+</tr>
+<tr><td>ifTrue</td>
+<td>fq-</td>
+<td>Execute quote if flag is not zero</td>
+</tr>
+<tr><td>ifFalse</td>
+<td>fq-</td>
+<td>Execute quote if flag is zero</td>
+</tr>
+<tr><td>when</td>
+<td>nqq-n</td>
+<td>Execute second quote if first quote
+returns true. Exits caller if second
+quote is executed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="namespaces">
+<h2>Namespaces</h2>
+<p>Sometimes you will want to hide some functions or data structures from the
+main dictionary. This is done by wrapping the code in question in double
+curly braces:</p>
+<pre class="literal-block">
+23 constant foo
+
+{{
+  1 constant ONE
+  2 constant TWO
+  : foo ONE TWO + ;
+  foo
+}}
+
+foo  ( refers to the first foo; the second foo is now hidden )
+</pre>
+<p>When the closing braces are encountered, the headers for the functions following
+the opening braces are hidden.</p>
+<p>If you want to hide some functions, but reveal others, you can add <strong>---reveal---</strong>
+into the mix:</p>
+<pre class="literal-block">
+{{
+  1 constant ONE
+  2 constant TWO
+---reveal---
+  : foo ONE TWO + ;
+}}
+</pre>
+<p>At this point, <em>foo</em> would be visible, but the constants would be hidden.</p>
+</div>
+<div class="section" id="vocabularies">
+<h2>Vocabularies</h2>
+<p>Vocabularies allow grouping of related functions and data, and selectively
+exposing them. Active vocabularies are searched before the main dictionary
+and the order for searching is configurable at runtime.</p>
+<div class="section" id="creation">
+<h3>Creation</h3>
+<pre class="literal-block">
+chain: name'
+  ...functions...
+;chain
+</pre>
+<p>Vocabulary names should generally be lowercase, and should end with a single
+apostrophe.</p>
+</div>
+<div class="section" id="exposing-and-hiding">
+<h3>Exposing and Hiding</h3>
+<p>Use <strong>with</strong> to add a vocabulary to the search order. The most recently
+exposed vocabularies are searched first, with the global dictionary
+searched last.</p>
+<pre class="literal-block">
+with console'
+</pre>
+<p>The most recent vocabulary can be closed using <strong>without</strong>.</p>
+<pre class="literal-block">
+without
+</pre>
+<p>You can also close all vocabularies using <strong>global</strong>.</p>
+<pre class="literal-block">
+global
+</pre>
+<p>As a simplification, you can reset the search order and load a series
+of vocabularies using  <strong>with|</strong>:</p>
+<pre class="literal-block">
+with| console' files' strings' |
+</pre>
+</div>
+<div class="section" id="direct-access">
+<h3>Direct Access</h3>
+<p>It is possible to directly use functions and variables in a vocabulary
+using the <strong>^</strong> prefix.</p>
+<pre class="literal-block">
+^vocabulary'function
+</pre>
+<p>As an example:</p>
+<pre class="literal-block">
+: redWords ^console'red words ^console'normal ;
+</pre>
+<p>This is recommended over exposing a full vocabulary as it keeps the
+exposed functions down, helping to avoid naming conflicts.</p>
+</div>
+</div>
+<div class="section" id="vectored-execution">
+<h2>Vectored Execution</h2>
+<p>One of the design goals of Retro is flexibility. And one way this is achieved is
+by allowing existing colon definitions to be replaced with new code. We call this
+<em>revectoring</em> a definition.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="10%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>:is</td>
+<td>aa-</td>
+<td>Assign the function (a2) to act as (a1)</td>
+</tr>
+<tr><td>:devector</td>
+<td>a-</td>
+<td>Restore the original definition of (a)</td>
+</tr>
+<tr><td>is</td>
+<td>a&quot;-</td>
+<td>Parse for a function name and set it to act as (a)</td>
+</tr>
+<tr><td>devector</td>
+<td>&quot;-</td>
+<td>Parse for a function name and restore the original
+definition</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<pre class="literal-block">
+: foo ( -n ) 100 ;
+: bar ( -  ) foo 10 + putn ;
+bar
+&gt;&gt;&gt; 110
+[ 20 ] is foo
+bar
+&gt;&gt;&gt; 30
+devector foo
+bar
+&gt;&gt;&gt; 110
+</pre>
+<p>This technique is used to allow for fixing of buggy code in existing images
+and adding new functionality.</p>
+</div>
+<div class="section" id="input-and-output">
+<h2>Input and Output</h2>
+<p>Getting away from the quotes, combinators, compiler, and other bits, let's take
+a short look at input and output options.</p>
+<div class="section" id="console">
+<h3>Console</h3>
+<p>At the listener level, Retro provides a few basic functions for reading and
+displaying data.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="10%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>getc</td>
+<td>-c</td>
+<td>Read a single keypress</td>
+</tr>
+<tr><td>accept</td>
+<td>c-</td>
+<td>Read a string into the text input buffer</td>
+</tr>
+<tr><td>getToken</td>
+<td>-$</td>
+<td>Read a whitespace delimited token and return a pointer</td>
+</tr>
+<tr><td>putc</td>
+<td>c-</td>
+<td>Display a single character</td>
+</tr>
+<tr><td>puts</td>
+<td>$-</td>
+<td>Display a string</td>
+</tr>
+<tr><td>clear</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Clear the display</td>
+</tr>
+<tr><td>space</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display a blank space</td>
+</tr>
+<tr><td>cr</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Move cursor to the next line</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>puts</strong> function handles a number of escape sequences to allow for formatted
+output.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Code</th>
+<th class="head">Use</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>n</td>
+<td>newline</td>
+</tr>
+<tr><td>[</td>
+<td>ASCII 27, followed by [</td>
+</tr>
+<tr><td>\</td>
+<td>Display a </td>
+</tr>
+<tr><td>'</td>
+<td>Display a &quot;</td>
+</tr>
+<tr><td>%d</td>
+<td>Display a number from the stack (decimal)</td>
+</tr>
+<tr><td>%o</td>
+<td>Display a number from the stack (octal)</td>
+</tr>
+<tr><td>%x</td>
+<td>Display a number from the stack (hexadecimal)</td>
+</tr>
+<tr><td>%s</td>
+<td>Display a string from the stack</td>
+</tr>
+<tr><td>%c</td>
+<td>Display a character from the stack</td>
+</tr>
+<tr><td>%%</td>
+<td>Display a %</td>
+</tr>
+</tbody>
+</table>
+<p>As an example:</p>
+<pre class="literal-block">
+3 1 2 &quot;%d + %d = %d\n&quot; puts
+&gt;&gt;&gt; 2 + 1 = 3
+
+: I'm ( &quot;- )
+  getToken &quot;\nHello %s, welcome back.\n&quot; puts ;
+
+I'm crc
+&gt;&gt;&gt; Hello crc, welcome back
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="footnotes">
+<h1>Footnotes</h1>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>With some VM implementations, Retro will not process the input until
+the enter key is pressed. This is system-level buffering, and is not
+the standard Retro behavior. There are external tools included with
+Retro to alter the behavior to match the standard.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>You can not use Retro with tools like <em>rlwrap</em>, and editing is limited
+to use of backspace. The arrow keys are not supported by Retro.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>The exceptions here would be the <em>&amp;</em> prefix for obtaining a pointer inside
+a definition and the <em>&quot;</em> prefix for parsing strings. All of the others can
+be worked around or ignored easily.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id10" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>The terminology and some function names are borrowed from the Factor
+language.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

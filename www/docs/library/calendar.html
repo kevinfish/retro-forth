@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>calendar'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="calendar">
+<h1 class="title">calendar'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This vocabulary provides support for doing calculations involving time
+and dates.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="11%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>MINUTES/WEEK</td>
+<td>-n</td>
+<td>Number of minutes in a week</td>
+</tr>
+<tr><td>MINUTES/DAY</td>
+<td>-n</td>
+<td>Number of minutes in a day</td>
+</tr>
+<tr><td>MINUTES/HOUR</td>
+<td>-n</td>
+<td>Number of minutes in an hour</td>
+</tr>
+<tr><td>HOURS/DAY</td>
+<td>-n</td>
+<td>Number of hours in a day</td>
+</tr>
+<tr><td>DAYS/WEEK</td>
+<td>-n</td>
+<td>Number of days in a week</td>
+</tr>
+<tr><td>DAYS/YEAR</td>
+<td>-n</td>
+<td>Number of days in a typical year</td>
+</tr>
+<tr><td>WEEKS/YEAR</td>
+<td>-n</td>
+<td>Number of weeks in a year</td>
+</tr>
+<tr><td>SECONDS/MINUTE</td>
+<td>-n</td>
+<td>Number of seconds in a minute</td>
+</tr>
+<tr><td>SECONDS/HOUR</td>
+<td>-n</td>
+<td>Number of seconds in an hour</td>
+</tr>
+<tr><td>SECONDS/DAY</td>
+<td>-n</td>
+<td>Number of seconds in a day</td>
+</tr>
+<tr><td>dayToName</td>
+<td>n-$</td>
+<td>Convert the number of a day to a
+three letter abbreviation</td>
+</tr>
+<tr><td>daysPerMonth</td>
+<td>m-n</td>
+<td>Return the number of days in a given
+month</td>
+</tr>
+<tr><td>secondsPerMonth</td>
+<td>m-n</td>
+<td>Return the number of seconds in a
+given month</td>
+</tr>
+<tr><td>isLeapYear?</td>
+<td>y-f</td>
+<td>Return true (-1) if the year is a
+leap year or false (0) otherwise</td>
+</tr>
+<tr><td>secondsPerYear</td>
+<td>y-n</td>
+<td>Return the number of seconds in a
+given year</td>
+</tr>
+<tr><td>toJulian</td>
+<td>dmy-j</td>
+<td>Convert a date into a Julian day</td>
+</tr>
+<tr><td>toDayOfWeek</td>
+<td>dmy-n</td>
+<td>Convert a date to the numeric day of
+the week</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

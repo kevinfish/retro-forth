@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>struct'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="struct">
+<h1 class="title">struct'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This vocabulary provides support for creating and using simple data
+structures.</p>
+</div>
+<div class="section" id="example">
+<h1>Example</h1>
+<pre class="literal-block">
+with struct'
+
+{
+  1 field .id
+  4 field .initials
+  1 field .jobcode
+} employee
+
+( The above could also be written as: )
+{ 3 fields .id 4 .initials .jobcode } employee
+
+employee Fred
+1 Fred !.id
+&quot;fjh&quot; Fred .initials 3 copy
+22 Fred !.jobcode
+
+employee Sue
+2 Sue !.id
+&quot;sjs&quot; Sue .initials 3 copy
+91 Sue !.jobcode
+
+Fred &#64;.id putn
+Sue &#64;.id putn
+Sue .initials puts
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>{</td>
+<td>-n</td>
+<td>Start a new structure</td>
+</tr>
+<tr><td>field</td>
+<td>nn&quot;-n</td>
+<td>Add a field to a structure. Takes the number of cells to
+allocate and parses for a name</td>
+</tr>
+<tr><td>fields</td>
+<td>n&quot;-n</td>
+<td>Add multiple fields to a structure. Takes the number of
+fields and parses for names and optionally sizes.</td>
+</tr>
+<tr><td>}</td>
+<td>n&quot;-</td>
+<td>End a structure. Parses for the structure name</td>
+</tr>
+<tr><td>size</td>
+<td>a-n</td>
+<td>Return the size of a structure. The address must be the
+address of the function created by <strong>}</strong>, not the actual
+allocated structure.</td>
+</tr>
+<tr><td>clone</td>
+<td>a-a</td>
+<td>Given a structure address, return a new anonyous instance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+needs math'
+
+chain: double'
+  : s>d     ( n-dd )  dup 0 < [ -1 ] [ 0 ] if ;
+  : d+      ( dd-d )  [ rot over + [  > [ 1+ ] ifTrue  ] sip swap ] dip + ;
+  : m+      ( nd-d )  s>d d+ ;
+  : d2*     (  d-d )  2over d+ ;
+  : dnegate (  d-d )  [ not ] bi@ 1 0 d+ ;
+  : dabs    (  d-d )  dup 0 < [ dnegate ] ifTrue ;
+;chain
+
+
+doc{
+=======
+double'
+=======
+
+--------
+Overview
+--------
+This library provides functions for creating and working with double-cell values.
+The functions here are based on the equivilent functions from ANS Forth.
+
+---------
+Functions
+---------
+
++------------------+-------+-------------------------------------------------+
+| Name             | Stack | Usage                                           |
++==================+=======+=================================================+
+| s>d              | n-d   | Convert a single cell value into a double cell  |
+|                  |       | value                                           |
++------------------+-------+-------------------------------------------------+
+| d+               | dd-d  | Add two double cell values                      |
++------------------+-------+-------------------------------------------------+
+| m+               | nd-d  | Add a single and a double cell value            |
++------------------+-------+-------------------------------------------------+
+| d2*              | d-d   | Multiply a double value by itself               |
++------------------+-------+-------------------------------------------------+
+| dnegate          | d-d   | Invert the sign of a double cell value          |
++------------------+-------+-------------------------------------------------+
+| dabs             | d-d   | Return the absolute value of a double value     |
++------------------+-------+-------------------------------------------------+
+
+;doc
+

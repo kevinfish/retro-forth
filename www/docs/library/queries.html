@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>queries'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="queries">
+<h1 class="title">queries'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library provides symbolic constants and helper functions for
+using the VM queries in a clean, portable manner.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="8%" />
+<col width="51%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>MEMORY-SIZE</td>
+<td>-n</td>
+<td>Query for determining amount
+of memory provided by the
+virtual machine</td>
+</tr>
+<tr><td>CANVAS?</td>
+<td>-n</td>
+<td>Query for determining whether
+the virtual machine provides
+a canvas device</td>
+</tr>
+<tr><td>CANVAS-WIDTH</td>
+<td>-n</td>
+<td>Query returning canvas width</td>
+</tr>
+<tr><td>CANVAS-HEIGHT</td>
+<td>-n</td>
+<td>Query returning canvas height</td>
+</tr>
+<tr><td>STACK-DEPTH</td>
+<td>-n</td>
+<td>Query returning data stack
+depth</td>
+</tr>
+<tr><td>ADDRESS-STACK-DEPTH</td>
+<td>-n</td>
+<td>Query returning address stack
+depth</td>
+</tr>
+<tr><td>MOUSE?</td>
+<td>-n</td>
+<td>Query for determining if the
+virtual machine provides a
+mouse device</td>
+</tr>
+<tr><td>TIME</td>
+<td>-n</td>
+<td>Query returning current time
+in seconds</td>
+</tr>
+<tr><td>QUIT-VM</td>
+<td>-n</td>
+<td>Query to shutdown the virtual
+machine</td>
+</tr>
+<tr><td>HOST-ENVIRONMENT-QUERY</td>
+<td>-n</td>
+<td>Query to lookup and return
+the value of an environment
+variable in the host system</td>
+</tr>
+<tr><td>CONSOLE-WIDTH</td>
+<td>-n</td>
+<td>Query returning the console
+width</td>
+</tr>
+<tr><td>CONSOLE-HEIGHT</td>
+<td>-n</td>
+<td>Query returning the console
+height</td>
+</tr>
+<tr><td>BITS-PER-CELL</td>
+<td>-n</td>
+<td>Query returning the number of
+bits in a cell</td>
+</tr>
+<tr><td>ENDIAN</td>
+<td>-n</td>
+<td>Query returning a flag which
+indicates endian used by the
+virtual machine</td>
+</tr>
+<tr><td>CONSOLE?</td>
+<td>-n</td>
+<td>Query to see if enhanced text
+console is provided</td>
+</tr>
+<tr><td>query</td>
+<td>?-?</td>
+<td>Perform a query. Actual stack
+effect varies by query</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+needs bad'
+
+chain: hex'
+{{
+  : displayHex  ( n- )
+    base [ hex dup $F < [ '0 putc ] ifTrue putn space ] preserve ;
+---reveal---
+  : display  ( n- )
+    ^bad'unpack 2displayHex 2displayHex ;
+}}
+
+
+{{
+  : address  ( a-a )
+    [ base [ hex "%d: " puts ] preserve ] sip ;
+
+  : cells  ( an-a )
+    [ @+ display space ] times ;
+---reveal---
+  : dump  ( na- )
+    cr [ 6 /mod ] dip
+    swap [ address 6 cells cr ] times address swap cells drop ;
+
+  : dump:  ( n"- )
+    ' dump ;
+}}
+;chain
+
+doc{
+====
+hex'
+====
+
+--------
+Overview
+--------
+This vocabulary implements a memory dumping facility.
+
+
+---------
+Functions
+---------
++---------------+-------+-------------------------------------------------+
+| Function      | Stack | Usage                                           |
++===============+=======+=================================================+
+| display       | n-    | Display the hex values of each byte in a cell   |
++---------------+-------+-------------------------------------------------+
+| dump          | na-   | Display n cells as hex values on a byte level   |
++---------------+-------+-------------------------------------------------+
+| dump:         | n"-   | Same as **dump**, but parses for function name  |
++---------------+-------+-------------------------------------------------+
+}doc
+

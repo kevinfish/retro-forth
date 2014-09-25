@@ -1,0 +1,25 @@
+( Tests ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+include sql.rx
+
+with sql'
+
+[ 1024 ] is STRING-LENGTH
+
+: displayQueryResults ( - )
+  loadResults
+  [ cr getRow itemize [ 1- :column "%s|" puts ] iter ] times finished ;
+
+: displayBooksByAuthor ( $- )
+  "select * from catalog where author like '%" ^strings'prepend
+  "%'" ^strings'append submitQuery
+  displayQueryResults ;
+
+: displayBooksByTitle ( $- )
+  "select * from catalog where title like '%" ^strings'prepend
+  "%'" ^strings'append submitQuery
+  displayQueryResults ;
+
+"select * from catalog where id < 100" submitQuery
+displayQueryResults
+
+bye

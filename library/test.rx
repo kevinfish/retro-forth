@@ -1,0 +1,40 @@
+needs assertion'
+with assertion'
+
+chain: test'
+
+  create tests
+    0 , 0 , 0 ,
+
+  : :next  ( a-a )       @ ;
+  : :name  ( a-a )   1+  @ ;
+  : :xt    ( a-a )  2 +  @ ;
+
+  : findLastNode  ( -a ) tests [ dup :next [ :next -1 ] [ 0 ] if ] while ;
+
+  : TEST:  ( "-  )
+    getToken keepString findLastNode here swap ! 0 , , here 1+ , ]] ;
+
+  : IO:    ( "-  )
+    getToken keepString findLastNode here swap ! 0 , , [ ] , ;
+
+  : OMIT:    ( "-  )
+    getToken keepString findLastNode here swap ! 0 , , [ ] , ;
+
+  : listTests
+    tests [ [ @1+ 0; puts space ] [ :next ] bi dup 0 <> ] while ;
+
+  : expected:  ( q"- )
+    getToken drop  ` do
+    [ getToken dup "}" compare [ drop 0 ] [ toNumber .data ` assert= -1 ] if ] while ; immediate
+
+  : runTests
+    cr
+    [ [ "PASS: %s\n" ] [ "FAIL: %s\n" ] if puts ] &postCond :is
+    tests [ [ [ :name ?dup [ "???" ] ifFalse ] [ :xt 0; .assertion ] bi ] [ :next ] bi dup 0 <> ] while
+    &postCond :devector ;
+
+;chain
+
+without
+

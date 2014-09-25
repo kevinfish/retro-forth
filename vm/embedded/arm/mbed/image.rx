@@ -1,0 +1,7 @@
+include mbed.rx
+needs diet'
+^diet'extreme
+here .s
+save
+bye
+

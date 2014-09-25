@@ -1,0 +1,45 @@
+chain: decimal'
+  2 variable: scale
+
+  : split  ( -n )
+    1 @scale [ 10 * ] times ;
+
+  : putn  ( n- )
+    split /mod "%d.%d" puts ;
+;chain
+
+: __d  ( "- )
+  ^strings'splitAtChar: . ^strings'chop ^strings'prepend toNumber ; parsing
+
+doc{
+========
+decimal'
+========
+
+
+--------
+Overview
+--------
+
+This vocabulary provides a prefix and some functions for working with
+simple decimal values. It's not intended as a replacement for fixed or
+floating point math.
+
+
+---------
+Functions
+---------
+
++----------+-------+-------------------------------------------------------+
+| Function | Stack | Usage                                                 |
++==========+=======+=======================================================+
+| __d      | "-n   | Prefix to parse a value like "nn.nnn" into an integer |
++----------+-------+-------------------------------------------------------+
+| putn     | n-    | Display a decimal number, based on **scale**          |
++----------+-------+-------------------------------------------------------+
+| scale    | -a    | Variable containing the number of decimal places      |
++----------+-------+-------------------------------------------------------+
+| split    | -n    | Return a factor to divide by for display/working with |
+|          |       | decimal values                                        |
++----------+-------+-------------------------------------------------------+
+}doc

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>assertion'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="assertion">
+<h1 class="title">assertion'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This vocabulary provides support for testing code in a clean,
+predicatable manner.</p>
+<p>Assertion predicates first check the stack for underflow; if
+the stack is deep enough, their embedded predicates are applied;
+if not, the assertion fails.</p>
+<p>The result of each assertion - including the underflow check -
+is ANDed with the assertionFlag which can then be tested after
+the containing thread has finished executing; this is handled by
+the .assertion word class.</p>
+<p>For custom behaviour, revector preCond and/or postCond; by
+default the pre-condition is an effective nop while the post-
+condition simply prints 'Success' or 'Failure'.</p>
+<p>Given that each assertion predicate mutates assertionFlag, use
+of the word class .assertion is encouraged; this resets the
+assertionFlag before execution and push its final value to the
+stack before calling postCond when the thread exits.</p>
+<p>NOTE: For simplicity of implementation, failure within a word of
+class .assertion will not result in immediate termination;
+instead, the false value of assertionFlag is left to propagate.</p>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+( Our assertions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+( n.b, underflow is dealt with sanely )
+: a1 ( xyz- ) 30 assert= 20 assert= 10 assert= ; assertion
+: a2 (  xy- ) assertTrue assertFalse ; assertion
+: a3 (   x- ) 5 assert&lt; ; assertion
+
+( Simple demo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+: go
+  &quot;\n----------&quot; puts
+  10 20 30 a1
+  30 20 10 a1
+  &quot;\n----------&quot; puts
+  10 a1
+  &quot;\n----------&quot; puts
+  a1
+  &quot;\n----------&quot; puts
+  -1 0 a2
+  0 -1 a2
+  -1 -1 a2
+  -1 a2
+  &quot;\n----------&quot; puts
+  3 a3
+  4 a3
+  5 a3
+  a3
+  &quot;\n----------&quot; puts
+;
+
+clear go
+
+( Adjusting pre- and post- conditions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+: myPreCond .s ;
+: myPostCond [ &quot;Fatal error: assertion failure.&quot; puts bye ] ifFalse ;
+&amp;myPostCond is postCond
+&amp;myPreCond is preCond
+
+( 'go' will now exit on first failure )
+go
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="9%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>assertionFlag</td>
+<td>-a</td>
+<td>Variable. This holds a true (-1) or false (0)
+value indicating whether the current set of
+assertions have passed or failed. The <strong>.assertion</strong>
+class will set this to true automatically.</td>
+</tr>
+<tr><td>assert</td>
+<td>f-</td>
+<td>Updates the <strong>assertionFlag</strong> using bitwise AND</td>
+</tr>
+<tr><td>available</td>
+<td>n-f</td>
+<td>Checks to see if there are at least <em>n</em> items on the
+stack. Returns true if there are, or false otherwise</td>
+</tr>
+<tr><td>assert=</td>
+<td>nn-</td>
+<td>Check to see if two values are equal</td>
+</tr>
+<tr><td>assertFalse</td>
+<td>f-</td>
+<td>Check to see if flag is false (0)</td>
+</tr>
+<tr><td>assertTrue</td>
+<td>f-</td>
+<td>Check to see if flag is true (non-zero)</td>
+</tr>
+<tr><td>assert&gt;</td>
+<td>nn-</td>
+<td>Check to see if n1 is greather than n2</td>
+</tr>
+<tr><td>assert&gt;=</td>
+<td>nn-</td>
+<td>Check to see if n1 is greater than or equal to n2</td>
+</tr>
+<tr><td>assert&lt;</td>
+<td>nn-</td>
+<td>Check to see if n1 is less than n2</td>
+</tr>
+<tr><td>assert&lt;=</td>
+<td>nn-</td>
+<td>Check to see if n1 is less than or equal to n2</td>
+</tr>
+<tr><td>putAssertion</td>
+<td>f-</td>
+<td>Display 'Success' or 'Failure' based on flag</td>
+</tr>
+<tr><td>preCond</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Hook, does nothing bu default</td>
+</tr>
+<tr><td>postCond</td>
+<td>f-</td>
+<td>Hook, displays 'Success' or 'Failure' by default</td>
+</tr>
+<tr><td>.assertion</td>
+<td>a-</td>
+<td>Class handler for assertions</td>
+</tr>
+<tr><td>assertion</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Change the class of a function to <strong>.asssertion</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

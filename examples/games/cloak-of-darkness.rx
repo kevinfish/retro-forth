@@ -1,0 +1,88 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( A sample game based on Cloak of Darkness                                    )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+needs fiction'
+with fiction'
+
+variable blunders
+
+room foyer
+room bar
+room cloakroom
+item cloak
+item hook
+item message
+
+( ==[ cloak ]================================================================ )
+"velvet cloak" nameOf cloak
+
+"A handsome cloak, of velvet trimmed with statin, and slightly splattered\n
+raindrops. Its blackness is so deep that it almost seems to suck light from\n
+the room." describes cloak
+
+
+
+( ==[ cloak ]================================================================ )
+"brass hook" nameOf hook
+
+"It's just a small brass hook. You could probably hang a cloak on
+it." describes hook
+
+
+( ==[ message ]============================================================== )
+
+"message" nameOf message
+
+"There appears to be something scrawled in the sawdust on the floor." describes
+message
+
+[ cloak .location @ cloakroom =
+  [ @blunders 2 >= [ "\nThe message reads 'You win!'\n\n" puts bye ]
+                   [ "\nThe message is heavily smudged due to your blundering, but you can make\nout the words 'You lose!'\n\n" puts bye ] if ]
+  [ "It's too dark to read anything here.\n" puts ] if ] message .onRead !
+
+
+( ==[ foyer ]================================================================ )
+"The Foyer" nameOf foyer
+
+"You are standing in a spacious hall, splendidly decorated in red and gold\n
+with glittering chandeliers overhead. The entrance from the street is to the\n
+north, and there are doorways south and west." describes foyer
+
+[ "You've only just arrived, and besides, the weather outside seems to be\n
+getting worse.\n" puts ] foyer .onNorth !
+
+foyer is north of bar
+foyer is east of cloakroom
+
+foyer !at
+
+( ==[ cloakroom ]============================================================ )
+"Cloakroom" nameOf cloakroom
+
+"The walls of this small room were clearly once lined with hooks, though now\n
+only one remains. The exit is a door to the east." describes cloakroom
+
+cloakroom is west of foyer
+
+cloakroom contains hook
+
+
+( ==[ bar ]================================================================== )
+"Foyer Bar" nameOf bar
+
+"The bar, much rougher than you'd have guessed after the opulence of of the\n
+foyer to the north, is completely empty.\n\n
+There seems to be some sort of message scrawled in the sawdust on the
+floor." describes bar
+
+[ cloak .location @ cloakroom <> [ "It is very dark in here.\n\n" puts ] ifTrue ]
+bar .postDescription !
+
+[ blunders ++ ] foyer .onEast !
+[ blunders ++ ] foyer .onWest !
+[ blunders ++ ] foyer .onSouth !
+
+bar is south of foyer
+
+bar contains message

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>fiction'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="fiction">
+<h1 class="title">fiction'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>I have always enjoyed playing interactive fiction games. This library provides a
+framework for building simple games of this type. It's been used for an implemention
+of <em>Cloak of Darkness</em>, as well as various small puzzle games for my children.</p>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="14%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ROOM</td>
+<td>-n</td>
+<td>Item type for rooms</td>
+</tr>
+<tr><td>ITEM</td>
+<td>-n</td>
+<td>Item type for items</td>
+</tr>
+<tr><td>.description</td>
+<td>a-a</td>
+<td>Object field. Describe the item</td>
+</tr>
+<tr><td>.shortDescription</td>
+<td>a-a</td>
+<td>Object field. Short name for object</td>
+</tr>
+<tr><td>.type</td>
+<td>a-a</td>
+<td>Object field. Type. ROOM or ITEM</td>
+</tr>
+<tr><td>.onLook</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;look&quot;</td>
+</tr>
+<tr><td>.onEntry</td>
+<td>a-a</td>
+<td>Object field. Custom handler for entry event</td>
+</tr>
+<tr><td>.location</td>
+<td>a-a</td>
+<td>Object field. Where is this object?</td>
+</tr>
+<tr><td>.visited</td>
+<td>a-a</td>
+<td>Object field. Have we been here before?</td>
+</tr>
+<tr><td>.toNorth</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the north</td>
+</tr>
+<tr><td>.toSouth</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the south</td>
+</tr>
+<tr><td>.toEast</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the east</td>
+</tr>
+<tr><td>.toWest</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the west</td>
+</tr>
+<tr><td>.onNorth</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;north&quot;</td>
+</tr>
+<tr><td>.onSouth</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;south&quot;</td>
+</tr>
+<tr><td>.onEast</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;east&quot;</td>
+</tr>
+<tr><td>.onWest</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;west&quot;</td>
+</tr>
+<tr><td>.postDescription</td>
+<td>a-a</td>
+<td><dl class="first last docutils">
+<dt>Object field. Custom handler run after showing</dt>
+<dd>a description</dd>
+</dl>
+</td>
+</tr>
+<tr><td>.preDescription</td>
+<td>a-a</td>
+<td><dl class="first last docutils">
+<dt>Object field. Custom handler run before showing</dt>
+<dd>a desription</dd>
+</dl>
+</td>
+</tr>
+<tr><td>.onRead</td>
+<td>a-a</td>
+<td>Object field. custom handler for &quot;read&quot;</td>
+</tr>
+<tr><td>describes</td>
+<td>$&quot;-</td>
+<td>Add a description to an object</td>
+</tr>
+<tr><td>nameOf</td>
+<td>$&quot;-</td>
+<td>Specify a short name for an object</td>
+</tr>
+<tr><td>room</td>
+<td>&quot;-</td>
+<td>Create a new ROOM object</td>
+</tr>
+<tr><td>invertDirection</td>
+<td>a$-a</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>is</td>
+<td>a&quot;&quot;&quot;&quot;-</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>items</td>
+<td>-L</td>
+<td>Linked list of all known items</td>
+</tr>
+<tr><td>item</td>
+<td>&quot;-</td>
+<td>Create a new ITEM object</td>
+</tr>
+<tr><td>contains</td>
+<td>a&quot;-</td>
+<td>Mark that a room contains an item</td>
+</tr>
+<tr><td>has?</td>
+<td>a-af</td>
+<td>Does the player have an item?</td>
+</tr>
+<tr><td>displayItem</td>
+<td>a-</td>
+<td>Display the name of an item</td>
+</tr>
+<tr><td>inventory</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display all items the player has</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

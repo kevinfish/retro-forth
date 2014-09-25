@@ -1,0 +1,130 @@
+( rxSQL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2010 - 2011, Charles Childers                                 )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+needs files'
+with files'
+
+chain: sql'
+  variable fid
+  : buffer      ( -a )
+    @memory 200000 - ;
+
+  : waitForResults  (  -a )
+    0 [ drop "results" :R open dup 0 = ] while ;
+
+  : submit      (  - )
+    "query" :W open close drop ;
+
+  : submitQuery ( $- )
+    withLength "sql" spew drop submit ;
+
+  : loadResults ( -n )
+    waitForResults dup !fid readLine toNumber ;
+
+  : getRow      ( -$ )
+    @fid readLine ;
+
+  : finished    ( -  )
+    @fid close drop
+    "results"  "query"  "sql"  [ delete drop ] tri@ ;
+
+  {{
+    create cols 64 allot
+    : split (    $-  )
+      0 swap repeat dup 9 ^strings'findChar 0; dup 0 swap ! 1+ again ;
+    : store ( 0...-  ) repeat 0; cols &++ &@ bi cols + ! again ;
+  ---reveal---
+    : itemize ( $-n ) buffer swap 0 !cols split store cols -- drop @cols ;
+    : :column ( n-$ ) @cols swap - cols + @ ;
+  }}
+;chain
+
+without
+
+doc{
+=====
+rxSQL
+=====
+
+--------
+Overview
+--------
+rxSQL provides a bridge between an SQLite database and Retro.
+
+
+------
+Server
+------
+The server is written in Python.
+
+* Load SQLite3 database *retro.db*
+* Wait for a file named *query* to be created
+  * When detected, load the query from a second file named *sql*
+  * Erases the *query* file
+* Perform the query on the sqlite database
+* Write the results to a file named *results*
+  * First line is an integer specifying the number of rows
+  * Each result, one row per line.
+  * Columns are tab separated
+* Repeat until a *quit* file is created
+
+
+------
+Client
+------
+The client library is written in Retro. It provides a number of functions
+under an **sql'** vocabulary.
+
++--------------+---------+-------------------------------------------------+
+| Function     | Stack   | Description                                     |
++==============+=========+=================================================+
+| submit       | [  -  ] | Create the *query* file                         |
++--------------+---------+-------------------------------------------------+
+| submitQuery  | [ $-  ] | Store an SQL query and submit                   |
++--------------+---------+-------------------------------------------------+
+| loadResults  | [  -n ] | Load the results of the query, return number of |
+|              |         | results                                         |
++--------------+---------+-------------------------------------------------+
+| getRow       | [  -$ ] | Read a row from the results                     |
++--------------+---------+-------------------------------------------------+
+| finished     | [  -  ] | Close the results                               |
++--------------+---------+-------------------------------------------------+
+| itemize      | [ $-n ] | Split a row into columns                        |
++--------------+---------+-------------------------------------------------+
+| :column      | [ n-$ ] | Access a column from an itemized row            |
++--------------+---------+-------------------------------------------------+
+
+
+Loading
++++++++
+
+Option 1
+~~~~~~~~
+Put the *sql.rx* in the directory with your image, and do:
+
+::
+
+  include sql.rx
+
+Option 2
+~~~~~~~~
+Put the *sql.rx* in your *library* directory, and do:
+
+::
+
+  needs sql'
+
+
+Example
++++++++
+
+::
+
+  with sql'
+
+  "select * from catalog where title like '%yankee in ki%'" submitQuery
+  loadResults
+    [ cr getRow itemize [ 1- :column "%s|" puts ] iter ] times
+  finished
+}doc

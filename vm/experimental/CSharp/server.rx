@@ -1,0 +1,120 @@
+chain: socket'
+{{
+    : ?CR  
+	over 1+ @ 'n = [ drop over 10 swap ! 1+ 0 ] [ -1 ] if ;
+	    
+    : ?NL  
+	over 1+ @ 'r = [ drop over 13 swap ! 1+ 0 ] [ -1 ] if ;
+
+    : ?ESCAPE 
+	dup '\ = [ ?CR [ ?NL ] [ 0 ]  if ] [ -1 ]  if ;
+	    
+    : COPYNULL
+	dup 1+ @ 0 = [ over 1+ 0 swap ! ] ifTrue ;
+	    
+    : COPYVAL
+	[ swap push over ! pop ] ifTrue ;
+	    
+    : _NORMALIZE ( string -- string endread endwrite ) 
+	2dup repeat dup @ 0; 
+	?ESCAPE COPYVAL COPYNULL 
+	1+ swap 1+ swap again ;
+	    
+---reveal---    
+	
+    : NORMALIZE ( str -- str )
+	_NORMALIZE 2drop ;
+	    
+    : PRINTCHARS ( length string -- )
+	swap [ dup @ putc 1+ ] times drop ;
+	
+    : connect ( addr port -- sock )         
+	#1 #22 out wait #22 in ;
+	
+    : listen ( port -- sock )
+        #2 #22 out wait #22 in ;
+	
+    : accept ( port -- sock )
+        #3 #22 out wait #22 in ;
+	
+    : accept? ( sock -- t | f )
+        #8 #22 out wait #22 in ;
+	
+    : close   ( sock -- status )             
+	#6 #22 out wait #22 in ;
+	
+    : stop ( sock -- status )
+        #7 #22 out wait #22 in ;
+	
+    : read    ( sock count buffer -- count )   
+	#4 #22 out wait #22 in ;
+	
+    : read? ( sock -- t | f )
+        #9 #22 out wait #22 in ;
+	
+    : write   ( sock length buffer -- count ) 
+	#5 #22 out wait #22 in ;
+
+    : copyargs ( v1 v2 v3 -- v1 v2 v3 v1 v2 v3 )
+	[ 2over ] dip dup [ 2rot ] dip ;
+}}
+;chain
+
+( Create read buffer )
+create buffer 1024 allot 
+
+( Create socket )
+variable sock
+
+: testTCPClient ( -- closeStatus )
+
+    ( Connect assign socket )
+    "google.com" 80 ^socket'connect sock ! 
+
+    ( Request Page )
+    sock @ "GET / HTTP/1.1\r\nHost: www.google.com\r\n\r\n" 
+    ^socket'NORMALIZE withLength swap ^socket'write drop
+
+    ( Print results )
+    sock @ 1024 buffer
+    [ ^socket'copyargs ^socket'read dup buffer ^socket'PRINTCHARS 1024 >= ] while
+
+    ( drop result of copyargs left on the stack )
+    2drop drop
+    
+    ( Close Socket )
+    sock @ ^socket'close
+;
+
+testTCPClient
+
+: sleep #1 #21 out wait ;
+
+variable listener
+variable client
+
+: testTCPServer
+
+    ( create server )
+    8080 ^socket'listen !listener
+    
+    ( Accept client )
+    [ 500 sleep @listener ^socket'accept? dup "%d Accept" puts cr not ] while
+    @listener ^socket'accept !client
+    
+    ( Read client twice )
+    2 [ 
+        [ 500 sleep @client ^socket'read? dup "%d Receive" puts cr not ] while
+        @client 1024 buffer ^socket'read buffer ^socket'PRINTCHARS 
+    ] times
+    
+    ( Close client )
+    @client ^socket'close
+    
+    ( Shutdown server )
+    @listener ^socket'stop
+    
+;
+
+testTCPServer
+

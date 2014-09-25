@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>values'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="values">
+<h1 class="title">values'</h1>
+
+<p>A value is a variable that returns the stored value when used. This
+library provides an implementation for Retro.</p>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs values'
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+with values'
+
+value foo
+
+100 to foo
+
+foo foo + .s
+
+50 to foo
+foo foo + .s
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="24%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>.value</td>
+<td><div class="first last line-block">
+<div class="line">a-n</div>
+<div class="line"><em>or</em></div>
+<div class="line">na-</div>
+</div>
+</td>
+<td><div class="first last line-block">
+<div class="line">Return a stored value</div>
+<div class="line"><br /></div>
+<div class="line">Update a stored value</div>
+</div>
+</td>
+</tr>
+<tr><td>to</td>
+<td><tt class="docutils literal">`-</tt></td>
+<td>Switch value to update
+mode</td>
+</tr>
+<tr><td>value</td>
+<td>&quot;-</td>
+<td>Create a new value</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Recursive
+
+: fib ( n-m )
+  [ 0 = ] [ 0 ] whend
+  [ 1 = ] [ 1 ] whend
+  [ 1 - fib ] sip 2 - fib + ;
+
+
+Iterative
+
+variables| previous result |
+: fib ( n-m )
+  -1 !previous 1 !result
+   1+ [ @result @previous over + !result !previous ] times @result ;

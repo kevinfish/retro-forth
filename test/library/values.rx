@@ -1,0 +1,26 @@
+needs test'
+needs assertion'
+needs values'
+
+with| test' assertion' values' |
+
+value a
+value b
+
+TEST: ^values'value
+  a b expected{ 0 0 } ;
+
+TEST: ^values'to
+  100 to a
+   80 to b
+  [ a b + ] expected: { 180 }
+  [ a ] expected: { 100 }
+  [ b ] expected: { 80 } ;
+
+TEST: ^values'.value
+  &a &.value withClass 100 assert=
+  to 3100 &a &.value withClass
+  &a &.value withClass 3100 assert= ;
+
+runTests bye
+

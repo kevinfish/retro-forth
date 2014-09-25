@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>diet'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="diet">
+<h1 class="title">diet'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>This library reduces overall memory consumption by reducing the string length
+and number of string buffers.</p>
+<p>While easy enough to do manually, this automates the process and makes it
+easily reversible.</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage</h1>
+<p>After loading, add a call to the function desired to your application code.
+E.g.,</p>
+<pre class="literal-block">
+[ ^diet'extreme ] is boot
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>shrink</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Reduce string length. This is invoked during
+the initial load of the library</td>
+</tr>
+<tr><td>extreme</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Further reductions of string length and reduces
+the buffers</td>
+</tr>
+<tr><td>max</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Shrink as far as possible. Disables hidden
+headers and temporary strings</td>
+</tr>
+<tr><td>bloat</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Restore buffers and string length to the
+default</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

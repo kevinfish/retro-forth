@@ -1,0 +1,93 @@
+This file:
+  http://angg.twu.net/RETRO/README.html
+This is a development of:
+  http://rx-core.org/retro-shared-object.tar.gz
+and is an attempt to link Retro with (e)Lua. See:
+  http://www.eluaproject.net/
+  http://builder.eluaproject.net/web/start.lua?control=user&act=index
+For the current version, see:
+  http://angg.twu.net/RETRO/VERSION.html
+
+
+
+Usage
+=====
+ (eepitch-shell)
+ (eepitch-kill)
+ (eepitch-shell)
+rm -Rv /tmp/luaretro/
+mkdir  /tmp/luaretro/
+cd     /tmp/luaretro/
+# (find-RETRO "Makefile" "tarball")
+wget http://angg.twu.net/RETRO/luaretro.tgz
+tar -xvzf luaretro.tgz
+
+# (find-RETRO "Makefile" "help")
+make help
+
+# (find-RETRO "Makefile" "runluatest")
+make runluatest
+# On OSX run this instead:
+make LUAOS=macosx runluatest
+
+
+
+
+To update the tarball I just do this,
+# (find-RETRO "Makefile" "tarball")
+
+ (eepitch-shell)
+ (eepitch-kill)
+ (eepitch-shell)
+cd ~/RETRO/
+make tgz
+
+and update my page.
+
+
+
+Etc:
+
+ (eepitch-shell)
+ (eepitch-kill)
+ (eepitch-shell)
+rm -Rv /tmp/luaretro/
+mkdir  /tmp/luaretro/
+cd     /tmp/luaretro/
+
+# (find-RETRO "Makefile" "luarocks")
+# (find-RETRO "retro-0.0.1-0.rockspec")
+ (eepitch-shell)
+ (eepitch-kill)
+ (eepitch-shell)
+cd ~/RETRO/ && make tgz
+cd /tmp/luaretro/
+tar -xvzf ~/RETRO/luaretro.tgz
+make S=$S rockmake
+make S=$S rockpack
+
+# (code-c-d "lr" "/tmp/luaretro/usrc/luarocks/share/lua/5.1/luarocks/")
+# (find-lrfile "")
+# (find-lrfile "build/builtin.lua" 185)
+# (find-lrfile "fetch.lua" 35)
+
+
+make clean
+make cleanluarocksbuild
+make S=$S luarocks
+
+# (find-fline "/tmp/luaretro/")
+# (find-angg "peek/peek-0.0.1-0.rockspec")
+# (find-RETRO "retro-0.0.1-0.rockspec")
+make help
+# make S=$S runluatest
+# make S=$S LUASRC=$LUA51SRC runluatest
+make S=$S rockmake
+make S=$S rockpack
+
+
+
+# (find-es "lua5" "luarocks")
+# http://luarocks.org/releases/
+# http://luarocks.org/releases/luarocks-2.0.4.1.tar.gz
+

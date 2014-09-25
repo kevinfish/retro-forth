@@ -1,0 +1,61 @@
+needs assertion'
+needs test'
+needs char'
+
+with| test' assertion' |
+
+TEST: ^char'isChar?
+  'a ^char'isChar? assert
+  '1 ^char'isChar? not assert
+  'z ^char'isChar? assert
+  231 ^char'isChar? not assert ;
+
+TEST: ^char'isUpper?
+  'a ^char'isUpper? not assert
+  'A ^char'isUpper? assert
+  'z ^char'isUpper? not assert
+  'Z ^char'isUpper? assert ;
+
+TEST: ^char'isLower?
+  'a ^char'isLower? assert
+  'A ^char'isLower? not assert
+  'z ^char'isLower? assert
+  'Z ^char'isLower? not assert ;
+
+TEST: ^char'isNumeric?
+  'a ^char'isNumeric? not assert
+  'Z ^char'isNumeric? not assert
+  'q ^char'isNumeric? not assert
+  42 ^char'isNumeric? not assert
+  '1 ^char'isNumeric? assert
+  '2 ^char'isNumeric? assert
+  '6 ^char'isNumeric? assert
+  '8 ^char'isNumeric? assert
+  '0 ^char'isNumeric? assert ;
+
+TEST: ^char'isWhitespace?
+  32 ^char'isWhitespace? assert
+   9 ^char'isWhitespace? assert
+  10 ^char'isWhitespace? assert
+  13 ^char'isWhitespace? assert
+  'a ^char'isWhitespace? not assert
+  43 ^char'isWhitespace? not assert ;
+
+TEST: ^char'toUpper
+  '1 ^char'toUpper '1 assert=
+  'a ^char'toUpper 'A assert=
+  'A ^char'toUpper 'A assert= ;
+
+TEST: ^char'toLower
+  '1 ^char'toLower '1 assert=
+  'a ^char'toLower 'a assert=
+  'A ^char'toLower 'a assert= ;
+
+TEST: ^char'toString
+  '1 ^char'toString "1" compare -1 assert= ;
+
+TEST: ^char'isVisible?
+  '1 ^char'isVisible? -1 assert=
+  23 ^char'isVisible?  0 assert= ;
+
+runTests bye

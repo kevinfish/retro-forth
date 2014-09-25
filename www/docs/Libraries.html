@@ -1,0 +1,2823 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title></title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document">
+
+
+<div class="section" id="array">
+<h1>array'</h1>
+<div class="section" id="overview">
+<h2>Overview</h2>
+<p>This library provides functions for creating and working with simple
+arrays.</p>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation</h2>
+<p>Arrays are stored as a linear sequence of values. In memory, they
+are represented like:</p>
+<pre class="literal-block">
++---+--------------------+
+| 0 | number of elements |
++---+--------------------+
+| 1 | first value        |
++---+--------------------+
+| 2 | second value       |
++---+--------------------+
+| n | ... nth value ...  |
++---+--------------------+
+</pre>
+</div>
+<div class="section" id="examples">
+<h2>Examples</h2>
+<pre class="literal-block">
+( Create an array with four elements )
+^array'new{ 1 2 3 4 } constant a
+
+( Add 10 to each element in an array )
+a [ 10 + ] ^array'map
+
+( Display an array )
+a ^array'display
+
+( Average the values in an array )
+^array'new{ 1 2 3 4 5 } [ ^array'sum ] [ ^array'length ] bi /
+
+( Create an array of strings )
+[ &quot;abc&quot;  &quot;def&quot;  &quot;ghi&quot; ] ^array'fromQuote
+</pre>
+</div>
+<div class="section" id="functions">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>new{</td>
+<td>&quot;-a</td>
+<td>Create a new array. Parses and adds numbers to
+the array until &quot;}&quot; is reached. Returns a
+pointer to the new array.</td>
+</tr>
+<tr><td>display</td>
+<td>a-</td>
+<td>Display all values in the array</td>
+</tr>
+<tr><td>in?</td>
+<td>na-</td>
+<td>Returns -1 if value (n) is a value in the array</td>
+</tr>
+<tr><td>stringIn?</td>
+<td>$n-</td>
+<td>Returns -1 if string ($) is a string in the
+array</td>
+</tr>
+<tr><td>map</td>
+<td>aq-</td>
+<td>Apply quote to each item in the array. Updates
+the array with the values returned by the quote</td>
+</tr>
+<tr><td>apply</td>
+<td>aq-</td>
+<td>Apply quote to each item in the array. Does not
+modify the array contents.</td>
+</tr>
+<tr><td>sum</td>
+<td>a-n</td>
+<td>Add all values in an array</td>
+</tr>
+<tr><td>length</td>
+<td>a-n</td>
+<td>Get the number of items in an array</td>
+</tr>
+<tr><td>reverse</td>
+<td>a-</td>
+<td>Reverse the order of all elements in an array</td>
+</tr>
+<tr><td>append</td>
+<td>aa-a</td>
+<td>Append two arrays and return a new one</td>
+</tr>
+<tr><td>fromQuote</td>
+<td>q-a</td>
+<td>Generate an array from the values returned by a
+quote</td>
+</tr>
+<tr><td>toQuote</td>
+<td>a-q</td>
+<td>Generate a quote from the values stored in an
+array</td>
+</tr>
+<tr><td>sort:bubble</td>
+<td>a-</td>
+<td>Sort the items in an array using bubble sort</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="assertion">
+<h1>assertion'</h1>
+<div class="section" id="id1">
+<h2>Overview</h2>
+<p>This vocabulary provides support for testing code in a clean,
+predicatable manner.</p>
+<p>Assertion predicates first check the stack for underflow; if
+the stack is deep enough, their embedded predicates are applied;
+if not, the assertion fails.</p>
+<p>The result of each assertion - including the underflow check -
+is ANDed with the assertionFlag which can then be tested after
+the containing thread has finished executing; this is handled by
+the .assertion word class.</p>
+<p>For custom behaviour, revector preCond and/or postCond; by
+default the pre-condition is an effective nop while the post-
+condition simply prints 'Success' or 'Failure'.</p>
+<p>Given that each assertion predicate mutates assertionFlag, use
+of the word class .assertion is encouraged; this resets the
+assertionFlag before execution and push its final value to the
+stack before calling postCond when the thread exits.</p>
+<p>NOTE: For simplicity of implementation, failure within a word of
+class .assertion will not result in immediate termination;
+instead, the false value of assertionFlag is left to propagate.</p>
+</div>
+<div class="section" id="id2">
+<h2>Examples</h2>
+<pre class="literal-block">
+( Our assertions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+( n.b, underflow is dealt with sanely )
+: a1 ( xyz- ) 30 assert= 20 assert= 10 assert= ; assertion
+: a2 (  xy- ) assertTrue assertFalse ; assertion
+: a3 (   x- ) 5 assert&lt; ; assertion
+
+( Simple demo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+: go
+  &quot;\n----------&quot; puts
+  10 20 30 a1
+  30 20 10 a1
+  &quot;\n----------&quot; puts
+  10 a1
+  &quot;\n----------&quot; puts
+  a1
+  &quot;\n----------&quot; puts
+  -1 0 a2
+  0 -1 a2
+  -1 -1 a2
+  -1 a2
+  &quot;\n----------&quot; puts
+  3 a3
+  4 a3
+  5 a3
+  a3
+  &quot;\n----------&quot; puts
+;
+
+clear go
+
+( Adjusting pre- and post- conditions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+: myPreCond .s ;
+: myPostCond [ &quot;Fatal error: assertion failure.&quot; puts bye ] ifFalse ;
+&amp;myPostCond is postCond
+&amp;myPreCond is preCond
+
+( 'go' will now exit on first failure )
+go
+</pre>
+</div>
+<div class="section" id="id3">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="9%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>assertionFlag</td>
+<td>-a</td>
+<td>Variable. This holds a true (-1) or false (0)
+value indicating whether the current set of
+assertions have passed or failed. The <strong>.assertion</strong>
+class will set this to true automatically.</td>
+</tr>
+<tr><td>assert</td>
+<td>f-</td>
+<td>Updates the <strong>assertionFlag</strong> using bitwise AND</td>
+</tr>
+<tr><td>available</td>
+<td>n-f</td>
+<td>Checks to see if there are at least <em>n</em> items on the
+stack. Returns true if there are, or false otherwise</td>
+</tr>
+<tr><td>assert=</td>
+<td>nn-</td>
+<td>Check to see if two values are equal</td>
+</tr>
+<tr><td>assertFalse</td>
+<td>f-</td>
+<td>Check to see if flag is false (0)</td>
+</tr>
+<tr><td>assertTrue</td>
+<td>f-</td>
+<td>Check to see if flag is true (non-zero)</td>
+</tr>
+<tr><td>assert&gt;</td>
+<td>nn-</td>
+<td>Check to see if n1 is greather than n2</td>
+</tr>
+<tr><td>assert&gt;=</td>
+<td>nn-</td>
+<td>Check to see if n1 is greater than or equal to n2</td>
+</tr>
+<tr><td>assert&lt;</td>
+<td>nn-</td>
+<td>Check to see if n1 is less than n2</td>
+</tr>
+<tr><td>assert&lt;=</td>
+<td>nn-</td>
+<td>Check to see if n1 is less than or equal to n2</td>
+</tr>
+<tr><td>putAssertion</td>
+<td>f-</td>
+<td>Display 'Success' or 'Failure' based on flag</td>
+</tr>
+<tr><td>preCond</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Hook, does nothing bu default</td>
+</tr>
+<tr><td>postCond</td>
+<td>f-</td>
+<td>Hook, displays 'Success' or 'Failure' by default</td>
+</tr>
+<tr><td>.assertion</td>
+<td>a-</td>
+<td>Class handler for assertions</td>
+</tr>
+<tr><td>assertion</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Change the class of a function to <strong>.asssertion</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="bad">
+<h1>bad'</h1>
+<div class="section" id="id4">
+<h2>Overview</h2>
+<p>The Ngaro virtual machine underlying Retro does not provide access to memory
+in units other than a standard cell. This simplifies things in many ways, but
+can be very wasteful of memory, especially when dealing with large amounts of
+text. This library provides support for dealing with byte-level access to the
+Ngaro memory.</p>
+</div>
+<div class="section" id="terminology">
+<h2>Terminology</h2>
+<p><em>byte</em>: A unit of memory consisting of eight bits.</p>
+<p><em>cell</em>: A unit of memory consisting of thirty two bits.</p>
+</div>
+<div class="section" id="loading">
+<h2>Loading</h2>
+<pre class="literal-block">
+needs bad'
+</pre>
+</div>
+<div class="section" id="example">
+<h2>Example</h2>
+<pre class="literal-block">
+1024 ^bad'newPool
+'e 0 ^bad'b!
+'f 1 ^bad'b!
+'g 2 ^bad'b!
+'h 3 ^bad'b!
+^bad'pool &#64; putn
+2 ^bad'b&#64; putn
+</pre>
+</div>
+<div class="section" id="id5">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="12%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>pool</td>
+<td>-a</td>
+<td>Variable. This holds a pointer to the current
+byte addressable memory pool</td>
+</tr>
+<tr><td>unpack</td>
+<td>c-bbbb</td>
+<td>Given a byte-packed cell on the stack return
+the bytes it contains</td>
+</tr>
+<tr><td>pack</td>
+<td>bbbb-c</td>
+<td>Pack four byes into a cell, return the cell on
+the stack</td>
+</tr>
+<tr><td>b&#64;</td>
+<td>a-b</td>
+<td>Fetch a byte from the active byte addressable
+memory pool</td>
+</tr>
+<tr><td>b!</td>
+<td>ba-</td>
+<td>Store a byte into the currently active byte
+addressable memory pool</td>
+</tr>
+<tr><td>b&#64;+</td>
+<td>a-ab</td>
+<td>Fetch a byte from the active byte addressable
+memory pool. Returns next byte address and the
+byte fetched</td>
+</tr>
+<tr><td>b!+</td>
+<td>ba-a</td>
+<td>Store a byte into the currently active byte
+addressable memory pool. Returns next byte
+address</td>
+</tr>
+<tr><td>newPool</td>
+<td>n-</td>
+<td>Allocate a new pool of <em>n</em> characters and set
+<strong>pool</strong> to point to it</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="bstrings">
+<h1>bstrings'</h1>
+<div class="section" id="id6">
+<h2>Overview</h2>
+<p>This library builds on the <em>byte addressing</em> vocabulary (<strong>bad'</strong>) to provide
+support for creating and working with byte-packed strings.</p>
+<p>Generally it's better to use the cell-based strings. They are larger in memory,
+but much faster to work with. If space is critical though, this library can be
+used to significantly reduce the memory consumed, at the cost of performance.</p>
+<p>As an example of how this works, consider a simple string: &quot;This is a test.&quot;</p>
+<pre class="literal-block">
+&quot;This is a test.&quot;
+</pre>
+<p>Retro will create a string in memory that looks like:</p>
+<pre class="literal-block">
+0000 T
+0001 h
+0002 i
+0003 s
+0004 &lt;space&gt;
+0005 i
+0006 s
+0007 &lt;space&gt;
+0008 a
+0009 &lt;space&gt;
+0010 t
+0011 e
+0012 s
+0013 t
+0014 .
+0015 &lt;terminator&gt;
+</pre>
+<p>So 16 cells used. If we byte pack this, it reduces considerably:</p>
+<pre class="literal-block">
+0000 This
+0001  is
+0002 a te
+0003 st&lt;terminator&gt;
+</pre>
+<p>Down to four cells. It's a straightforward 4:1 reduction.</p>
+</div>
+<div class="section" id="id7">
+<h2>Terminology</h2>
+<p><em>byte</em>: A unit of memory consisting of eight bits.</p>
+<p><em>cell</em>: A unit of memory consisting of thirty two bits.</p>
+</div>
+<div class="section" id="id8">
+<h2>Loading</h2>
+<pre class="literal-block">
+needs bstrings'
+</pre>
+</div>
+<div class="section" id="id9">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="12%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>pack</td>
+<td>$-a</td>
+<td>Convert a standard string into a byte packed
+string</td>
+</tr>
+<tr><td>getLength</td>
+<td>a-n</td>
+<td>Return the length of a byte packed string (in
+characters)</td>
+</tr>
+<tr><td>unpack</td>
+<td>a-$</td>
+<td>Convert a byte packed string into a standard
+string</td>
+</tr>
+<tr><td>withLength</td>
+<td>a-an</td>
+<td>Return the length (in characters) and address
+of a byte-packed string</td>
+</tr>
+<tr><td>puts</td>
+<td>a-</td>
+<td>Display a bye packed string</td>
+</tr>
+<tr><td>toLower</td>
+<td>a-a</td>
+<td>Convert a byte packed string to lowercase</td>
+</tr>
+<tr><td>toUpper</td>
+<td>a-a</td>
+<td>Convert a byte packed string to uppercase</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="calendar">
+<h1>calendar'</h1>
+<div class="section" id="id10">
+<h2>Overview</h2>
+<p>This vocabulary provides support for doing calculations involving time
+and dates.</p>
+</div>
+<div class="section" id="id11">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="11%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>MINUTES/WEEK</td>
+<td>-n</td>
+<td>Number of minutes in a week</td>
+</tr>
+<tr><td>MINUTES/DAY</td>
+<td>-n</td>
+<td>Number of minutes in a day</td>
+</tr>
+<tr><td>MINUTES/HOUR</td>
+<td>-n</td>
+<td>Number of minutes in an hour</td>
+</tr>
+<tr><td>HOURS/DAY</td>
+<td>-n</td>
+<td>Number of hours in a day</td>
+</tr>
+<tr><td>DAYS/WEEK</td>
+<td>-n</td>
+<td>Number of days in a week</td>
+</tr>
+<tr><td>DAYS/YEAR</td>
+<td>-n</td>
+<td>Number of days in a typical year</td>
+</tr>
+<tr><td>WEEKS/YEAR</td>
+<td>-n</td>
+<td>Number of weeks in a year</td>
+</tr>
+<tr><td>SECONDS/MINUTE</td>
+<td>-n</td>
+<td>Number of seconds in a minute</td>
+</tr>
+<tr><td>SECONDS/HOUR</td>
+<td>-n</td>
+<td>Number of seconds in an hour</td>
+</tr>
+<tr><td>SECONDS/DAY</td>
+<td>-n</td>
+<td>Number of seconds in a day</td>
+</tr>
+<tr><td>dayToName</td>
+<td>n-$</td>
+<td>Convert the number of a day to a
+three letter abbreviation</td>
+</tr>
+<tr><td>daysPerMonth</td>
+<td>m-n</td>
+<td>Return the number of days in a given
+month</td>
+</tr>
+<tr><td>secondsPerMonth</td>
+<td>m-n</td>
+<td>Return the number of seconds in a
+given month</td>
+</tr>
+<tr><td>isLeapYear?</td>
+<td>y-f</td>
+<td>Return true (-1) if the year is a
+leap year or false (0) otherwise</td>
+</tr>
+<tr><td>secondsPerYear</td>
+<td>y-n</td>
+<td>Return the number of seconds in a
+given year</td>
+</tr>
+<tr><td>toJulian</td>
+<td>dmy-j</td>
+<td>Convert a date into a Julian day</td>
+</tr>
+<tr><td>toDayOfWeek</td>
+<td>dmy-n</td>
+<td>Convert a date to the numeric day of
+the week</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="canvas">
+<h1>canvas'</h1>
+<p>This library provides support for the canvas device provided by the
+JavaScript implementation of Ngaro.</p>
+<div class="section" id="id12">
+<h2>Loading</h2>
+<p>Since the JavaScript implementation has no file I/O, build an image with
+this loaded manually.</p>
+<pre class="literal-block">
+needs infix'
+include vm/web/dumpImage.rx
+</pre>
+</div>
+<div class="section" id="id13">
+<h2>Examples</h2>
+<pre class="literal-block">
+100 100 50 ^canvas'red ^canvas'solid ^canvas'circle
+</pre>
+</div>
+<div class="section" id="id14">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="15%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>mouse</td>
+<td>-xy</td>
+<td>Current mouse coordinates</td>
+</tr>
+<tr><td>click?</td>
+<td>-f</td>
+<td>Is mouse button clicked?</td>
+</tr>
+<tr><td>setColor</td>
+<td>c-</td>
+<td>Set color to <em>c</em>. Used by various other words</td>
+</tr>
+<tr><td>pixel</td>
+<td>xy-</td>
+<td>Draw a pixel in the current color</td>
+</tr>
+<tr><td>solid</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Modifier; tells <strong>box</strong> and <strong>circle</strong> to draw
+a filled in shape rather than an outline</td>
+</tr>
+<tr><td>box</td>
+<td>xyhw-</td>
+<td>Draw a box</td>
+</tr>
+<tr><td>vline</td>
+<td>xyh-</td>
+<td>Draw a vertical line</td>
+</tr>
+<tr><td>hline</td>
+<td>xyw-</td>
+<td>Draw a horizontal line</td>
+</tr>
+<tr><td>circle</td>
+<td>xyw-</td>
+<td>Draw a circle</td>
+</tr>
+<tr><td>black</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>blue</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>green</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>cyan</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>red</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>purple</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brown</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>gray</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>darkGray</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightBlue</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightGreen</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightCyan</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>brightRed</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>magenta</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>yellow</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>white</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color</td>
+</tr>
+<tr><td>dimensions</td>
+<td>-hw</td>
+<td>Return height and width of canvas</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="casket">
+<h1>casket'</h1>
+<div class="section" id="id15">
+<h2>Overview</h2>
+<p>Casket is a lightweight framework intended to simplify the development of
+web apps in Retro.</p>
+<p>Casket grew out of my work on the Corpse blog and later through work on the
+Rancid IRC log viewer.</p>
+</div>
+<div class="section" id="id16">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="9%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>serve:</td>
+<td>&quot;&quot;&quot;-</td>
+<td>Serve a file with a specific mime type</td>
+</tr>
+<tr><td>decode</td>
+<td>$-</td>
+<td>Decode a URL encoded string</td>
+</tr>
+<tr><td>dispatch</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Look for a view handler (e.g., /index) and call
+it, or call <strong>/404</strong> if none is found</td>
+</tr>
+<tr><td>doBeforeDispatch</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Code to execute before processing paths. This is
+always called before <strong>dispatch</strong>.</td>
+</tr>
+<tr><td>/</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Default index page</td>
+</tr>
+<tr><td>/404</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Default 404 error page</td>
+</tr>
+<tr><td>withTemplate</td>
+<td>$-</td>
+<td>Include and render a template file using the
+<strong>tputs</strong> function</td>
+</tr>
+<tr><td>withFile</td>
+<td>$-</td>
+<td>Include and render a raw file</td>
+</tr>
+<tr><td>tputs</td>
+<td>...$-</td>
+<td>This is a replacement for <strong>puts</strong>, which adds
+additional escape sequences for use with the
+templates.</td>
+</tr>
+<tr><td>eputs</td>
+<td>$-</td>
+<td>This is a replacement for <strong>puts</strong>, which escapes
+html entities for use with &lt;pre&gt; and such</td>
+</tr>
+<tr><td>Content-type:</td>
+<td>&quot;-</td>
+<td>Generate a MIME header for a file or view</td>
+</tr>
+<tr><td>getFormData</td>
+<td>-$</td>
+<td>Process a form and return the elements as a text
+string</td>
+</tr>
+<tr><td>getRequest</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Internal: Read the PATH_INFO environment variable
+and parse for <strong>casket:path</strong> and
+<strong>casket:options</strong></td>
+</tr>
+<tr><td>casket:url</td>
+<td>-a</td>
+<td>Function returning application url</td>
+</tr>
+<tr><td>casket:root</td>
+<td>-a</td>
+<td>Function returning path to application root</td>
+</tr>
+<tr><td>casket:form</td>
+<td>-a</td>
+<td>Internal buffer for form data</td>
+</tr>
+<tr><td>casket:buffer</td>
+<td>-a</td>
+<td>Internal buffer</td>
+</tr>
+<tr><td>casket:options</td>
+<td>-a</td>
+<td>Returns optional data following view)</td>
+</tr>
+<tr><td>casket:path</td>
+<td>-a</td>
+<td>Returns requested view (e.g., /index)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id17">
+<h2>Example</h2>
+<div class="section" id="application-rx">
+<h3>application.rx</h3>
+<pre class="literal-block">
+ needs casket'
+ with casket'
+
+: /index
+   Content-type: text/html
+   &quot;index.erx&quot; withTemplate ;
+
+ : /test
+   Content-type: text/html
+   casket:options &quot;test.erx&quot; withTemplate ;
+
+ [ ( -$ ) &quot;/path/to/app/&quot; ] is casket:root
+ [ ( -$ ) &quot;http://domain.ext/path/to/cgi&quot; ] is casket:url
+ &amp;/index is /
+ &amp;dispatch is boot
+ save bye
+</pre>
+</div>
+<div class="section" id="index-erx">
+<h3>index.erx</h3>
+<pre class="literal-block">
+&lt;html&gt;
+&lt;body&gt;&lt;h1&gt;Test of Casket&lt;/h1&gt;
+&lt;p&gt;&lt;a href='%u/test/apple'&gt;test apple&lt;/a&gt;
+   or &lt;a href='%u/test/banana'&gt;test banana&lt;/a&gt;.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre>
+</div>
+<div class="section" id="test-erx">
+<h3>test.erx</h3>
+<pre class="literal-block">
+&lt;html&gt;&quot;  tputs
+&lt;body&gt;&lt;h1&gt;You requested...&lt;/h1&gt;
+&lt;p&gt;An %s.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+</pre>
+</div>
+</div>
+</div>
+<div class="section" id="char">
+<h1>char'</h1>
+<p>This library provides a vocabulary for simple operations on ASCII characters.</p>
+<div class="section" id="id18">
+<h2>Loading</h2>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs char'
+</pre>
+</div>
+<div class="section" id="id19">
+<h2>Examples</h2>
+<pre class="literal-block">
+97 ^char'isChar?
+'a dup ^char'isUpper? [ ^char'toLower ] ifTrue
+</pre>
+</div>
+<div class="section" id="id20">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="13%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>isChar?</td>
+<td>c-f</td>
+<td>Return true if a given value is an alphabetic
+character (A-Z or a-z). If not, return false</td>
+</tr>
+<tr><td>isUpper?</td>
+<td>c-f</td>
+<td>Return true if character is uppercase, false
+otherwise</td>
+</tr>
+<tr><td>isLower?</td>
+<td>c-f</td>
+<td>Return true if character is lowercase, false
+otherwise</td>
+</tr>
+<tr><td>isNumeric?</td>
+<td>c-f</td>
+<td>Return true if character is between 0 - 9
+inclusive, or false otherwise</td>
+</tr>
+<tr><td>isWhitespace?</td>
+<td>c-f</td>
+<td>Return true if character is a space, tab, or
+end of line. Returns false otherwise</td>
+</tr>
+<tr><td>isVisible?</td>
+<td>c-f</td>
+<td>Return true if character is visible, or false
+if it is a control-type character</td>
+</tr>
+<tr><td>toUpper</td>
+<td>c-c</td>
+<td>Convert a lowercase character to uppercase.
+This will only work on a lowercase character.</td>
+</tr>
+<tr><td>toLower</td>
+<td>c-c</td>
+<td>Convert an upperacase character to lowercase.
+This will only work on an uppercase character.</td>
+</tr>
+<tr><td>toString</td>
+<td>c-$</td>
+<td>Convert a character into a string</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="combinators">
+<h1>combinators'</h1>
+<div class="section" id="id21">
+<h2>Overview</h2>
+<p>This library serves as a home to various combinators that are useful, but not
+essential to the core Retro language.</p>
+</div>
+<div class="section" id="id22">
+<h2>Loading</h2>
+<pre class="literal-block">
+needs combinators'
+</pre>
+</div>
+<div class="section" id="id23">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="13%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Used For</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>loopd</td>
+<td>seq-</td>
+<td>Execute a loop. Index starts at high value (e)
+and decrements to low value (s). The loop body
+is quote (q).</td>
+</tr>
+<tr><td>indexd</td>
+<td>-n</td>
+<td>Return the current index for a decrementing
+loop.</td>
+</tr>
+<tr><td>loopi</td>
+<td>seq-</td>
+<td>Execute a loop. Index starts at low value (s)
+and increments to high value (e). The loop body
+is quote (q).</td>
+</tr>
+<tr><td>indexi</td>
+<td>-n</td>
+<td>Return the current index for an incrementing
+loop.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="console">
+<h1>console'</h1>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>colors</td>
+<td>-a</td>
+<td>Variable; indicates if console exists</td>
+</tr>
+<tr><td>esc</td>
+<td>$-</td>
+<td>Display a string starting as an escape
+sequence</td>
+</tr>
+<tr><td>at-xy</td>
+<td>xy-</td>
+<td>Move cursor to x,y</td>
+</tr>
+<tr><td>home</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Move cursor to top left corner</td>
+</tr>
+<tr><td>black</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onBlack</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>red</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onRed</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>green</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onGreen</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>yellow</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onYellow</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>blue</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onBlue</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>magenta</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onMagenta</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>cyan</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onCyan</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>white</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set foreground color</td>
+</tr>
+<tr><td>onWhite</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set background color</td>
+</tr>
+<tr><td>normal</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Reset colors to default</td>
+</tr>
+<tr><td>bold</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Set color attribute to bold/bright</td>
+</tr>
+<tr><td>dimensions</td>
+<td>-hw</td>
+<td>Return height and width of console</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="crypto">
+<h1>crypto'</h1>
+<div class="section" id="id24">
+<h2>Overview</h2>
+<p>I enjoy dabbling with logic puzzles and classical forms of encryption.
+This vocabulary is intended to be a tool to help with these diversions.</p>
+</div>
+<div class="section" id="id25">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="9%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ceaser</td>
+<td>$n-$</td>
+<td>Encrypt (or decrypt) a string using the ceaser
+algorithm. The value n is the number of
+characters to shift the alphabet by.</td>
+</tr>
+<tr><td>rot13</td>
+<td>$-$</td>
+<td>Encrypt or decrypt a string using rot13. This
+is a trivial variant of the ceaser algorithm.</td>
+</tr>
+<tr><td>tapcode:encrypt</td>
+<td>$-a</td>
+<td>Encrypt a string into a tapcode array</td>
+</tr>
+<tr><td>tapcode:decrypt</td>
+<td>a-$</td>
+<td>Decrypt a tapcode array into a string</td>
+</tr>
+<tr><td>pigpen:encrypt</td>
+<td>$-a</td>
+<td><p class="first">Convert a string into a pigpen encoded array.
+To display the pigpen sequence, try:</p>
+<pre class="last literal-block">
+&quot;ab&quot; ^crypto'toPigpen [ puts space ] ^array'apply
+</pre>
+</td>
+</tr>
+<tr><td>pigpen:decrypt</td>
+<td>a-$</td>
+<td>Decode a pigpen encoded array into a string</td>
+</tr>
+<tr><td>keyword:setKey</td>
+<td>$-</td>
+<td>Set the key to use for keyword encryption. This
+should be 26 characters long.</td>
+</tr>
+<tr><td>keyword:encrypt</td>
+<td>$-$</td>
+<td>Encrypt a string using keyword encryption</td>
+</tr>
+<tr><td>keyword:decrypt</td>
+<td>$-$</td>
+<td>Decrypt a string using keyword encryption</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="decimal">
+<h1>decimal'</h1>
+<div class="section" id="id26">
+<h2>Overview</h2>
+<p>This vocabulary provides a prefix and some functions for working with
+simple decimal values. It's not intended as a replacement for fixed or
+floating point math.</p>
+</div>
+<div class="section" id="id27">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="10%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>__d</td>
+<td>&quot;-n</td>
+<td>Prefix to parse a value like &quot;nn.nnn&quot; into an integer</td>
+</tr>
+<tr><td>putn</td>
+<td>n-</td>
+<td>Display a decimal number, based on <strong>scale</strong></td>
+</tr>
+<tr><td>scale</td>
+<td>-a</td>
+<td>Variable containing the number of decimal places</td>
+</tr>
+<tr><td>split</td>
+<td>-n</td>
+<td>Return a factor to divide by for display/working with
+decimal values</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="decompose">
+<h1>decompose'</h1>
+<div class="section" id="id28">
+<h2>Overview</h2>
+<p>The core Casket framework provides minimal templating, but no easy way to
+generate HTML from code.</p>
+<p>This vocabulary provides support for generating HTML using a series of
+combinators. Textual data returned will be displayed (using <strong>^casket'tputs</strong>),
+and various attributes are supported.</p>
+</div>
+<div class="section" id="id29">
+<h2>Loading</h2>
+<pre class="literal-block">
+needs decompose'
+</pre>
+</div>
+<div class="section" id="id30">
+<h2>Example</h2>
+<pre class="literal-block">
+: /index
+  Content-type: text/html
+  [ [ [ &quot;Hello&quot; ] title ] head
+    [ [ &quot;Welcome&quot; ] h1
+      [ &quot;This is a paragraph.&quot; ] p ] body ] html ;
+</pre>
+</div>
+</div>
+<div class="section" id="decorator">
+<h1>decorator'</h1>
+<div class="section" id="id31">
+<h2>Overview</h2>
+<p>A decorator extends an existing function by appending ocde that will be
+executed before (and possibly after) execution of the original function.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage</h2>
+<pre class="literal-block">
+ok  : foo + putn cr ;
+ok  1
+ok  2
+ok  foo 3
+ok  : demo 2over &quot;%d + %d = &quot; puts ;
+ok  &amp;foo
+ok  &amp;demo
+ok  decorate
+ok  1
+ok  2
+ok  foo 2 + 1 = 3
+ok
+</pre>
+</div>
+<div class="section" id="id32">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="12%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>decorate</td>
+<td>aa-</td>
+<td>Apply decoration (a2) to function (a1)</td>
+</tr>
+<tr><td>undecorate</td>
+<td>a-</td>
+<td>Remove a decoration from a function</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="diet">
+<h1>diet'</h1>
+<div class="section" id="id33">
+<h2>Overview</h2>
+<p>This library reduces overall memory consumption by reducing the string length
+and number of string buffers.</p>
+<p>While easy enough to do manually, this automates the process and makes it
+easily reversible.</p>
+</div>
+<div class="section" id="id34">
+<h2>Usage</h2>
+<p>After loading, add a call to the function desired to your application code.
+E.g.,</p>
+<pre class="literal-block">
+[ ^diet'extreme ] is boot
+</pre>
+</div>
+<div class="section" id="id35">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="15%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>shrink</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Reduce string length. This is invoked during
+the initial load of the library</td>
+</tr>
+<tr><td>extreme</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Further reductions of string length and reduces
+the buffers</td>
+</tr>
+<tr><td>max</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Shrink as far as possible. Disables hidden
+headers and temporary strings</td>
+</tr>
+<tr><td>bloat</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Restore buffers and string length to the
+default</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="dissect">
+<h1>dissect'</h1>
+<div class="section" id="id36">
+<h2>Overview</h2>
+<p>This vocabulary provides a basic decompiler for the Ngaro instruction set.</p>
+</div>
+<div class="section" id="id37">
+<h2>Usage</h2>
+</div>
+<div class="section" id="id38">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>lookupOpcode</td>
+<td>n-$ff</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>decompile</td>
+<td>a-a$</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>endOfWord?</td>
+<td>a-f</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="enum">
+<h1>enum'</h1>
+<div class="section" id="id39">
+<h2>Overview</h2>
+<p>This vocabulary adds support for enumerated values.</p>
+</div>
+<div class="section" id="id40">
+<h2>Usage</h2>
+<pre class="literal-block">
+0 enum A enum B enum C enum D drop
+</pre>
+<p>Or</p>
+<pre class="literal-block">
+0 enum| A B C D |
+</pre>
+</div>
+<div class="section" id="id41">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="9%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>step</td>
+<td>n-n</td>
+<td>Increment for next enumerated value. Defaults to <strong>1+</strong>
+but can be revectored as needed</td>
+</tr>
+<tr><td>enum</td>
+<td>n&quot;-n</td>
+<td>Create an enumerated constant, and increment the value
+using <strong>step</strong></td>
+</tr>
+<tr><td><tt class="docutils literal">enum|</tt></td>
+<td>n&quot;-</td>
+<td>Create a series of enumerated values, incremented by
+<strong>step</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="eval">
+<h1>eval'</h1>
+<div class="section" id="id42">
+<h2>Overview</h2>
+<p>This library provides a vocabulary for evaluating code contained in strings.</p>
+<p>Retro was not designed to allow textual strings to be evaluated. This works
+by remapping the keyboard input to read from a string, until the string is
+exhausted. Additionally, it has a built-in varient of the listener to process
+input immediately, rather than after the function returns.</p>
+<p>This library should be used only if there's no other (clean) way to solve a
+problem.</p>
+</div>
+<div class="section" id="id43">
+<h2>Loading</h2>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs eval'
+</pre>
+</div>
+<div class="section" id="id44">
+<h2>Examples</h2>
+<pre class="literal-block">
+: foo  ( -n )  99 &quot;54 + putn&quot; ^eval'eval 5 ;
+
+^eval'ifNotDefined foo { 100 constant foo }
+^eval'ifDefined foo { foo 10 * putn }
+</pre>
+</div>
+<div class="section" id="id45">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="8%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>eval</td>
+<td>$-</td>
+<td>Evaluate a string</td>
+</tr>
+<tr><td>ifDefined</td>
+<td>&quot;&quot;-</td>
+<td>Parse for a name, if found, execute code in the following string
+block. Otherwise ignore the string block.</td>
+</tr>
+<tr><td>ifNotDefined</td>
+<td>&quot;&quot;-</td>
+<td>Parse for a name, if not found, execute code in the following
+string block. If found, ignore the string block.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="fiction">
+<h1>fiction'</h1>
+<div class="section" id="id46">
+<h2>Overview</h2>
+<p>I have always enjoyed playing interactive fiction games. This library provides a
+framework for building simple games of this type. It's been used for an implemention
+of <em>Cloak of Darkness</em>, as well as various small puzzle games for my children.</p>
+</div>
+<div class="section" id="id47">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="14%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>ROOM</td>
+<td>-n</td>
+<td>Item type for rooms</td>
+</tr>
+<tr><td>ITEM</td>
+<td>-n</td>
+<td>Item type for items</td>
+</tr>
+<tr><td>.description</td>
+<td>a-a</td>
+<td>Object field. Describe the item</td>
+</tr>
+<tr><td>.shortDescription</td>
+<td>a-a</td>
+<td>Object field. Short name for object</td>
+</tr>
+<tr><td>.type</td>
+<td>a-a</td>
+<td>Object field. Type. ROOM or ITEM</td>
+</tr>
+<tr><td>.onLook</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;look&quot;</td>
+</tr>
+<tr><td>.onEntry</td>
+<td>a-a</td>
+<td>Object field. Custom handler for entry event</td>
+</tr>
+<tr><td>.location</td>
+<td>a-a</td>
+<td>Object field. Where is this object?</td>
+</tr>
+<tr><td>.visited</td>
+<td>a-a</td>
+<td>Object field. Have we been here before?</td>
+</tr>
+<tr><td>.toNorth</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the north</td>
+</tr>
+<tr><td>.toSouth</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the south</td>
+</tr>
+<tr><td>.toEast</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the east</td>
+</tr>
+<tr><td>.toWest</td>
+<td>a-a</td>
+<td>Object field. Pointer to location to the west</td>
+</tr>
+<tr><td>.onNorth</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;north&quot;</td>
+</tr>
+<tr><td>.onSouth</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;south&quot;</td>
+</tr>
+<tr><td>.onEast</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;east&quot;</td>
+</tr>
+<tr><td>.onWest</td>
+<td>a-a</td>
+<td>Object field. Custom handler for &quot;west&quot;</td>
+</tr>
+<tr><td>.postDescription</td>
+<td>a-a</td>
+<td><dl class="first last docutils">
+<dt>Object field. Custom handler run after showing</dt>
+<dd>a description</dd>
+</dl>
+</td>
+</tr>
+<tr><td>.preDescription</td>
+<td>a-a</td>
+<td><dl class="first last docutils">
+<dt>Object field. Custom handler run before showing</dt>
+<dd>a desription</dd>
+</dl>
+</td>
+</tr>
+<tr><td>.onRead</td>
+<td>a-a</td>
+<td>Object field. custom handler for &quot;read&quot;</td>
+</tr>
+<tr><td>describes</td>
+<td>$&quot;-</td>
+<td>Add a description to an object</td>
+</tr>
+<tr><td>nameOf</td>
+<td>$&quot;-</td>
+<td>Specify a short name for an object</td>
+</tr>
+<tr><td>room</td>
+<td>&quot;-</td>
+<td>Create a new ROOM object</td>
+</tr>
+<tr><td>invertDirection</td>
+<td>a$-a</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>is</td>
+<td>a&quot;&quot;&quot;&quot;-</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>items</td>
+<td>-L</td>
+<td>Linked list of all known items</td>
+</tr>
+<tr><td>item</td>
+<td>&quot;-</td>
+<td>Create a new ITEM object</td>
+</tr>
+<tr><td>contains</td>
+<td>a&quot;-</td>
+<td>Mark that a room contains an item</td>
+</tr>
+<tr><td>has?</td>
+<td>a-af</td>
+<td>Does the player have an item?</td>
+</tr>
+<tr><td>displayItem</td>
+<td>a-</td>
+<td>Display the name of an item</td>
+</tr>
+<tr><td>inventory</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Display all items the player has</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="files">
+<h1>files'</h1>
+<table border="1" class="corefunc docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>:R</td>
+<td>-n</td>
+<td>Mode for reading a file. Does not create file</td>
+</tr>
+<tr><td>:W</td>
+<td>-n</td>
+<td>Mode for writing a file</td>
+</tr>
+<tr><td>:A</td>
+<td>-n</td>
+<td>Mode for appending to a file</td>
+</tr>
+<tr><td>:M</td>
+<td>-n</td>
+<td>Mode for modifying a file. Does not create
+file.</td>
+</tr>
+<tr><td>open</td>
+<td>$m-h</td>
+<td>Open a file. Will return a handle. Valid
+handles will be non-zero. A zero handle
+indicates failure to open a file.</td>
+</tr>
+<tr><td>read</td>
+<td>h-c</td>
+<td>Read a byte from a file. This returns the
+byte.</td>
+</tr>
+<tr><td>write</td>
+<td>ch-f</td>
+<td>Write a byte to a file. This returns a flag
+indicating the number of bytes written.
+(Should always equal '1')</td>
+</tr>
+<tr><td>close</td>
+<td>h-f</td>
+<td>Close an open file. Returns a flag of zero if
+unable to close, or non-zero if successful.</td>
+</tr>
+<tr><td>pos</td>
+<td>h-n</td>
+<td>Get current position in a file</td>
+</tr>
+<tr><td>seek</td>
+<td>nh-f</td>
+<td>Seek a position in a file</td>
+</tr>
+<tr><td>size</td>
+<td>h-n</td>
+<td>Return size of open file</td>
+</tr>
+<tr><td>delete</td>
+<td>$-f</td>
+<td>Delete a file. Returns a handle. Non-zero if
+successful, zero if failed.</td>
+</tr>
+<tr><td>slurp</td>
+<td>a$-n</td>
+<td>Read a file into a buffer</td>
+</tr>
+<tr><td>spew</td>
+<td>an$-n</td>
+<td>Write (n) bytes from address (a) into a file</td>
+</tr>
+<tr><td>readLine</td>
+<td>h-$</td>
+<td>Read a line from a file</td>
+</tr>
+<tr><td>writeLine</td>
+<td>$h-</td>
+<td>Write a string to a file</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="forth">
+<h1>forth'</h1>
+<div class="section" id="id48">
+<h2>Overview</h2>
+<p>This vocabulary will make Retro closer to a traditional Forth system. When
+it is visible, some things will be significantly different than in a standard
+Retro system, but it will also be easier to port existing Forth code.</p>
+<p>Eventually this should provide a large subset of the ANS Forth standard, with
+the limitation that only lowercase function names are provided.</p>
+</div>
+<div class="section" id="notes">
+<h2>Notes</h2>
+<div class="section" id="strings">
+<h3>Strings</h3>
+<p>Strings in ANS Forth are represented either as counted, or address and length
+pairs.</p>
+<p>This differs from the strings in Retro which are represented as null-terminated
+character arrays. So existing functions can't be directly used with strings
+created by the functions this vocabulary provides, and these functions can not
+be used freely with Retro strings.</p>
+<p>For counted strings, you get a pointer to a structure in memory that looks like:</p>
+<pre class="literal-block">
+length,characters
+</pre>
+<p>These can be unpacked into address/length pairs using <strong>count</strong>.</p>
+</div>
+</div>
+<div class="section" id="id49">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="13%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>if</td>
+<td>f-</td>
+<td>Start a conditional sequence</td>
+</tr>
+<tr><td>else</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Start the second half of a conditional sequence</td>
+</tr>
+<tr><td>then</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>End a conditional sequence</td>
+</tr>
+<tr><td>0&lt;</td>
+<td>n-f</td>
+<td>Return true flag if n is less than zero</td>
+</tr>
+<tr><td>0=</td>
+<td>n-f</td>
+<td>Return true flag if n is equal to zero</td>
+</tr>
+<tr><td>for</td>
+<td>n-</td>
+<td>Start a counted loop</td>
+</tr>
+<tr><td>next</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>End a counted loop</td>
+</tr>
+<tr><td>r&#64;</td>
+<td>-n</td>
+<td>Return a copy of the top item on the address stack</td>
+</tr>
+<tr><td><tt class="docutils literal">&gt;r</tt></td>
+<td>n-</td>
+<td>Push a value to the address stack</td>
+</tr>
+<tr><td><tt class="docutils literal">r&gt;</tt></td>
+<td>-n</td>
+<td>Pop a value off the address stack</td>
+</tr>
+<tr><td>2dup</td>
+<td>xy-xyxy</td>
+<td>Duplicate the top two items on the stack</td>
+</tr>
+<tr><td>emit</td>
+<td>c-</td>
+<td>Display a character</td>
+</tr>
+<tr><td>key</td>
+<td>-c</td>
+<td>Read a keypress</td>
+</tr>
+<tr><td>type</td>
+<td>an-</td>
+<td>Display n characters from string</td>
+</tr>
+<tr><td>spaces</td>
+<td>n-</td>
+<td>Display a series of spaces</td>
+</tr>
+<tr><td>state</td>
+<td>-a</td>
+<td>Same as <strong>compiler</strong></td>
+</tr>
+<tr><td><tt class="docutils literal">[']</tt></td>
+<td>&quot;-a</td>
+<td>Return the address of a function. Compile-time
+version of <strong>'</strong></td>
+</tr>
+<tr><td>recurse</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Compile a call to the current function into the
+function</td>
+</tr>
+<tr><td><tt class="docutils literal">*/mod</tt></td>
+<td>abc-rq</td>
+<td>Multiply a by b, then divide the results by c.
+Returns the remainder and the quotient.</td>
+</tr>
+<tr><td>rshift</td>
+<td>ab-c</td>
+<td>Shift bits right</td>
+</tr>
+<tr><td>lshift</td>
+<td>ab-c</td>
+<td>Shift bits left</td>
+</tr>
+<tr><td>fm/mod</td>
+<td>ab-mq</td>
+<td>Floored divide and remainder</td>
+</tr>
+<tr><td>sm/mod</td>
+<td>ab-mq</td>
+<td>Symmetric divide and remainder</td>
+</tr>
+<tr><td><tt class="docutils literal">c&quot;</tt></td>
+<td><tt class="docutils literal"><span class="pre">&quot;-a</span></tt></td>
+<td>Parse and return a counted string</td>
+</tr>
+<tr><td><tt class="docutils literal">s&quot;</tt></td>
+<td><tt class="docutils literal"><span class="pre">&quot;-an</span></tt></td>
+<td>Parse and return a string and its length</td>
+</tr>
+<tr><td>count</td>
+<td>a-an</td>
+<td>Convert a counted string to an addr/len pair</td>
+</tr>
+<tr><td><tt class="docutils literal">[</tt></td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Turn <strong>compiler</strong> off</td>
+</tr>
+<tr><td><tt class="docutils literal">]</tt></td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Turn <strong>compiler</strong> on</td>
+</tr>
+<tr><td>char</td>
+<td><tt class="docutils literal"><span class="pre">&quot;-c</span></tt></td>
+<td>Parse for and return an ASCII character</td>
+</tr>
+<tr><td><tt class="docutils literal">[char]</tt></td>
+<td><tt class="docutils literal"><span class="pre">&quot;-c</span></tt></td>
+<td>Compile-time version of <strong>char</strong></td>
+</tr>
+<tr><td>lateBinding</td>
+<td><tt class="docutils literal">$-</tt></td>
+<td>&quot;on&quot; binds names to functions after execution of
+<strong>;</strong>, &quot;off&quot; binds immediately</td>
+</tr>
+<tr><td>pick</td>
+<td>...n-..m</td>
+<td>Evil function to access arbitrary stack items</td>
+</tr>
+<tr><td>roll</td>
+<td>xu xu-1
+... x0 u
+-- xu-1
+... x0 xu</td>
+<td>Remove u. Rotate u+1 items on the top of the stack</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="hash">
+<h1>hash'</h1>
+<div class="section" id="id50">
+<h2>Overview</h2>
+<p>This library provides a vocabulary for generating hashes from strings.</p>
+<p>Most documented hash functions leverage unsigned longs during computation.
+Here we use <em>signed</em> cells as unsigned words are not offered by Retro at
+the present time.  So that we avoid returning negative hash values, hashing
+is filtered through <strong>abs</strong>.  (Negative values emerge due to shifting into
+the sign bit.)</p>
+<p>The <strong>hash-prime</strong> variable has been selected to provide a reasonable balance
+between clashing and key size -- this is to ensure that associative arrays
+built using <strong>hash</strong> don't need to allocate too much heap.  This can be
+adjusted by revectoring <strong>hash</strong> in the [unlikely] event of large tables.</p>
+</div>
+<div class="section" id="id51">
+<h2>Loading</h2>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs hash'
+</pre>
+</div>
+<div class="section" id="id52">
+<h2>Examples</h2>
+<pre class="literal-block">
+needs hash'
+&quot;hello&quot; ^hash'hash
+</pre>
+</div>
+<div class="section" id="id53">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="20%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>djb2</td>
+<td>$-n</td>
+<td>Generate a djb2 hash. This is
+the default option.</td>
+</tr>
+<tr><td>hash</td>
+<td>$-n</td>
+<td>Generate a hash from a string.
+Normally this is all you need to
+use.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data-structures">
+<h2>Data Structures</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="20%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>hash-prime</td>
+<td>-a</td>
+<td>Prime used by hashing algorithim</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="infix">
+<h1>infix'</h1>
+<div class="section" id="id54">
+<h2>Overview</h2>
+<p>This library provides a vocabulary for supporting simple infix math.</p>
+<p>Expressions are processed from left to right.</p>
+<div class="section" id="id55">
+<h3>Loading</h3>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs infix'
+</pre>
+</div>
+<div class="section" id="id56">
+<h3>Examples</h3>
+<pre class="literal-block">
+with infix'
+
+1 + 2 putn
+4 * 2 + 3 putn
+</pre>
+</div>
+<div class="section" id="id57">
+<h3>Functions</h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="31%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal">+</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">1 + 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">-</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">2 - 1</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">*</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">3 * 3</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">/</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">4 / 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">mod</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">5 % 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">/mod</tt></td>
+<td>( x&quot;-qr )</td>
+<td><tt class="docutils literal">5 /mod 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">^</tt></td>
+<td>( x&quot;-n )</td>
+<td><tt class="docutils literal">5 ^ 2</tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="introspection">
+<h1>introspection'</h1>
+<div class="section" id="id58">
+<h2>Overview</h2>
+<p>This vocabulary provides functions for examining functions and data structures.</p>
+</div>
+<div class="section" id="id59">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="9%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>isRevectorable?</td>
+<td>a-f</td>
+<td>Returns -1 if a function can be revectored, or 0
+if not.</td>
+</tr>
+<tr><td>isVisible?</td>
+<td>a-f</td>
+<td>Returns -1 if a function is visible in the current
+dictionary, or 0 if not</td>
+</tr>
+<tr><td>getClass</td>
+<td>a-a</td>
+<td>Return the class of a function, or 0 if not found</td>
+</tr>
+<tr><td>startOfBuffers</td>
+<td>-a</td>
+<td>Address where system buffers begin</td>
+</tr>
+<tr><td>reserved</td>
+<td>-n</td>
+<td>Amount of memory used for buffers</td>
+</tr>
+<tr><td>freeSpace</td>
+<td>-n</td>
+<td>Amount of free space (between <strong>here</strong> and
+<strong>startOfBuffers</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="linkedlist">
+<h1>linkedList'</h1>
+<div class="section" id="id60">
+<h2>Overview</h2>
+<p>While linked lists are a simple data structure, they are very useful.
+This vocabulary provides a foundation for creating and using them in
+a predicatable, consistent way.</p>
+<p>The <strong>linkedList'</strong> vocabulary provides support for single linked
+lists.</p>
+<div class="section" id="back-linked-lists">
+<h3>Back Linked Lists</h3>
+<p>In this form a list consists of a series of nodes that each point to
+the prior node. The list pointer variable is updated with each <strong>add</strong>
+or <strong>remove</strong> to point to the newest node in the chain.</p>
+</div>
+</div>
+<div class="section" id="id61">
+<h2>Examples</h2>
+<div class="section" id="creating-a-list">
+<h3>Creating A List</h3>
+<pre class="literal-block">
+^linkedList'new: L
+</pre>
+</div>
+<div class="section" id="adding-a-value-to-a-list">
+<h3>Adding A Value To A List</h3>
+<pre class="literal-block">
+100 L ^linkList'add
+</pre>
+</div>
+<div class="section" id="removing-a-value-from-a-list">
+<h3>Removing A Value From A List</h3>
+<pre class="literal-block">
+L ^linkList'remove
+</pre>
+</div>
+<div class="section" id="accessing-a-specific-node">
+<h3>Accessing A Specific Node</h3>
+<pre class="literal-block">
+10 L ^linkList'nth
+</pre>
+</div>
+</div>
+<div class="section" id="id62">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="10%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>node</td>
+<td>&quot;-</td>
+<td>Structure for list nodes</td>
+</tr>
+<tr><td>.prior</td>
+<td>a-a</td>
+<td>Access prior node field</td>
+</tr>
+<tr><td>.value</td>
+<td>a-a</td>
+<td>Access value field</td>
+</tr>
+<tr><td>new:</td>
+<td>&quot;-</td>
+<td>Create a list. This gives a variable pointing
+to a <strong>node</strong> structure</td>
+</tr>
+<tr><td>add</td>
+<td>nL-</td>
+<td>Add a value to a list. Allocates a new node</td>
+</tr>
+<tr><td>remove</td>
+<td>L-n</td>
+<td>Remove a node from a list and return its value</td>
+</tr>
+<tr><td>addNode</td>
+<td>NL-</td>
+<td>Add a node to a list</td>
+</tr>
+<tr><td>removeNode</td>
+<td>L-N</td>
+<td>Remove a node from a list. Returns the node</td>
+</tr>
+<tr><td>nth</td>
+<td>nL-N</td>
+<td>Return the <em>nth</em> node from the list. Indexing
+starts at <em>1</em>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="math">
+<h1>math'</h1>
+<p>This library provides support for additional mathmatic operations not provided
+by the core Retro language.</p>
+<div class="section" id="id63">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="10%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>squareRoot</td>
+<td>x-n</td>
+<td>Find an (approximate) square root for a given value</td>
+</tr>
+<tr><td>gcd</td>
+<td>xy-n</td>
+<td>Find the greatest common denominator for two values</td>
+</tr>
+<tr><td>lcm</td>
+<td>xy-n</td>
+<td>Find the least common multiplier for two values</td>
+</tr>
+<tr><td>divisor?</td>
+<td>ab-f</td>
+<td>Tests to see if b is a divisor of a. Returns a flag.</td>
+</tr>
+<tr><td><tt class="docutils literal">*/</tt></td>
+<td>abc-d</td>
+<td>Multiply a by b, then divide bye c to get d</td>
+</tr>
+<tr><td>even?</td>
+<td>n-f</td>
+<td>Returns a flag indicating whether or not a number is
+true</td>
+</tr>
+<tr><td>odd?</td>
+<td>n-f</td>
+<td>Returns a flag indicating whether or not a number is
+false</td>
+</tr>
+<tr><td>pow</td>
+<td>bp-n</td>
+<td>Raise (b) to power (p)</td>
+</tr>
+<tr><td>abs</td>
+<td>n-n</td>
+<td>Absoulte value of number (n)</td>
+</tr>
+<tr><td>min</td>
+<td>ab-c</td>
+<td>Minimum of (a) or (b)</td>
+</tr>
+<tr><td>max</td>
+<td>ab-c</td>
+<td>Maximum of (a) or (b)</td>
+</tr>
+<tr><td>random</td>
+<td>-x</td>
+<td>Return a random number</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="queries">
+<h1>queries'</h1>
+<div class="section" id="id64">
+<h2>Overview</h2>
+<p>This library provides symbolic constants and helper functions for
+using the VM queries in a clean, portable manner.</p>
+</div>
+<div class="section" id="id65">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="8%" />
+<col width="51%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>MEMORY-SIZE</td>
+<td>-n</td>
+<td>Query for determining amount
+of memory provided by the
+virtual machine</td>
+</tr>
+<tr><td>CANVAS?</td>
+<td>-n</td>
+<td>Query for determining whether
+the virtual machine provides
+a canvas device</td>
+</tr>
+<tr><td>CANVAS-WIDTH</td>
+<td>-n</td>
+<td>Query returning canvas width</td>
+</tr>
+<tr><td>CANVAS-HEIGHT</td>
+<td>-n</td>
+<td>Query returning canvas height</td>
+</tr>
+<tr><td>STACK-DEPTH</td>
+<td>-n</td>
+<td>Query returning data stack
+depth</td>
+</tr>
+<tr><td>ADDRESS-STACK-DEPTH</td>
+<td>-n</td>
+<td>Query returning address stack
+depth</td>
+</tr>
+<tr><td>MOUSE?</td>
+<td>-n</td>
+<td>Query for determining if the
+virtual machine provides a
+mouse device</td>
+</tr>
+<tr><td>TIME</td>
+<td>-n</td>
+<td>Query returning current time
+in seconds</td>
+</tr>
+<tr><td>QUIT-VM</td>
+<td>-n</td>
+<td>Query to shutdown the virtual
+machine</td>
+</tr>
+<tr><td>HOST-ENVIRONMENT-QUERY</td>
+<td>-n</td>
+<td>Query to lookup and return
+the value of an environment
+variable in the host system</td>
+</tr>
+<tr><td>CONSOLE-WIDTH</td>
+<td>-n</td>
+<td>Query returning the console
+width</td>
+</tr>
+<tr><td>CONSOLE-HEIGHT</td>
+<td>-n</td>
+<td>Query returning the console
+height</td>
+</tr>
+<tr><td>BITS-PER-CELL</td>
+<td>-n</td>
+<td>Query returning the number of
+bits in a cell</td>
+</tr>
+<tr><td>ENDIAN</td>
+<td>-n</td>
+<td>Query returning a flag which
+indicates endian used by the
+virtual machine</td>
+</tr>
+<tr><td>CONSOLE?</td>
+<td>-n</td>
+<td>Query to see if enhanced text
+console is provided</td>
+</tr>
+<tr><td>query</td>
+<td>?-?</td>
+<td>Perform a query. Actual stack
+effect varies by query</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="stack">
+<h1>stack'</h1>
+<p>This library provides a vocabulary for creating and using custom LIFO stacks.</p>
+<div class="section" id="id66">
+<h2>Loading</h2>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs stack'
+</pre>
+</div>
+<div class="section" id="id67">
+<h2>Examples</h2>
+<pre class="literal-block">
+with stack'
+
+new: foo
+100 push
+200 push
+
+new: bar
+300 push
+400 push
+500 push
+
+depth putn
+pop putn
+
+foo set
+depth putn
+pop putn
+pop putn
+
+bar set
+pop putn
+pop putn
+</pre>
+</div>
+<div class="section" id="id68">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="20%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>get</td>
+<td>-a</td>
+<td>Get address of current stack</td>
+</tr>
+<tr><td>set</td>
+<td>a-</td>
+<td>Activate a stack</td>
+</tr>
+<tr><td>new</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Create a new anonymous stack</td>
+</tr>
+<tr><td>new:</td>
+<td><tt class="docutils literal">&quot;-</tt></td>
+<td>Create a new named stack</td>
+</tr>
+<tr><td>push</td>
+<td>n-</td>
+<td>Push a value to a stack</td>
+</tr>
+<tr><td>pop</td>
+<td>-n</td>
+<td>Pop a value from a stack</td>
+</tr>
+<tr><td>depth</td>
+<td>-n</td>
+<td>Return number of items on stack</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="struct">
+<h1>struct'</h1>
+<div class="section" id="id69">
+<h2>Overview</h2>
+<p>This vocabulary provides support for creating and using simple data
+structures.</p>
+</div>
+<div class="section" id="id70">
+<h2>Example</h2>
+<pre class="literal-block">
+with struct'
+
+{
+  1 field .id
+  4 field .initials
+  1 field .jobcode
+} employee
+
+( The above could also be written as: )
+{ 3 fields .id 4 .initials .jobcode } employee
+
+employee Fred
+1 Fred !.id
+&quot;fjh&quot; Fred .initials 3 copy
+22 Fred !.jobcode
+
+employee Sue
+2 Sue !.id
+&quot;sjs&quot; Sue .initials 3 copy
+91 Sue !.jobcode
+
+Fred &#64;.id putn
+Sue &#64;.id putn
+Sue .initials puts
+</pre>
+</div>
+<div class="section" id="id71">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="10%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>{</td>
+<td>-n</td>
+<td>Start a new structure</td>
+</tr>
+<tr><td>field</td>
+<td>nn&quot;-n</td>
+<td>Add a field to a structure. Takes the number of cells to
+allocate and parses for a name</td>
+</tr>
+<tr><td>fields</td>
+<td>n&quot;-n</td>
+<td>Add multiple fields to a structure. Takes the number of
+fields and parses for names and optionally sizes.</td>
+</tr>
+<tr><td>}</td>
+<td>n&quot;-</td>
+<td>End a structure. Parses for the structure name</td>
+</tr>
+<tr><td>size</td>
+<td>a-n</td>
+<td>Return the size of a structure. The address must be the
+address of the function created by <strong>}</strong>, not the actual
+allocated structure.</td>
+</tr>
+<tr><td>clone</td>
+<td>a-a</td>
+<td>Given a structure address, return a new anonyous instance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="subcell">
+<h1>subcell'</h1>
+<div class="section" id="id72">
+<h2>Overview</h2>
+<p>This library provides functions for accessing 16-bit and 8-bit subsets of cells.</p>
+</div>
+<div class="section" id="id73">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>highWord</td>
+<td>cellAddr -- highwordAddr</td>
+</tr>
+<tr><td>lowWord</td>
+<td>cellAddr -- lowwordAddr</td>
+</tr>
+<tr><td>w&#64;</td>
+<td>wordAddr -- val</td>
+</tr>
+<tr><td>w&#64;+</td>
+<td>wordAddr -- wordAddr val</td>
+</tr>
+<tr><td>w!</td>
+<td>val wordAddr --</td>
+</tr>
+<tr><td>w!+</td>
+<td>val wordAddr -- wordAddr+1</td>
+</tr>
+<tr><td>highByte</td>
+<td>wordAddr -- highbyteAddr</td>
+</tr>
+<tr><td>lowByte</td>
+<td>wordAddr -- lowbyteAddr</td>
+</tr>
+<tr><td>c&#64;</td>
+<td>byteAddr -- val</td>
+</tr>
+<tr><td>c&#64;+</td>
+<td>byteAddr -- byteAddr val</td>
+</tr>
+<tr><td>c!</td>
+<td>val byteaddr --</td>
+</tr>
+<tr><td>c!+</td>
+<td>val byteAddr -- byteAddr+1</td>
+</tr>
+<tr><td>highNibble</td>
+<td>byteAddr -- highnibbleAddr</td>
+</tr>
+<tr><td>lowNibble</td>
+<td>byteAddr -- lownibbleAddr</td>
+</tr>
+<tr><td>nibble&#64;</td>
+<td>nibbleAddr -- val</td>
+</tr>
+<tr><td>nibble&#64;+</td>
+<td>nibbleAddr -- nibbleAddr val</td>
+</tr>
+<tr><td>nibble!</td>
+<td>val nibbleAddr --</td>
+</tr>
+<tr><td>nibble!+</td>
+<td>val nibbleAddr -- nibbleAddr+1</td>
+</tr>
+<tr><td>packString</td>
+<td>strAddr --</td>
+</tr>
+<tr><td>printPack</td>
+<td>strAddr --</td>
+</tr>
+<tr><td>getPackedLength</td>
+<td>strAddr -- strLen</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="unsigned">
+<h1>unsigned'</h1>
+<div class="section" id="id74">
+<h2>Overview</h2>
+<p>This vocabulary will provide support for creation and use of unsigned values.</p>
+</div>
+</div>
+<div class="section" id="values">
+<h1>values'</h1>
+<p>A value is a variable that returns the stored value when used. This
+library provides an implementation for Retro.</p>
+<div class="section" id="id75">
+<h2>Loading</h2>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs values'
+</pre>
+</div>
+<div class="section" id="id76">
+<h2>Examples</h2>
+<pre class="literal-block">
+with values'
+
+value foo
+
+100 to foo
+
+foo foo + .s
+
+50 to foo
+foo foo + .s
+</pre>
+</div>
+<div class="section" id="id77">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="24%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>.value</td>
+<td><div class="first last line-block">
+<div class="line">a-n</div>
+<div class="line"><em>or</em></div>
+<div class="line">na-</div>
+</div>
+</td>
+<td><div class="first last line-block">
+<div class="line">Return a stored value</div>
+<div class="line"><br /></div>
+<div class="line">Update a stored value</div>
+</div>
+</td>
+</tr>
+<tr><td>to</td>
+<td><tt class="docutils literal">`-</tt></td>
+<td>Switch value to update
+mode</td>
+</tr>
+<tr><td>value</td>
+<td>&quot;-</td>
+<td>Create a new value</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="variations">
+<h1>variations'</h1>
+<div class="section" id="id78">
+<h2>Overview</h2>
+<p>This library provides some functions for determining the differences between
+VM implementations and conditionally evaluating code blocks based on these
+differences.</p>
+<p>Specifically, it provides functions for determining the number of bits per
+cell and the endian nature of an implementation.</p>
+</div>
+<div class="section" id="id79">
+<h2>Functions</h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>size</td>
+<td>-n</td>
+<td>Return the number of bits per cell</td>
+</tr>
+<tr><td>endian</td>
+<td>-n</td>
+<td>Return 0 for little endian or 1 for big endian</td>
+</tr>
+<tr><td>bits{</td>
+<td>n&quot;-</td>
+<td>Execute code up to <strong>}</strong> if the bits per cell
+matches <em>n</em></td>
+</tr>
+<tr><td>bigEndian</td>
+<td>&quot;-</td>
+<td>Execute code up to <strong>}</strong> if endian is big</td>
+</tr>
+<tr><td>littleEndian</td>
+<td>&quot;-</td>
+<td>Execute code up to <strong>}</strong> if endian is little</td>
+</tr>
+<tr><td>}</td>
+<td><tt class="docutils literal">-</tt></td>
+<td>Does nothing</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>

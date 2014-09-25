@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+<title>Retro Language</title>
+<link rel="stylesheet" href="retro.css" />
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<meta charset=UTF-8>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+</head>
+
+<body onload="rxPrepareCanvas('framebuffer', 'framebuffer'); rxLoadCleanImage(); rxPrepareVM(); rxStartVM(); rxListProjects();">
+<div class="container">
+<div class="row">
+<div class="span12"><p></p></div>
+</div>
+<div class="row">
+  <div class="span6">
+    <div><canvas id="framebuffer" width="400" height="400"></canvas></div>
+    <form action="javascript:rxProcessInput()">
+      <input onBlur="javascript:rxProcessInput();"
+             placeholder="enter code here"
+             class="span4" id="tib" size="30">
+    <div class="btn-group">
+      <a class="btn" onClick="javascript:rxLoadCleanImage()"><i class="icon-plus-sign"></i> new</a>
+      <a class="btn" onClick="javascript:rxSaveImage()"><i class="icon-download-alt"></i> save</a>
+      <a class="btn" onClick="javascript:rxLoadImage()"><i class="icon-refresh"></i> load</a>
+    </div>
+    </form>
+    <hr>
+    <p>Process up to <input class="span1" onBlur="javascript:rxSetCyclesPerInterval()" id="cycles" value="5000"/>
+    instructions every <input class="span1" onBlur="javascript:rxSetInterval()" id="frequency" value="75"/> milliseconds.</p>
+
+  </div>
+  <div class="span6">
+    <form>
+    <textarea placeholder="code editor" class="span4" rows="22" id="project"></textarea>
+    <div class="btn-toolbar">
+      <div class="btn-group">
+        <a class="btn" onClick="javascript:rxNewProject()"><i class="icon-plus-sign"></i> new</a>
+        <a class="btn" onClick="javascript:rxSaveProject()"><i class="icon-download-alt"></i> save</a>
+        <a class="btn" onClick="javascript:rxLoadSavedProject()"><i class="icon-refresh"></i> reload</a>
+      </div>
+      <div class="btn-group">
+        <a class="btn" onClick="javascript:rxRunProject()">eval</a>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+</div>
+
+<script src="canvastext.js"></script>
+<script src="ngaro.js"></script>
+<script src="retroImage.js"></script>
+<script type="text/javascript">
+  FB_WIDTH=400;
+  FB_HEIGHT=400;
+  TERM_WIDTH  = Math.floor(FB_WIDTH / 8);
+  TERM_HEIGHT = Math.floor(FB_HEIGHT / 16);
+</script>
+</body>
+</html>

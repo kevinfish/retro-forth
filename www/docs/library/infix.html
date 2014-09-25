@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>infix'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="infix">
+<h1 class="title">infix'</h1>
+<h2 class="subtitle" id="overview">Overview</h2>
+
+<p>This library provides a vocabulary for supporting simple infix math.</p>
+<p>Expressions are processed from left to right.</p>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<p>The following should suffice:</p>
+<pre class="literal-block">
+needs infix'
+</pre>
+</div>
+<div class="section" id="examples">
+<h1>Examples</h1>
+<pre class="literal-block">
+with infix'
+
+1 + 2 putn
+4 * 2 + 3 putn
+</pre>
+</div>
+<div class="section" id="functions">
+<h1>Functions</h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="31%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Name</th>
+<th class="head">Stack</th>
+<th class="head">Usage</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal">+</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">1 + 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">-</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">2 - 1</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">*</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">3 * 3</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">/</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">4 / 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">mod</tt></td>
+<td>( x&quot;-y  )</td>
+<td><tt class="docutils literal">5 % 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">/mod</tt></td>
+<td>( x&quot;-qr )</td>
+<td><tt class="docutils literal">5 /mod 2</tt></td>
+</tr>
+<tr><td><tt class="docutils literal">^</tt></td>
+<td>( x&quot;-n )</td>
+<td><tt class="docutils literal">5 ^ 2</tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

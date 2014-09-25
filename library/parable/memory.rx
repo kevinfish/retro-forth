@@ -1,0 +1,63 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Parable Memory Manager                                                      )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2012, Charles Childers                                        )
+( License: ISC                                                                )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+chain: parable/memory'
+  create map
+    1024 allot
+
+  create slices
+    1024 128 * allot
+
+  variable give
+
+  : toSlice  ( n-a )
+    128 * slices + ;
+
+  : findUnusedSlice ( -n )
+    0 &give !
+    #0 1000 [ #1 + dup map + @ #0 == [ dup &give ! ] ifTrue ] times drop &give @ ;
+
+  : markUsed  ( n-n )
+    [ map + on ] sip ;
+
+  : memory.request  ( -n )
+    findUnusedSlice markUsed ;
+
+  : memory.release  ( n- )
+    map + off ;
+
+  : memory.fetch  ( slice offset - value )
+    [ toSlice ] dip + @ ;
+
+  : memory.store  ( value slice offset - )
+    [ toSlice ] dip + ! ;
+
+  : memory.copy   ( source dest - )
+    [ toSlice ] bi@ 128 copy ;
+
+;chain
+
+doc{
+===============
+parable/memory'
+===============
+
+
+--------
+Overview
+--------
+This is intended to provide Parable style memory access in Retro.
+
+-------
+Loading
+-------
+The following should suffice:
+
+::
+
+  needs parable/memory'
+}doc

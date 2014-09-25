@@ -1,0 +1,18 @@
+with pic32'
+
+: memread -6 6 out wait 6 in ;
+: memshow dup hex8 space space
+dup memread hex8 space
+4 + dup memread hex8 space
+4 + dup memread hex8 space
+4 + memread hex8 space cr ;
+: bootread clear cr "Stack Memory" puts cr cr
+"Address  Value" puts cr 
+$80007F00 
+dup memshow $10 + dup memshow $10 + dup memshow $10 + dup memshow $10 +
+dup memshow $10 + dup memshow $10 + dup memshow $10 + dup memshow $10 +
+dup memshow $10 + dup memshow $10 + dup memshow $10 + dup memshow $10 + 
+dup memshow $10 + dup memshow $10 + dup memshow $10 + memshow ;
+bootread
+bye
+

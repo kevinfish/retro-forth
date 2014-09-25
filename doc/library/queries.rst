@@ -1,0 +1,70 @@
+========
+queries'
+========
+
+--------
+Overview
+--------
+
+This library provides symbolic constants and helper functions for
+using the VM queries in a clean, portable manner.
+
+
+---------
+Functions
+---------
+
++------------------------+-----+------------------------------+
+| MEMORY-SIZE            | -n  | Query for determining amount |
+|                        |     | of memory provided by the    |
+|                        |     | virtual machine              |
++------------------------+-----+------------------------------+
+| CANVAS?                | -n  | Query for determining whether|
+|                        |     | the virtual machine provides |
+|                        |     | a canvas device              |
++------------------------+-----+------------------------------+
+| CANVAS-WIDTH           | -n  | Query returning canvas width |
++------------------------+-----+------------------------------+
+| CANVAS-HEIGHT          | -n  | Query returning canvas height|
++------------------------+-----+------------------------------+
+| STACK-DEPTH            | -n  | Query returning data stack   |
+|                        |     | depth                        |
++------------------------+-----+------------------------------+
+| ADDRESS-STACK-DEPTH    | -n  | Query returning address stack|
+|                        |     | depth                        |
++------------------------+-----+------------------------------+
+| MOUSE?                 | -n  | Query for determining if the |
+|                        |     | virtual machine provides a   |
+|                        |     | mouse device                 |
++------------------------+-----+------------------------------+
+| TIME                   | -n  | Query returning current time |
+|                        |     | in seconds                   |
++------------------------+-----+------------------------------+
+| QUIT-VM                | -n  | Query to shutdown the virtual|
+|                        |     | machine                      |
++------------------------+-----+------------------------------+
+| HOST-ENVIRONMENT-QUERY | -n  | Query to lookup and return   |
+|                        |     | the value of an environment  |
+|                        |     | variable in the host system  |
++------------------------+-----+------------------------------+
+| CONSOLE-WIDTH          | -n  | Query returning the console  |
+|                        |     | width                        |
++------------------------+-----+------------------------------+
+| CONSOLE-HEIGHT         | -n  | Query returning the console  |
+|                        |     | height                       |
++------------------------+-----+------------------------------+
+| BITS-PER-CELL          | -n  | Query returning the number of|
+|                        |     | bits in a cell               |
++------------------------+-----+------------------------------+
+| ENDIAN                 | -n  | Query returning a flag which |
+|                        |     | indicates endian used by the |
+|                        |     | virtual machine              |
++------------------------+-----+------------------------------+
+| CONSOLE?               | -n  | Query to see if enhanced text|
+|                        |     | console is provided          |
++------------------------+-----+------------------------------+
+| query                  | ?-? | Perform a query. Actual stack|
+|                        |     | effect varies by query       |
++------------------------+-----+------------------------------+
+
+

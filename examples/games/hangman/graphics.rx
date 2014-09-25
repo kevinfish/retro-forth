@@ -1,0 +1,42 @@
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Hangman for Retro Console                                    )
+(  * Drawing routines.                                         )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+( Copyright [c] 2010-11, Marc Simpson                          )
+( License: ISC                                                 )
+( ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ )
+
+needs console'
+
+( --[ Drawing Routines ]-------------------------------------- )
+
+: at-xy  ( cr- ) swap ^console'setCursor ;
+: bar ( xyn- ) [ at-xy ] dip [ '- putc ] times ;
+: col ( xyn- ) [ 2over at-xy '| putc 1+ ] times 2drop ;
+
+( --[ Stages ]------------------------------------------------ )
+
+( NOTE: 13 is FIXED unless we add more drawing XTs )
+
+13 constant STAGES
+
+create graphics STAGES allot
+graphics variable: current-graphic
+
+: graphic, @current-graphic ! current-graphic ++ ;
+
+[ 20 15 15                 bar ]   graphic,
+[ 20  5 10                 col ]   graphic,
+[ 20  5 15                 bar ]   graphic,
+[ 21  6 at-xy '/ putc ]   graphic,
+[ 30  6  2                 col ]   graphic,
+[ 30  8 at-xy '@ putc ]   graphic,
+[ 30  9  1                 col ]   graphic,
+[ 29  9 at-xy '/ putc ]   graphic,
+[ 31  9 at-xy '\ putc ]   graphic,
+[ 30  9  1                 col ]   graphic,
+[ 30 10  1                 col ]   graphic,
+[ 29 11 at-xy '/ putc ]   graphic,
+[ 31 11 at-xy '\ putc ]   graphic,
+
+( ============================================================ )

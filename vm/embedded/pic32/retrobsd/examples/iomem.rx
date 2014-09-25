@@ -1,0 +1,20 @@
+with pic32'
+
+: memread -2 6 out wait 6 in ;
+: memshow dup hex8 space 
+dup memread hex8 space $10 + 
+dup memread hex8 space $10 + 
+memread hex8 cr ;
+: ioread clear cr "I/O Memory" puts cr cr
+"Port   Address  Value" puts cr 
+$BF886000 
+dup "Port A  " puts memshow $40 + 
+dup "Port B  " puts memshow $40 + 
+dup "Port C  " puts memshow $40 + 
+dup "Port D  " puts memshow $40 + 
+dup "Port E  " puts memshow $40 + 
+dup "Port F  " puts memshow $40 + 
+"Port G  " puts memshow ;
+ioread
+bye
+

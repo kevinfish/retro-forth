@@ -1,0 +1,52 @@
+=======
+values'
+=======
+A value is a variable that returns the stored value when used. This
+library provides an implementation for Retro.
+
+
+-------
+Loading
+-------
+The following should suffice:
+
+::
+
+  needs values'
+
+
+--------
+Examples
+--------
+
+::
+
+  with values'
+
+  value foo
+
+  100 to foo
+
+  foo foo + .s
+
+  50 to foo
+  foo foo + .s
+
+
+---------
+Functions
+---------
+
++----------+-----------+-------------------------+
+| Name     | Stack     | Usage                   |
++==========+===========+=========================+
+| .value   | | a-n     | | Return a stored value |
+|          | | *or*    | |                       |
+|          | | na-     | | Update a stored value |
++----------+-----------+-------------------------+
+| to       | ```-``    | Switch value to update  |
+|          |           | mode                    |
++----------+-----------+-------------------------+
+| value    | "-        | Create a new value      |
++----------+-----------+-------------------------+
+

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Coding Style</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="coding-style">
+<h1 class="title">Coding Style</h1>
+
+<div class="section" id="formatting">
+<h1>Formatting</h1>
+<ul class="simple">
+<li>Use ASCII or UTF8</li>
+<li>Use 2 space indent, no tabs</li>
+<li>Use Unix-style line endings</li>
+<li>If a function is more than one line, start the code on the line
+following the name</li>
+<li>All functions should have stack comments</li>
+<li>Try not to exceed 80 characters per line</li>
+<li>Avoid trailing whitespace</li>
+<li>Closing semicolons should not be on a separate line</li>
+</ul>
+</div>
+<div class="section" id="naming">
+<h1>Naming</h1>
+<ul class="simple">
+<li>Use short names for indexes</li>
+<li>Vocabulary names should end with an apostrophe</li>
+<li>Class names should begin with a period</li>
+<li>Constants should be in UPPERCASE</li>
+<li>Use camelCase with the initial word lowercase. Keep acronyms uppercase.</li>
+<li>Use of dotted notation (e.g., list.size) is acceptable for functions
+operating on a data structure</li>
+</ul>
+</div>
+<div class="section" id="comments">
+<h1>Comments</h1>
+<ul class="simple">
+<li>Comments should be enclosed in parenthesis</li>
+<li>Keep comments roughly aligned within a local grouping</li>
+<li>Avoid superfluous comments</li>
+<li>All functions should have stack comments</li>
+<li>A space should preceed the closing parenthesis</li>
+</ul>
+</div>
+<div class="section" id="stack-comments">
+<h1>Stack Comments</h1>
+<p>Stack comments in Retro are a compact form, using short codes
+in place of actual words. These codes are listed in the next
+section.</p>
+<p>A typical comment for a function that takes two arguments and
+leaves one will look like:</p>
+<pre class="literal-block">
+( xy-z )
+</pre>
+<p>In a few cases, functions may consume or leave a variable number
+of arguments. In this case, we denote it like:</p>
+<pre class="literal-block">
+( n-n || n- )
+</pre>
+<p>There are two other modifiers in use. Some functions have different
+compile-time and run-time stack use. We prefix the comment with
+C: for compile-time, and R: for run-time actions.</p>
+<p>If not specified, the stack comments are for runtime effects.
+Functions with no C: are assumed to have no stack impact during
+compilation.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Code</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>x, y, z, n</td>
+<td>Generic numbers</td>
+</tr>
+<tr><td>q, r</td>
+<td>Quotient, Remainder (for division)</td>
+</tr>
+<tr><td><tt class="docutils literal">&quot;</tt></td>
+<td>Function parses for a string</td>
+</tr>
+<tr><td>q</td>
+<td>Quote</td>
+</tr>
+<tr><td>a</td>
+<td>Address</td>
+</tr>
+<tr><td><tt class="docutils literal">$</tt></td>
+<td>Zero-terminated string</td>
+</tr>
+<tr><td>c</td>
+<td>ASCII character</td>
+</tr>
+<tr><td>f</td>
+<td>Flag</td>
+</tr>
+<tr><td>t</td>
+<td>Type constant</td>
+</tr>
+<tr><td>...</td>
+<td>Variable number of values on stack</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="documentation">
+<h1>Documentation</h1>
+<ul class="simple">
+<li>Use reStructuredText for compatibility</li>
+<li>Try to keeps lines to a max of 80 characters</li>
+<li>Use the following section title adornment styles:</li>
+</ul>
+<pre class="literal-block">
+==============
+Document Title
+==============
+
+------------------------------------------
+Document Subtitle, or Major Division Title
+------------------------------------------
+
+Section
+=======
+
+Subsection
+----------
+
+Sub-Subsection
+``````````````
+
+Sub-Sub-Subsection
+..................
+</pre>
+<ul class="simple">
+<li>Use two blank lines before each section/subsection/etc. title. One blank line
+is sufficient between immediately adjacent titles.</li>
+<li>Documentation should be released under ISC license or CC0</li>
+<li>For libraries: embedded documentation using <strong>doc{</strong> should be placed at the
+end of the file</li>
+</ul>
+</div>
+</div>
+</body>
+</html>

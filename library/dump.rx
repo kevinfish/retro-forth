@@ -1,0 +1,44 @@
+needs subcell'
+needs char'
+
+chain: dump'
+{{
+  : hex? ( -- t | f )
+    @base 16 == ;
+
+  : printNibble ( val -- )
+    dup 10 < [ 48 + ] [ 55 + ] if putc ;
+
+  : printPaddedDecimal ( val -- )
+    100000000 8 [ 10 / tuck /mod putn swap ] times 2drop ;
+
+  : printDecimal ( addr -- )
+    @ printPaddedDecimal ;
+
+  : printHex ( addr -- )
+    ^subcell'highWord ^subcell'highByte ^subcell'highNibble
+    8 [ dup ^subcell'nibble@ printNibble 1+ ] times drop ;
+
+  : printCells ( addr -- )
+    hex? [ printHex ] [ printDecimal ] if space ;
+
+  : printChar ( val -- )
+    dup ^char'isVisible? [ drop '_ ] ifFalse putc ;
+
+  : printChars ( addr -- )
+    ^subcell'highWord ^subcell'highByte
+    16 [ dup ^subcell'c@ printChar 1+ ] times drop cr ;
+
+  : printAddr ( addr -- )
+    '[ putc printPaddedDecimal '] putc ;
+
+  : dumpLine ( addr -- )
+    2dup printAddr space
+    4 [ dup printCells 1+ ] times swap printChars ;
+---reveal---
+  : dump ( numLines addr -- )
+    cr swap [ dumpLine ] times drop ;
+}}
+
+;chain
+

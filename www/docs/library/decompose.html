@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>decompose'</title>
+<link rel="stylesheet" href="/documentation.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="decompose">
+<h1 class="title">decompose'</h1>
+
+<div class="section" id="overview">
+<h1>Overview</h1>
+<p>The core Casket framework provides minimal templating, but no easy way to
+generate HTML from code.</p>
+<p>This vocabulary provides support for generating HTML using a series of
+combinators. Textual data returned will be displayed (using <strong>^casket'tputs</strong>),
+and various attributes are supported.</p>
+</div>
+<div class="section" id="loading">
+<h1>Loading</h1>
+<pre class="literal-block">
+needs decompose'
+</pre>
+</div>
+<div class="section" id="example">
+<h1>Example</h1>
+<pre class="literal-block">
+: /index
+  Content-type: text/html
+  [ [ [ &quot;Hello&quot; ] title ] head
+    [ [ &quot;Welcome&quot; ] h1
+      [ &quot;This is a paragraph.&quot; ] p ] body ] html ;
+</pre>
+</div>
+</div>
+</body>
+</html>
